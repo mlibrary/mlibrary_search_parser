@@ -1,6 +1,7 @@
 require "mlibrary_search_parser/version"
+# require 'mlibrary_search_parser/boolean/expressions'
 
-module MlibrarySearchParser
+
+module MLibrarySearchParser
   class Error < StandardError; end
-  # Your code goes here...
 end

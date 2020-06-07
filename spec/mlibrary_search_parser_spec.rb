@@ -1,6 +1,6 @@
-RSpec.describe MlibrarySearchParser do
+RSpec.describe MLibrarySearchParser do
   it "has a version number" do
-    expect(MlibrarySearchParser::VERSION).not_to be nil
+    expect(MLibrarySearchParser::VERSION).not_to be nil
   end
 
   it "does something useful" do
