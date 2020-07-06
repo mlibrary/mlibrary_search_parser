@@ -17,30 +17,10 @@ module MLibrarySearchParser
   rule(:space) { match['\\s'].repeat(1) }
   rule(:space?) { space.maybe }
 
-  rule(:dot) { str('.') }
-  rule(:dot?) { dot.maybe }
-
-  rule(:plus) { str('+') }
-  rule(:minus) { str('-') }
-  rule(:dash) { str('-') }
-  rule(:amp) { str('&') }
-
   rule(:dquote) { str('"') }
   rule(:squote) { str("'") }
   rule(:nondquote) { match['^"'].repeat(1) }
   rule(:nonsquote) { match["^'"].repeat(1) }
-
-  rule(:colon) { str(':') }
-
-  rule(:langle) { str('<') }
-  rule(:rangle) { str('>') }
-  rule(:lsquare) { str('[') }
-  rule(:rsuare) { str(']') }
-
-  rule(:digit) { match('\d') }
-  rule(:digits) { digit.repeat(1) }
-  rule(:digits?) { digits.maybe }
-
 
   ##################################################
   # "Smart" quotes and other near-miss characters
@@ -99,30 +79,8 @@ module MLibrarySearchParser
   #####################################
 
   rule(:not_op) { space? >> str('NOT')  >> space }
-  rule(:must_op) { space? >> plus }
-  rule(:cant_op) { space? >> minus }
 
-  rule(:any_op) { and_op | or_op | not_op | plus | minus }
-
-  ###################################
-  # Field names
-  ###################################
-  # These can be created programmatically from a config file; for now,
-  # we'll just use a few samples
-
-  rule(:title) { str('title') }
-  rule(:author) { str('author') }
-
-  rule(:field_name) { title | author }
-
-  ###################################
-  # Field indicator
-  ###################################
-  # The prefix that says, "This search is restricted to a particular
-  # field". We're using a colon, with no surrounding spaces
-
-  rule(:field_indicator) { field_name >> colon }
-
+  rule(:any_op) { and_op | or_op | not_op }
 
   #######################################
   # BASIC OPERATOR EXPRESSIONS
@@ -139,21 +97,5 @@ module MLibrarySearchParser
 
   rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
-
-  #######################################
-  # FIELDED OPERATOR EXPRESSIONS
-  #####################################
-  # Within a field, we can *not* allow any other fieldeds, so we use the
-  # basic "parens" from above
-  #
-
-  rule(:fielded) { field_indicator.as(:field) >> parens.as(:subtree) | parens }
-  rule(:fielded_parens) { lparen >> f_or_expr >> rparen | fielded }
-  rule(:f_not_expr) { not_op >> fielded_parens.as(:not) | fielded_parens }
-  rule(:f_and_expr) { (f_not_expr.as(:left) >> and_op >> f_and_expr.as(:right)).as(:and) | f_not_expr }
-  rule(:f_or_expr) { (f_and_expr.as(:left) >> or_op >> f_or_expr.as(:right)).as(:or) | f_and_expr }
-
-  rule(:fielded_expr) { (f_or_expr >> f_not_expr.repeat(0)) }
-
-  rule(:search) { space? >> ((fielded_expr | bare_expr).repeat(0)).as(:search) >> space? }
+  rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? }
 end
