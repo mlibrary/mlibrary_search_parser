@@ -89,10 +89,10 @@ module MLibrarySearchParser
     #
     # No fieldeds are allowed here
 
-    rule(:parens) { lparen >> or_expr >> rparen | tokens }
+    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) }
     rule(:not_expr) { not_op >> parens.as(:not) | parens }
-    rule(:and_expr) { (not_expr.as(:left) >> and_op >> and_expr.as(:right)).as(:and) | not_expr }
-    rule(:or_expr) { (and_expr.as(:left) >> or_op >> or_expr.as(:right)).as(:or) | and_expr }
+    rule(:and_expr) { (not_expr.as(:left) >> and_op >> (and_op | or_op).maybe >> and_expr.as(:right)).as(:and) | not_expr }
+    rule(:or_expr) { (and_expr.as(:left) >> or_op >> (and_op | or_op).maybe >> or_expr.as(:right)).as(:or) | and_expr }
 
     rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
@@ -101,12 +101,14 @@ module MLibrarySearchParser
   end
 
   class QueryTransformer < Parslet::Transform
+    rule(:tokens => simple(:t)) { t.to_s }
     rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
       "(#{l}) AND (#{r})"
     }
     rule(:or => { :left => simple(:l), :right => simple(:r) } ) {
       "(#{l}) OR (#{r})"
     }
+    rule(:not => simple(:n)) { "NOT #{n}" }
     rule(:search => simple(:s)) { s.to_s }
     rule(:search => sequence(:s)) { s.join(" ") }
   end
