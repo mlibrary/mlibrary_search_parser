@@ -1,4 +1,5 @@
 require 'parslet'
+require "mlibrary_search_parser/node/boolean"
 
 module MLibrarySearchParser
   class Error < StandardError; end
@@ -103,10 +104,10 @@ module MLibrarySearchParser
   class QueryTransformer < Parslet::Transform
     rule(:tokens => simple(:t)) { t.to_s }
     rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
-      "(#{l}) AND (#{r})"
+      Node::AndNode.new(l, r)
     }
     rule(:or => { :left => simple(:l), :right => simple(:r) } ) {
-      "(#{l}) OR (#{r})"
+      Node::OrNode.new(l,r)
     }
     rule(:not => simple(:n)) { "NOT #{n}" }
     rule(:search => simple(:s)) { s.to_s }
