@@ -1,21 +1,22 @@
 module MLibrarySearchParser
   module Node
     class Unary
+      attr_accessor :operand
       def initialize(operand)
         @operand = operand
       end
 
-      def type
+      def operator
         :undefined
       end
 
       def to_s
-        "#{type.upcase} (#{operand})"
+        "#{operator.upcase} (#{operand})"
       end
     end
 
     class NotNode < Unary
-      def type
+      def operator
         :not
       end
     end
