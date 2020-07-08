@@ -88,7 +88,7 @@ module MLibrarySearchParser
     
     rule(:field_name) { str("title") | str("author") }
     rule(:field_prefix) { field_name.as(:field_name) >> colon }
-    rule(:fielded) { field_prefix >> tokens.as(:query) }
+    rule(:fielded) { field_prefix >> parens.as(:query) }
 
     #######################################
     # BINARY OPERATORS
@@ -113,7 +113,7 @@ module MLibrarySearchParser
     # have spaces around them
 
     rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
-    rule(:not_expr) { not_op >> parens.as(:not) | parens }
+    rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? }
     rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
     rule(:or_expr) { (and_expr.as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
 

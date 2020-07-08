@@ -86,4 +86,20 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse("title:huck finn")
     expect(@transformer.apply(parsed)).to eq "title:(huck finn)"
   end
+
+  it "allows fields on both sides of AND" do
+    parsed = @parser.parse("author:mark twain AND title:huck finn")
+    expect(@transformer.apply(parsed)).to eq "(author:(mark twain)) AND (title:(huck finn))"
+  end
+
+  it "allows a boolean within fielded" do
+    parsed = @parser.parse("author:(mark twain AND samuel clemens)")
+    expect(@transformer.apply(parsed)).to eq "author:((mark twain) AND (samuel clemens))"
+  end
+
+  it "turns bare words into an allfields query" do
+    parsed = @parser.parse("huck finn author:mark twain")
+    pp parsed
+    expect(@transformer.apply(parsed)).to eq "allfields:(huck finn) author:(mark twain)"
+  end
 end
