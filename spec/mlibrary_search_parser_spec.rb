@@ -35,7 +35,7 @@ RSpec.describe MLibrarySearchParser do
 
   it "keeps NOT" do
     parsed = @parser.parse("mark twain NOT huck finn")
-    expect(@transformer.apply(parsed)).to eq "mark twain NOT huck finn"
+    expect(@transformer.apply(parsed)).to eq "mark twain NOT (huck finn)"
   end
 
   it "ignores not" do
@@ -70,11 +70,20 @@ RSpec.describe MLibrarySearchParser do
 
   it "accepts sequence AND NOT" do
     parsed = @parser.parse("mark twain AND NOT huck finn")
-    expect(@transformer.apply(parsed)).to eq "(mark twain) AND (NOT huck finn)"
+    expect(@transformer.apply(parsed)).to eq "(mark twain) AND (NOT (huck finn))"
   end
 
   it "preserves provided parens" do
     parsed = @parser.parse("(mark twain OR samuel clemens) AND huck finn")
     expect(@transformer.apply(parsed)).to eq "((mark twain) OR (samuel clemens)) AND (huck finn)"
+  end
+
+  it "doesn't allow a fielded in tokens" do
+    expect{@parser.tokens.parse("one two title:three four")}.to raise_error(Parslet::ParseFailed)
+  end
+
+  it "picks up a title field" do
+    parsed = @parser.parse("title:huck finn")
+    expect(@transformer.apply(parsed)).to eq "title:(huck finn)"
   end
 end

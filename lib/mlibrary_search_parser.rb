@@ -1,9 +1,22 @@
 require 'parslet'
 require "mlibrary_search_parser/node/boolean"
+require "mlibrary_search_parser/node/unary"
+require "mlibrary_search_parser/node/fielded"
 
 module MLibrarySearchParser
   class Error < StandardError; end
 
+  class PreQueryParenthesisParser < Parslet::Parser
+    # check for balance and sanity
+  end
+
+  class PreQueryDoubleQuotesParser < Parslet::Parser
+    # check for balance and sanity
+  end
+
+  class PreQueryNestedFieldsParser < Parslet::Parser
+    # check for balance and sanity
+  end
 
   class QueryParser < Parslet::Parser
 
@@ -16,6 +29,8 @@ module MLibrarySearchParser
 
     rule(:space) { match['\\s'].repeat(1) }
     rule(:space?) { space.maybe }
+
+    rule(:colon) { str(":") }
 
     rule(:dquote) { str('"') }
     rule(:squote) { str("'") }
@@ -65,7 +80,15 @@ module MLibrarySearchParser
     # that we treat as a single "word"
 
     rule(:token) { phrase | word }
-    rule(:tokens) { any_op.absent? >> token >> (space >> tokens).repeat(0) }
+    rule(:tokens) { any_op.absent? >> fielded.absent? >> token >> (space >> tokens).repeat(0) }
+
+    #######################################
+    # FIELDS
+    # ####################################
+    
+    rule(:field_name) { str("title") | str("author") }
+    rule(:field_prefix) { field_name.as(:field_name) >> colon }
+    rule(:fielded) { field_prefix >> tokens.as(:query) }
 
     #######################################
     # BINARY OPERATORS
@@ -73,6 +96,7 @@ module MLibrarySearchParser
 
     rule(:and_op) { space? >> str('AND') >> space }
     rule(:or_op)  { space? >> str('OR') >> space }
+    rule(:binary_op) { and_op | or_op }
 
     #######################################
     # UNARY OPERATORS
@@ -80,20 +104,18 @@ module MLibrarySearchParser
 
     rule(:not_op) { space? >> str('NOT')  >> space }
 
-    rule(:any_op) { and_op | or_op | not_op }
+    rule(:any_op) { binary_op | not_op }
 
     #######################################
     # BASIC OPERATOR EXPRESSIONS
     #####################################
     # These include the normal booleans and NOT, where we
     # have spaces around them
-    #
-    # No fieldeds are allowed here
 
-    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) }
+    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
     rule(:not_expr) { not_op >> parens.as(:not) | parens }
-    rule(:and_expr) { (not_expr.as(:left) >> and_op >> (and_op | or_op).maybe >> and_expr.as(:right)).as(:and) | not_expr }
-    rule(:or_expr) { (and_expr.as(:left) >> or_op >> (and_op | or_op).maybe >> or_expr.as(:right)).as(:or) | and_expr }
+    rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
+    rule(:or_expr) { (and_expr.as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
 
     rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
@@ -109,7 +131,8 @@ module MLibrarySearchParser
     rule(:or => { :left => simple(:l), :right => simple(:r) } ) {
       Node::OrNode.new(l,r)
     }
-    rule(:not => simple(:n)) { "NOT #{n}" }
+    rule(:not => simple(:n)) { Node::NotNode.new(n) }
+    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn, q) }
     rule(:search => simple(:s)) { s.to_s }
     rule(:search => sequence(:s)) { s.join(" ") }
   end
