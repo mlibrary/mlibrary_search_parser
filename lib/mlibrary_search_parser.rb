@@ -71,7 +71,7 @@ module MLibrarySearchParser
     # ####################################
 
     rule(:and_op) { space? >> str('AND') >> space }
-    rule(:or_op) { space? >> str('OR') >> space }
+    rule(:or_op)  { space? >> str('OR') >> space }
 
     #######################################
     # UNARY OPERATORS
