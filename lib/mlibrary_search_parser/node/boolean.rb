@@ -15,6 +15,10 @@ module MLibrarySearchParser
       def to_s
         "(#{left}) #{operator.upcase} (#{right})"
       end
+
+      def inspect
+        "<#{operator.upcase} [#{left.inspect}] [#{right.inspect}]>"
+      end
     end
 
     class AndNode < Boolean

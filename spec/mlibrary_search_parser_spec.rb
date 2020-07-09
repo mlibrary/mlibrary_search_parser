@@ -3,14 +3,14 @@ RSpec.describe MLibrarySearchParser do
     expect(MLibrarySearchParser::VERSION).not_to be nil
   end
 
-  before(:example) do
+  before do
     @parser = MLibrarySearchParser::QueryParser.new
     @transformer = MLibrarySearchParser::QueryTransformer.new
   end
 
   it "returns a plain search" do
     parsed = @parser.parse("A search")
-    expect(@transformer.apply(parsed).to_s).to eq "A search"
+    expect(@transformer.apply(parsed).inspect).to eq "<TokensNode: [A search]>"
   end
 
   it "ignores lower-case and" do
@@ -33,14 +33,19 @@ RSpec.describe MLibrarySearchParser do
     expect(@transformer.apply(parsed).to_s).to eq "(mark twain) OR (huck finn)"
   end
 
-  it "keeps NOT" do
-    parsed = @parser.parse("mark twain NOT huck finn")
-    expect(@transformer.apply(parsed).to_s).to eq "mark twain | NOT (huck finn)"
-  end
-
-  it "ignores not" do
+  it "ignores lower-case not" do
     parsed = @parser.parse("mark twain not huck finn")
     expect(@transformer.apply(parsed).to_s).to eq "mark twain not huck finn"
+  end
+
+  it "demarcates NOT right scope" do
+    parsed = @parser.parse("NOT huck finn")
+    expect(@transformer.apply(parsed).to_s).to eq "NOT (huck finn)"
+  end
+
+  it "allows query parts before NOT" do
+    parsed = @parser.parse("mark twain NOT huck finn")
+    expect(@transformer.apply(parsed).to_s).to eq "mark twain | NOT (huck finn)"
   end
 
   it "handles OR followed by AND" do
@@ -73,7 +78,7 @@ RSpec.describe MLibrarySearchParser do
     expect(@transformer.apply(parsed).to_s).to eq "(mark twain) AND (NOT (huck finn))"
   end
 
-  it "preserves provided parens" do
+  it "allows parens to override normal precedence" do
     parsed = @parser.parse("(mark twain OR samuel clemens) AND huck finn")
     expect(@transformer.apply(parsed).to_s).to eq "((mark twain) OR (samuel clemens)) AND (huck finn)"
   end
@@ -100,10 +105,17 @@ RSpec.describe MLibrarySearchParser do
   it "allows a boolean within fielded" do
     parsed = @parser.parse("author:(mark twain AND samuel clemens)")
     expect(@transformer.apply(parsed).to_s).to eq "author:((mark twain) AND (samuel clemens))"
+    pp @transformer.apply(parsed)
   end
 
   it "allows bare words before a fielded" do
     parsed = @parser.parse("huck finn author:mark twain")
     expect(@transformer.apply(parsed).to_s).to eq "huck finn | author:(mark twain)"
+  end
+
+  it "allows bare words before and after fielded in parens" do
+    parsed = @parser.parse("huck finn author:(mark twain) tom sawyer")
+    expect(@transformer.apply(parsed).to_s).to eq "huck finn | author:(mark twain) | tom sawyer"
+    pp @transformer.apply(parsed)
   end
 end
