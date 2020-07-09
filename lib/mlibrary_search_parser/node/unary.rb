@@ -1,6 +1,7 @@
+require "mlibrary_search_parser/node/node"
 module MLibrarySearchParser
   module Node
-    class Unary
+    class Unary < BaseNode
       attr_accessor :operand
       def initialize(operand)
         @operand = operand

@@ -1,10 +1,11 @@
+require "mlibrary_search_parser/node/node"
 module MLibrarySearchParser
   module Node
-    class Boolean
+    class Boolean < BaseNode
       attr_accessor :left, :right
       def initialize(left, right)
-        @left = left
-        @right = right
+        @left = left.set_parent!(self)
+        @right = right.set_parent!(self)
       end
 
       def operator
