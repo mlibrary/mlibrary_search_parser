@@ -19,9 +19,6 @@ RSpec.describe "PreQueryNestedFieldsParser" do
   end
 
   it "rejects a field containing a field in parens" do
-    expect {
-      parsed = @parser.parse("title:(thing author:test)")
-      pp parsed
-    }.to raise_error(Parslet::ParseFailed)
+    expect { parsed = @parser.parse("title:(thing author:test)") }.to raise_error(Parslet::ParseFailed)
   end
 end

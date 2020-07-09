@@ -2,6 +2,8 @@ require 'parslet'
 require "mlibrary_search_parser/node/boolean"
 require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
+require "mlibrary_search_parser/node/search"
+require "mlibrary_search_parser/node/node"
 
 module MLibrarySearchParser
   class Error < StandardError; end
@@ -47,9 +49,7 @@ module MLibrarySearchParser
 
   class PreQueryParenthesisParser < BaseParser
     rule(:word) { match['^\(\)\s'].repeat(1) }
-
     rule(:tokens) { word >> (space >> tokens).repeat(0) >> space? }
-
     rule(:balanced_parens) { lparen >> (tokens | balanced_parens).repeat >> rparen }
     rule(:full_query) { (space? >> (balanced_parens | tokens) >> space?).repeat }
     root(:full_query)
@@ -57,9 +57,7 @@ module MLibrarySearchParser
 
   class PreQueryDoubleQuotesParser < BaseParser
     rule(:word) { nondquote.repeat(1) }
-
     rule(:tokens) { word >> (space >> tokens).repeat(0) >> space? }
-
     rule(:balanced_quotes) { dquote >> (tokens | balanced_quotes).repeat >> dquote }
     rule(:full_query) { (space? >> (balanced_quotes | tokens) >> space?).repeat }
     root(:full_query)
@@ -148,7 +146,7 @@ module MLibrarySearchParser
   end
 
   class QueryTransformer < Parslet::Transform
-    rule(:tokens => simple(:t)) { t.to_s }
+    rule(:tokens => simple(:t)) { Node::TokensNode.new(t.to_s) }
     rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
       Node::AndNode.new(l, r)
     }
@@ -157,7 +155,8 @@ module MLibrarySearchParser
     }
     rule(:not => simple(:n)) { Node::NotNode.new(n) }
     rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn, q) }
-    rule(:search => simple(:s)) { s.to_s }
-    rule(:search => sequence(:s)) { s.join(" ") }
+    rule(:search => simple(:s)) { Node::SearchNode.new(s) }
+    rule(:search => sequence(:s)) { Node::SearchNode.new(s) }
+    rule(:search => subtree(:s)) { Node::SearchNode.new(s) }
   end
 end
