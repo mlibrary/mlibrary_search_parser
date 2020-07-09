@@ -6,37 +6,25 @@ require "mlibrary_search_parser/node/fielded"
 module MLibrarySearchParser
   class Error < StandardError; end
 
-  class PreQueryParenthesisParser < Parslet::Parser
-    # check for balance and sanity
-  end
-
-  class PreQueryDoubleQuotesParser < Parslet::Parser
-    # check for balance and sanity
-  end
-
-  class PreQueryNestedFieldsParser < Parslet::Parser
-    # check for balance and sanity
-  end
-
-  class QueryParser < Parslet::Parser
-
+  class BaseParser < Parslet::Parser
     ###################################
     # BASICS
     ###################################
-    rule(:empty_string) { str("") }
-    rule(:lparen) { str('(') >> space? }
-    rule(:rparen) { space? >> str(')') }
 
     rule(:space) { match['\\s'].repeat(1) }
     rule(:space?) { space.maybe }
 
+    rule(:lparen) { str('(') >> space? }
+    rule(:rparen) { space? >> str(')') }
+
+    rule(:empty_string) { str("") }
     rule(:colon) { str(":") }
 
     rule(:dquote) { str('"') }
     rule(:squote) { str("'") }
     rule(:nondquote) { match['^"'].repeat(1) }
     rule(:nonsquote) { match["^'"].repeat(1) }
-
+    #
     ##################################################
     # "Smart" quotes and other near-miss characters
     ##################################################
@@ -55,7 +43,27 @@ module MLibrarySearchParser
 
     rule(:smartquote) { smart_squote | smart_dquote }
 
+  end
 
+  class PreQueryParenthesisParser < BaseParser
+    rule(:word) { match['^\(\)\s'].repeat(1) }
+
+    rule(:tokens) { word >> (space >> tokens).repeat(0) >> space? }
+
+    rule(:balanced_parens) { lparen >> (tokens | balanced_parens).repeat >> rparen }
+    rule(:full_query) { (space? >> (balanced_parens | tokens) >> space?).repeat }
+    root(:full_query)
+  end
+
+  class PreQueryDoubleQuotesParser < BaseParser
+    # check for balance and sanity
+  end
+
+  class PreQueryNestedFieldsParser < Parslet::Parser
+    # check for balance and sanity
+  end
+
+  class QueryParser < BaseParser
 
     ###################################
     # Phrase: Double-quoted strings
