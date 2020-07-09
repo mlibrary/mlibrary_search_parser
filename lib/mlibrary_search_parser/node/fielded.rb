@@ -11,6 +11,10 @@ module MLibrarySearchParser
       def to_s
         "#{field}:(#{query})"
       end
+
+      def inspect
+        "<FieldedNode[#{field}]: #{query.inspect}>"
+      end
     end
   end
 end

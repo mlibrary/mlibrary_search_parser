@@ -9,5 +9,9 @@ module MLibrarySearchParser::Node
     def to_s
       clauses.join(" | ")
     end
+
+    def inspect
+      clauses.map(&:inspect).join(" | ")
+    end
   end
 end

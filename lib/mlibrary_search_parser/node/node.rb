@@ -16,5 +16,9 @@ module MLibrarySearchParser::Node
     def to_s
       text
     end
+
+    def inspect
+      "<TokensNode: [#{text}]>"
+    end
   end
 end

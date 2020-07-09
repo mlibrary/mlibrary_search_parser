@@ -14,6 +14,10 @@ module MLibrarySearchParser
       def to_s
         "#{operator.upcase} (#{operand})"
       end
+
+      def inspect
+        "<#{operator.upcase} [#{operand.inspect}]>"
+      end
     end
 
     class NotNode < Unary
