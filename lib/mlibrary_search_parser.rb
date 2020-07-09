@@ -56,7 +56,13 @@ module MLibrarySearchParser
   end
 
   class PreQueryDoubleQuotesParser < BaseParser
-    # check for balance and sanity
+    rule(:word) { nondquote.repeat(1) }
+
+    rule(:tokens) { word >> (space >> tokens).repeat(0) >> space? }
+
+    rule(:balanced_quotes) { dquote >> (tokens | balanced_quotes).repeat >> dquote }
+    rule(:full_query) { (space? >> (balanced_quotes | tokens) >> space?).repeat }
+    root(:full_query)
   end
 
   class PreQueryNestedFieldsParser < Parslet::Parser
