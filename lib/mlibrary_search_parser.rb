@@ -65,8 +65,18 @@ module MLibrarySearchParser
     root(:full_query)
   end
 
-  class PreQueryNestedFieldsParser < Parslet::Parser
-    # check for balance and sanity
+  class PreQueryNestedFieldsParser < BaseParser
+    rule(:word_char) { match['^\(\)\"\s'] }
+    rule(:word) { word_char.repeat(1) }
+    rule(:field_name) { str("title") | str("author") }
+    rule(:field_prefix) { field_name.as(:field_name) >> colon }
+    rule(:fielded) { field_prefix >> parens_without_field.as(:query) }
+    rule(:tokens) { fielded.absent? >> word >> (space >> tokens).repeat(0) }
+    rule(:parens) { lparen >> tokens >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
+    rule(:parens_without_field) { lparen >> tokens >> rparen | tokens.as(:tokens) }
+    rule(:full_query) { (space? >> parens >> space?).repeat }
+    root(:full_query)
+
   end
 
   class QueryParser < BaseParser
