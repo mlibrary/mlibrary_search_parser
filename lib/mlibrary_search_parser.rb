@@ -4,6 +4,7 @@ require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
 require "mlibrary_search_parser/node/search"
 require "mlibrary_search_parser/node/node"
+require 'mlibrary_search_handler'
 
 module MLibrarySearchParser
   class Error < StandardError; end
