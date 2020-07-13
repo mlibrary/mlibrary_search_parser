@@ -30,5 +30,9 @@ RSpec.describe "PreQueryParenthesisParser" do
   it "chokes on unbalanced nested parenthesis" do
     expect { @parser.parse("(test (thing ())(") }.to raise_error(Parslet::ParseFailed)
   end
+
+  it "chokes on out-of-order parentheses" do
+    expect { @parser.parse(")test(") }.to raise_error(Parslet::ParseFailed)
+  end
 end
 
