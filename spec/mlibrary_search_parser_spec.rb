@@ -118,4 +118,9 @@ RSpec.describe MLibrarySearchParser do
     expect(@transformer.apply(parsed).to_s).to eq "huck finn | author:(mark twain) | tom sawyer"
     pp @transformer.apply(parsed)
   end
+
+  it "picks up fields from file" do
+    parsed = @parser.parse("callnum:blah")
+    expect(@transformer.apply(parsed).to_s).to eq "callnum:(blah)"
+  end
 end
