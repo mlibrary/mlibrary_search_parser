@@ -1,4 +1,6 @@
 require 'parslet'
+require 'json'
+require 'pry'
 require "mlibrary_search_parser/node/boolean"
 require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
@@ -109,9 +111,11 @@ module MLibrarySearchParser
     # FIELDS
     # ####################################
     
-    rule(:field_name) { str("title") | str("author") }
-    rule(:field_prefix) { field_name.as(:field_name) >> colon }
-    rule(:fielded) { field_prefix >> parens.as(:query) }
+    field_file = File.read("spec/fields_file.json")
+    field_obj = JSON.parse(field_file)
+
+    rule(:field_name) { match['^\(\)\"\s:'].repeat(1).capture(:capt).as(:field_name) >> dynamic { |s,c| if field_obj.keys.include?(c.captures[:capt].to_s) then colon else str('').ignore end } }
+    rule(:fielded) { field_name >> parens.as(:query) }
 
     #######################################
     # BINARY OPERATORS
