@@ -49,6 +49,17 @@ module MLibrarySearchParser
 
     rule(:smartquote) { smart_squote | smart_dquote }
 
+    field_file = File.read(ENV["FIELDS_FILE"])
+    field_obj = JSON.parse(field_file)
+    rule(:field_name) {
+      match['^\(\)\"\s:'].repeat(1).capture(:capt).as(:field_name) >> dynamic { |s,c|
+        if field_obj.keys.include?(c.captures[:capt].to_s)
+          then colon
+        else str('IExpectThisNeverToMatchASearchStringImmediatelyFollowingAFieldName').ignore
+        end
+      }
+    }
+
   end
 
   class PreQueryParenthesisParser < BaseParser
@@ -70,9 +81,7 @@ module MLibrarySearchParser
   class PreQueryNestedFieldsParser < BaseParser
     rule(:word_char) { match['^\(\)\"\s'] }
     rule(:word) { word_char.repeat(1) }
-    rule(:field_name) { str("title") | str("author") }
-    rule(:field_prefix) { field_name.as(:field_name) >> colon }
-    rule(:fielded) { field_prefix >> parens_without_field.as(:query) }
+    rule(:fielded) { field_name >> parens_without_field.as(:query) }
     rule(:tokens) { fielded.absent? >> word >> (space >> tokens).repeat(0) }
     rule(:parens) { lparen >> tokens >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
     rule(:parens_without_field) { lparen >> tokens >> rparen | tokens.as(:tokens) }
@@ -111,11 +120,7 @@ module MLibrarySearchParser
     #######################################
     # FIELDS
     # ####################################
-    
-    field_file = File.read(ENV["FIELDS_FILE"])
-    field_obj = JSON.parse(field_file)
 
-    rule(:field_name) { match['^\(\)\"\s:'].repeat(1).capture(:capt).as(:field_name) >> dynamic { |s,c| if field_obj.keys.include?(c.captures[:capt].to_s) then colon else str('').ignore end } }
     rule(:fielded) { field_name >> parens.as(:query) }
 
     #######################################

@@ -3,7 +3,6 @@ module MLibrarySearchParser::Node
   class SearchNode < BaseNode
     attr_accessor :clauses
     def initialize(clauses)
-      pp clauses
       @clauses = Array(clauses).map { |c| c.set_parent!(self) }
     end
 
