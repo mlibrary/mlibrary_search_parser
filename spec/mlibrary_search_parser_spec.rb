@@ -105,7 +105,6 @@ RSpec.describe MLibrarySearchParser do
   it "allows a boolean within fielded" do
     parsed = @parser.parse("author:(mark twain AND samuel clemens)")
     expect(@transformer.apply(parsed).to_s).to eq "author:((mark twain) AND (samuel clemens))"
-    pp @transformer.apply(parsed)
   end
 
   it "allows bare words before a fielded" do
@@ -116,7 +115,6 @@ RSpec.describe MLibrarySearchParser do
   it "allows bare words before and after fielded in parens" do
     parsed = @parser.parse("huck finn author:(mark twain) tom sawyer")
     expect(@transformer.apply(parsed).to_s).to eq "huck finn | author:(mark twain) | tom sawyer"
-    pp @transformer.apply(parsed)
   end
 
   it "picks up fields from file" do
@@ -127,5 +125,10 @@ RSpec.describe MLibrarySearchParser do
   it "ignores field names with no colon" do
     parsed = @parser.parse("author huck finn")
     expect(@transformer.apply(parsed).to_s).to eq "author huck finn"
+  end
+
+  it "doesn't pick up words preceding colons that are not field names" do
+    parsed = @parser.parse("random:huck finn")
+    expect(@transformer.apply(parsed).to_s).to eq "random:huck finn"
   end
 end

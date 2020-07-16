@@ -4,21 +4,25 @@ RSpec.describe "PreQueryNestedFieldsParser" do
   end
 
   it "validates a single field" do
-    parsed = @parser.parse("title:test")
-    pp parsed
+    expect { @parser.parse("title:test") }.not_to raise_error
   end
 
   it "validates sequential fields" do
-    parsed = @parser.parse("title:test author:word")
-    pp parsed
+    expect { @parser.parse("title:test author:word") }.not_to raise_error
   end
 
   it "validates fields with parens in them" do
-    parsed = @parser.parse("title:(test word) author:thing")
-    pp parsed
+    expect { @parser.parse("title:(test word) author:thing") }.not_to raise_error
   end
 
   it "rejects a field containing a field in parens" do
-    expect { parsed = @parser.parse("title:(thing author:test)") }.to raise_error(Parslet::ParseFailed)
+    expect { @parser.parse("title:(thing author:test)") }.to raise_error(Parslet::ParseFailed)
   end
+
+  it "doesn't recognize a nested field" do
+    parsed = @parser.parse("title:author:huck finn")
+    expect(parsed[0]).not_to have_key(:fielded)
+    expect(parsed[0]).to have_key(:tokens)
+  end
+
 end
