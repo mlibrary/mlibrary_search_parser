@@ -1,6 +1,7 @@
 require 'parslet'
 require 'json'
 require 'pry'
+require 'dotenv/load'
 require "mlibrary_search_parser/node/boolean"
 require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
@@ -111,7 +112,7 @@ module MLibrarySearchParser
     # FIELDS
     # ####################################
     
-    field_file = File.read("spec/fields_file.json")
+    field_file = File.read(ENV["FIELDS_FILE"])
     field_obj = JSON.parse(field_file)
 
     rule(:field_name) { match['^\(\)\"\s:'].repeat(1).capture(:capt).as(:field_name) >> dynamic { |s,c| if field_obj.keys.include?(c.captures[:capt].to_s) then colon else str('').ignore end } }
