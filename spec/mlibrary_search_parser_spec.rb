@@ -123,4 +123,9 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse("callnum:blah")
     expect(@transformer.apply(parsed).to_s).to eq "callnum:(blah)"
   end
+
+  it "ignores field names with no colon" do
+    parsed = @parser.parse("author huck finn")
+    expect(@transformer.apply(parsed).to_s).to eq "author huck finn"
+  end
 end
