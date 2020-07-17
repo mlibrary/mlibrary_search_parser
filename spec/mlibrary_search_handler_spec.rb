@@ -49,4 +49,12 @@ RSpec.describe "MLibrarySearchHandler" do
       expect(output).to eq "title:one:author"
     end
   end
+
+  describe "parse" do
+    it "returns our custom search tree" do
+      output = @handler.parse("title:huck finn AND author:mark twain")
+      expect(output.class).to eq MLibrarySearchParser::Node::SearchNode
+      expect(output.to_s).to eq "(title:(huck finn)) AND (author:(mark twain))"
+    end
+  end
 end
