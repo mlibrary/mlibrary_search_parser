@@ -132,4 +132,8 @@ RSpec.describe MLibrarySearchParser do
     expect(@transformer.apply(parsed).to_s).to eq "random:huck finn"
   end
 
+  it "does something reasonable with embedded colons" do
+    parsed = @parser.parse("title:one:author")
+    expect(@transformer.apply(parsed).to_s).to eq "title:(one:author)"
+  end
 end

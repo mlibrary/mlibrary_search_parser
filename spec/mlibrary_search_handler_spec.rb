@@ -44,6 +44,9 @@ RSpec.describe "MLibrarySearchHandler" do
       expect(output).to eq "title:author thing"
     end
    
-
+    it "ignores things that look like nested fields but aren't" do
+      output = @handler.pre_process("title:one:author")
+      expect(output).to eq "title:one:author"
+    end
   end
 end
