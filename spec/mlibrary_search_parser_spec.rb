@@ -136,4 +136,9 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse("title:one:author")
     expect(@transformer.apply(parsed).to_s).to eq "title:(one:author)"
   end
+
+  it "doesn't pick up a fieldname with a space after the colon" do
+    parsed = @parser.parse("author: huck finn")
+    expect(@transformer.apply(parsed).to_s).to eq "author: huck finn"
+  end
 end
