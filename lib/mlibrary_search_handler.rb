@@ -9,13 +9,20 @@ module MLibrarySearchParser
   class NestedFieldsError < RuntimeError; end
 
   class SearchHandler
-    attr_reader :fieldnames, :quote_preparser, :paren_preparser, :field_preparser
+    attr_reader :fieldnames,
+      :quote_preparser,
+      :paren_preparser,
+      :field_preparser,
+      :main_parser,
+      :transformer
 
     def initialize(filename)
       @fieldnames = load_fieldnames(filename)
       @quote_preparser = PreQueryDoubleQuotesParser.new
       @paren_preparser = PreQueryParenthesisParser.new
       @field_preparser = PreQueryNestedFieldsParser.new(filename)
+      @main_parser = QueryParser.new(filename)
+      @transformer = QueryTransformer.new
     end
 
     def load_fieldnames(filename)
@@ -60,6 +67,11 @@ module MLibrarySearchParser
         @errors << NestedFieldsError.new
       end
       search
+    end
+
+    def parse(search)
+      parsed = @main_parser.parse(search)
+      @transformer.apply(parsed)
     end
   end
 end
