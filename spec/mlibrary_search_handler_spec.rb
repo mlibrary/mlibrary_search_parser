@@ -6,47 +6,59 @@ RSpec.describe "MLibrarySearchHandler" do
   describe "pre_process" do
     it "returns a simple search" do
       output = @handler.pre_process("a search")
-      expect(output).to eq "a search"
+      expect(output.to_s).to eq "a search"
+      expect(output.errors).to be_empty
     end
 
     it "removes unbalanced parentheses" do
       output = @handler.pre_process("a ((search)")
-      expect(output).to eq "a search"
+      expect(output.to_s).to eq "a search"
+      expect(output.errors).to match_array([MLibrarySearchParser::UnevenParensError])
     end
 
     it "removes unbalanced double quotes" do
       output = @handler.pre_process("a \"\"search\"")
-      expect(output).to eq "a search"
+      expect(output.to_s).to eq "a search"
+      expect(output.errors).to match_array([MLibrarySearchParser::UnevenQuotesError])
     end
 
     it "leaves balanced parentheses" do
-      output = @handler.pre_process("a (search)()")
-      expect(output).to eq "a (search)()"
+      output = @handler.pre_process("a (search)(a)")
+      expect(output.to_s).to eq "a (search)(a)"
+      expect(output.errors).to be_empty
     end
 
     it "leaves balanced double quotes" do
-      output = @handler.pre_process("\"a \"search\"\"")
-      expect(output).to eq "\"a \"search\"\""
+      output = @handler.pre_process("\"a \"search\"a\"")
+      expect(output.to_s).to eq "\"a \"search\"a\""
+      expect(output.errors).to be_empty
     end
 
     it "removes immediately-nested fields" do
       output = @handler.pre_process("title:author:blah")
-      expect(output).to eq "title:author blah"
+      expect(output.to_s).to eq "title:author blah"
+      expect(output.errors).to match_array([MLibrarySearchParser::NestedFieldsError])
     end
 
     it "removes fields nested in parentheses" do
-      output = @handler.pre_process("title:(thing author:blah")
-      expect(output).to eq "title:thing author:blah"
+      output = @handler.pre_process("title:(thing author:blah)")
+      expect(output.to_s).to eq "title:thing author:blah"
+      expect(output.errors).to match_array([MLibrarySearchParser::NestedFieldsError])
     end
 
     it "removes fields differently nested in parentheses" do
       output = @handler.pre_process("title:(author:thing)")
-      expect(output).to eq "title:author thing"
+      expect(output.to_s).to eq "title:author thing"
+      expect(output.errors).to match_array([
+        MLibrarySearchParser::NestedFieldsError,
+        MLibrarySearchParser::NestedFieldsError
+      ])
     end
    
     it "ignores things that look like nested fields but aren't" do
       output = @handler.pre_process("title:one:author")
-      expect(output).to eq "title:one:author"
+      expect(output.to_s).to eq "title:one:author"
+      expect(output.errors).to be_empty
     end
   end
 

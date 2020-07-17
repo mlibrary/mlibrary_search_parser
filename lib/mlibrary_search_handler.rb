@@ -8,6 +8,19 @@ module MLibrarySearchParser
 
   class NestedFieldsError < RuntimeError; end
 
+  class Search
+    attr_accessor :search_string, :errors
+
+    def initialize(search_string, errors=[])
+      @search_string = search_string
+      @errors = errors
+    end
+
+    def to_s
+      @search_string
+    end
+  end
+
   class SearchHandler
     attr_reader :fieldnames,
       :quote_preparser,
@@ -53,7 +66,8 @@ module MLibrarySearchParser
         # The nested fields parser is only good at recognizing
         # fields that are explicitly nested using parentheses,
         # so we remove the parentheses
-        search = search.gsub(/(.*):\((.*):(.*)\)/, '\1:\2:\3')
+        any_fieldname = Regexp.union(@fieldnames)
+        search = search.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
         @errors << NestedFieldsError.new
       end
 
@@ -66,7 +80,7 @@ module MLibrarySearchParser
         search = search.gsub(nested_regex, '\1:\2 \3')
         @errors << NestedFieldsError.new
       end
-      search
+      Search.new(search, @errors)
     end
 
     def parse(search)

@@ -95,8 +95,9 @@ module MLibrarySearchParser
   class PreQueryNestedFieldsParser < FieldParser
     rule(:word_char) { match['^\(\)\"\s'] }
     rule(:word) { word_char.repeat(1) }
+    rule(:token) { word | phrase }
     rule(:fielded) { field_name >> parens_without_field.as(:query) }
-    rule(:tokens) { fielded.absent? >> word >> (space >> tokens).repeat(0) }
+    rule(:tokens) { fielded.absent? >> token >> (space >> tokens).repeat(0) }
     rule(:parens) { lparen >> tokens >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
     rule(:parens_without_field) { lparen >> tokens >> rparen | tokens.as(:tokens) }
     rule(:full_query) { (space? >> parens >> space?).repeat }
