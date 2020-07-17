@@ -43,5 +43,7 @@ RSpec.describe "MLibrarySearchHandler" do
       output = @handler.pre_process("title:(author:thing)")
       expect(output).to eq "title:author thing"
     end
+   
+
   end
 end

@@ -64,11 +64,19 @@ module MLibrarySearchParser
 
     rule(:smartquote) { smart_squote | smart_dquote }
 
+    ###################################
+    # Phrase: Double-quoted strings
+    ###################################
+    # Phrases can have anything in them except a double-quote character
+
+    rule(:phrase) { dquote >> nondquote.repeat(1) >> dquote }
+
   end
 
   class PreQueryParenthesisParser < BaseParser
     rule(:word) { match['^\(\)\s'].repeat(1) }
-    rule(:tokens) { word >> (space >> tokens).repeat(0) >> space? }
+    rule(:token) { phrase | word }
+    rule(:tokens) { token >> (space >> tokens).repeat(0) >> space? }
     rule(:balanced_parens) { lparen >> (tokens | balanced_parens).repeat >> rparen }
     rule(:full_query) { (space? >> (balanced_parens | tokens) >> space?).repeat }
     root(:full_query)
@@ -96,12 +104,7 @@ module MLibrarySearchParser
 
   class QueryParser < BaseParser
 
-    ###################################
-    # Phrase: Double-quoted strings
-    ###################################
-    # Phrases can have anything in them except a double-quote character
 
-    rule(:phrase) { dquote >> nondquote.repeat(1) >> dquote }
 
     ###################################
     # Words
