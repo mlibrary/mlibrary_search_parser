@@ -1,3 +1,6 @@
+require 'json'
+require 'dotenv/load'
+
 module MLibrarySearchParser
   class UnevenParensError < RuntimeError; end
 
@@ -6,6 +9,18 @@ module MLibrarySearchParser
   class NestedFieldsError < RuntimeError; end
 
   class SearchHandler
+    attr_reader :fieldnames
+
+    def initialize()
+      @fieldnames = load_fieldnames(ENV["FIELDS_FILE"])
+    end
+
+    def load_fieldnames(filename)
+      field_file = File.read(filename)
+      field_obj = JSON.parse(field_file)
+      field_obj.keys
+    end
+
     def pre_process(search)
       @errors = []
       begin
@@ -34,10 +49,11 @@ module MLibrarySearchParser
 
       # We want to eliminate nested fields like author:title:blah
       # They are unreasonably hard to recognize/prevent with Parslet
-      nested_regex = /(.*):([^\s]*):(.*)/
+      any_fieldname = Regexp.union(@fieldnames)
+      nested_regex = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
       match        = nested_regex.match(search)
       if match
-        search = search.gsub(/(.*):([^\s]*):(.*)/, '\1:\2 \3')
+        search = search.gsub(nested_regex, '\1:\2 \3')
         @errors << NestedFieldsError.new
       end
       search
