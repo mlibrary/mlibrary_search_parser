@@ -34,5 +34,9 @@ RSpec.describe "PreQueryParenthesisParser" do
   it "chokes on out-of-order parentheses" do
     expect { @parser.parse(")test(") }.to raise_error(Parslet::ParseFailed)
   end
+
+  it "allows paren embedded in a phrase" do
+    expect { @parser.parse('( one two "three )" four)') }.not_to raise_error
+  end
 end
 

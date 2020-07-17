@@ -131,4 +131,5 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse("random:huck finn")
     expect(@transformer.apply(parsed).to_s).to eq "random:huck finn"
   end
+
 end
