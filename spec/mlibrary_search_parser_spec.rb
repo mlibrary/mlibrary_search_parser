@@ -4,7 +4,7 @@ RSpec.describe MLibrarySearchParser do
   end
 
   before do
-    @parser = MLibrarySearchParser::QueryParser.new
+    @parser = MLibrarySearchParser::QueryParser.new('spec/fields_file.json')
     @transformer = MLibrarySearchParser::QueryTransformer.new
   end
 

@@ -1,7 +1,6 @@
 require 'parslet'
 require 'json'
 require 'pry'
-require 'dotenv/load'
 require "mlibrary_search_parser/node/boolean"
 require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
@@ -13,20 +12,6 @@ module MLibrarySearchParser
   class Error < StandardError; end
 
   class BaseParser < Parslet::Parser
-
-    # @param [Array<String>] fieldnames Names of the indexed files (title, author)
-    def initialize()
-      super
-      field_file = File.read(ENV["FIELDS_FILE"])
-      field_obj = JSON.parse(field_file)
-      setup_fieldnames(field_obj.keys)
-    end
-
-    def setup_fieldnames(flist)
-      tmp = str(flist.first)
-      flist[1..-1].each {|x| tmp = tmp | str(x)}
-      define_singleton_method(:field_name) { tmp.as(:field_name) >> colon }
-    end
 
     ###################################
     # BASICS
@@ -73,6 +58,23 @@ module MLibrarySearchParser
 
   end
 
+  class FieldParser < BaseParser
+    # @param [Array<String>] fieldnames Names of the indexed files (title, author)
+    def initialize(filename)
+      super()
+      field_file = File.read(filename)
+      field_obj = JSON.parse(field_file)
+      setup_fieldnames(field_obj.keys)
+    end
+
+    def setup_fieldnames(flist)
+      tmp = str(flist.first)
+      flist[1..-1].each {|x| tmp = tmp | str(x)}
+      define_singleton_method(:field_name) { tmp.as(:field_name) >> colon }
+    end
+
+  end
+
   class PreQueryParenthesisParser < BaseParser
     rule(:word) { match['^\(\)\s'].repeat(1) }
     rule(:token) { phrase | word }
@@ -90,7 +92,7 @@ module MLibrarySearchParser
     root(:full_query)
   end
 
-  class PreQueryNestedFieldsParser < BaseParser
+  class PreQueryNestedFieldsParser < FieldParser
     rule(:word_char) { match['^\(\)\"\s'] }
     rule(:word) { word_char.repeat(1) }
     rule(:fielded) { field_name >> parens_without_field.as(:query) }
@@ -102,7 +104,7 @@ module MLibrarySearchParser
 
   end
 
-  class QueryParser < BaseParser
+  class QueryParser < FieldParser
 
 
 

@@ -9,10 +9,13 @@ module MLibrarySearchParser
   class NestedFieldsError < RuntimeError; end
 
   class SearchHandler
-    attr_reader :fieldnames
+    attr_reader :fieldnames, :quote_preparser, :paren_preparser, :field_preparser
 
-    def initialize()
-      @fieldnames = load_fieldnames(ENV["FIELDS_FILE"])
+    def initialize(filename)
+      @fieldnames = load_fieldnames(filename)
+      @quote_preparser = PreQueryDoubleQuotesParser.new
+      @paren_preparser = PreQueryParenthesisParser.new
+      @field_preparser = PreQueryNestedFieldsParser.new(filename)
     end
 
     def load_fieldnames(filename)
@@ -24,21 +27,21 @@ module MLibrarySearchParser
     def pre_process(search)
       @errors = []
       begin
-        PreQueryDoubleQuotesParser.new.parse(search)
+        @quote_preparser.parse(search)
       rescue Parslet::ParseFailed
         search = search.delete("\"")
         @errors << UnevenQuotesError.new
       end
 
       begin
-        PreQueryParenthesisParser.new.parse(search)
+        @paren_preparser.parse(search)
       rescue Parslet::ParseFailed
         search = search.delete("()")
         @errors << UnevenParensError.new
       end
 
       begin
-        PreQueryNestedFieldsParser.new.parse(search)
+        @field_preparser.parse(search)
       rescue Parslet::ParseFailed
         # The nested fields parser is only good at recognizing
         # fields that are explicitly nested using parentheses,
