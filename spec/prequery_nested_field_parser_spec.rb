@@ -19,6 +19,10 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     expect { @parser.parse("title:(thing author:test)") }.to raise_error(Parslet::ParseFailed)
   end
 
+  it "rejects a field containing a field in parens differently" do
+    expect { @parser.parse("title:(author:test)") }.to raise_error(Parslet::ParseFailed)
+  end
+
   it "doesn't recognize a nested field" do
     parsed = @parser.parse("title:author:huck finn")
     expect(parsed[0]).not_to have_key(:fielded)
