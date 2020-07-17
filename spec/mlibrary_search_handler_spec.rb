@@ -1,6 +1,6 @@
 RSpec.describe "MLibrarySearchHandler" do
   before do
-    @handler = MLibrarySearchParser::SearchHandler.new
+    @handler = MLibrarySearchParser::SearchHandler.new('spec/fields_file.json')
   end
 
   describe "pre_process" do

@@ -1,6 +1,6 @@
 RSpec.describe "PreQueryNestedFieldsParser" do
   before do
-    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new
+    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new('spec/fields_file.json')
   end
 
   it "validates a single field" do
