@@ -13,6 +13,21 @@ module MLibrarySearchParser
   class Error < StandardError; end
 
   class BaseParser < Parslet::Parser
+
+    # @param [Array<String>] fieldnames Names of the indexed files (title, author)
+    def initialize()
+      super
+      field_file = File.read(ENV["FIELDS_FILE"])
+      field_obj = JSON.parse(field_file)
+      setup_fieldnames(field_obj.keys)
+    end
+
+    def setup_fieldnames(flist)
+      tmp = str(flist.first)
+      flist[1..-1].each {|x| tmp = tmp | str(x)}
+      define_singleton_method(:field_name) { tmp.as(:field_name) >> colon }
+    end
+
     ###################################
     # BASICS
     ###################################
@@ -48,17 +63,6 @@ module MLibrarySearchParser
       str("\u201e") | str("\u2033") }
 
     rule(:smartquote) { smart_squote | smart_dquote }
-
-    field_file = File.read(ENV["FIELDS_FILE"])
-    field_obj = JSON.parse(field_file)
-    rule(:field_name) {
-      match['^\(\)\"\s:'].repeat(1).capture(:capt).as(:field_name) >> dynamic { |s,c|
-        if field_obj.keys.include?(c.captures[:capt].to_s)
-          then colon
-        else str('IExpectThisNeverToMatchASearchStringImmediatelyFollowingAFieldName').ignore
-        end
-      }
-    }
 
   end
 

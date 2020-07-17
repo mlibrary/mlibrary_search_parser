@@ -25,6 +25,7 @@ RSpec.describe "PreQueryNestedFieldsParser" do
 
   it "doesn't recognize a nested field" do
     parsed = @parser.parse("title:author:huck finn")
+    pp parsed
     expect(parsed[0]).not_to have_key(:fielded)
     expect(parsed[0]).to have_key(:tokens)
   end
