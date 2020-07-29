@@ -13,5 +13,9 @@ module MLibrarySearchParser::Node
     def inspect
       clauses.map(&:inspect).join(" | ")
     end
+
+    def to_webform
+      clauses.collect { |c| c.to_webform}.flatten
+    end
   end
 end

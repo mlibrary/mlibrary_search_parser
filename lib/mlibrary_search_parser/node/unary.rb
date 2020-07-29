@@ -18,6 +18,10 @@ module MLibrarySearchParser
       def inspect
         "<#{operator.upcase} [#{operand.inspect}]>"
       end
+
+      def to_webform
+        [{"operator" => "#{operator.upcase}"}, operand.to_webform]
+      end
     end
 
     class NotNode < Unary
