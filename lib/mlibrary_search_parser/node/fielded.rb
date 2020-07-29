@@ -15,6 +15,10 @@ module MLibrarySearchParser
       def inspect
         "<FieldedNode[#{field}]: #{query.inspect}>"
       end
+
+      def to_webform
+        [{"field" => field}, query.to_webform]
+      end
     end
   end
 end
