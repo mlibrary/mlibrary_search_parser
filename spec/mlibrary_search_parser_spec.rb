@@ -141,4 +141,9 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse("author: huck finn")
     expect(@transformer.apply(parsed).to_s).to eq "author: huck finn"
   end
+
+  it "doesn't mind if there's no space after an ending double quote" do
+    parsed = @parser.parse('"my name"bill')
+    expect(@transformer.apply(parsed).to_s).to eq '"my name" | bill'
+  end
 end

@@ -29,8 +29,8 @@ RSpec.describe "MLibrarySearchHandler" do
     end
 
     it "leaves balanced double quotes" do
-      output = @handler.pre_process("\"a \"search\"a\"")
-      expect(output.to_s).to eq "\"a \"search\"a\""
+      output = @handler.pre_process('"a "search"a"')
+      expect(output.to_s).to eq '"a "search"a"'
       expect(output.errors).to be_empty
     end
 
