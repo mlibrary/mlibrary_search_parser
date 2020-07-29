@@ -7,6 +7,7 @@ require "mlibrary_search_parser/node/fielded"
 require "mlibrary_search_parser/node/search"
 require "mlibrary_search_parser/node/node"
 require 'mlibrary_search_handler'
+require "search"
 
 module MLibrarySearchParser
   class Error < StandardError; end
@@ -37,12 +38,12 @@ module MLibrarySearchParser
 
     rule(:smart_dash) { str("\u2013") | str("\u2014") | str("\u2015") }
 
-    rule(:smart_squote) { str("\u2018") | str("\u2019") |
-      str("\u201b") | str("\u2032") }
-
     rule(:smart_underscore) { str("\u2017") }
 
     rule(:smart_comma) { str("\u201a") }
+
+    rule(:smart_squote) { str("\u2018") | str("\u2019") |
+      str("\u201b") | str("\u2032") }
 
     rule(:smart_dquote) { str("\u201c") | str("\u201d") |
       str("\u201e") | str("\u2033") }
