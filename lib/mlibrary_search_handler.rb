@@ -8,7 +8,7 @@ module MLibrarySearchParser
 
   class NestedFieldsError < RuntimeError; end
 
-  class Search
+  class MiniSearch
     attr_accessor :search_string, :errors
 
     def initialize(search_string, errors=[])
@@ -80,7 +80,7 @@ module MLibrarySearchParser
         search = search.gsub(nested_regex, '\1:\2 \3')
         @errors << NestedFieldsError.new
       end
-      Search.new(search, @errors)
+      MiniSearch.new(search, @errors)
     end
 
     def parse(search)
