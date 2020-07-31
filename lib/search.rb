@@ -36,10 +36,6 @@ module MLibrarySearchParser
       true
     end
 
-    def fix!
-      # should populate errors and warnings
-    end
-
     def errors?
       false
     end
