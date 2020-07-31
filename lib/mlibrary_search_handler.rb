@@ -8,8 +8,10 @@ module MLibrarySearchParser
 
   class NestedFieldsError < RuntimeError; end
 
+  class UnparseableError < RuntimeError; end
+
   class MiniSearch
-    attr_accessor :search_string, :errors
+    attr_accessor :search_string, :errors, :warnings
 
     def initialize(search_string, errors=[])
       @search_string = search_string
@@ -44,43 +46,83 @@ module MLibrarySearchParser
       field_obj.keys
     end
 
-    def pre_process(search)
-      @errors = []
+    def check_quotes(search)
+      search_string = search.search_string
+      errors = search.errors
       begin
-        @quote_preparser.parse(search)
+        @quote_preparser.parse(search_string)
       rescue Parslet::ParseFailed
-        search = search.delete("\"")
-        @errors << UnevenQuotesError.new
+        search_string = search_string.delete("\"")
+        errors << UnevenQuotesError.new
       end
+      MiniSearch.new(search_string, errors)
+    end
 
+    def check_parens(search)
+      search_string = search.search_string
+      errors = search.errors
       begin
-        @paren_preparser.parse(search)
+        @paren_preparser.parse(search_string)
       rescue Parslet::ParseFailed
-        search = search.delete("()")
-        @errors << UnevenParensError.new
+        search_string = search_string.delete("()")
+        errors << UnevenParensError.new
       end
+      MiniSearch.new(search_string, errors)
+    end
 
+    def check_nested_fields(search)
+      search_string = search.search_string
+      errors = search.errors
       begin
-        @field_preparser.parse(search)
+        @field_preparser.parse(search_string)
       rescue Parslet::ParseFailed
         # The nested fields parser is only good at recognizing
         # fields that are explicitly nested using parentheses,
         # so we remove the parentheses
         any_fieldname = Regexp.union(@fieldnames)
-        search = search.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
-        @errors << NestedFieldsError.new
+        search_string = search_string.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
+        errors << NestedFieldsError.new
       end
 
       # We want to eliminate nested fields like author:title:blah
       # They are unreasonably hard to recognize/prevent with Parslet
       any_fieldname = Regexp.union(@fieldnames)
       nested_regex = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
-      match        = nested_regex.match(search)
+      match        = nested_regex.match(search_string)
       if match
-        search = search.gsub(nested_regex, '\1:\2 \3')
-        @errors << NestedFieldsError.new
+        search_string = search_string.gsub(nested_regex, '\1:\2 \3')
+        errors << NestedFieldsError.new
       end
-      MiniSearch.new(search, @errors)
+      MiniSearch.new(search_string, errors)
+    end
+
+    def check_parse(search)
+      search_string = search.search_string
+      errors = search.errors
+      begin
+        @main_parser.parse(search_string)
+      rescue Parslet::ParseFailed
+        errors << UnparseableError.new
+      end
+      MiniSearch.new(search_string, errors)
+    end
+
+    def pre_process(search)
+      # pull out into separate methods
+      # each one adds to errors and warnings, is informed by previous errors and warnings
+      # e.g. if it's empty, or no actual text, no point continuing
+      # this method will take a minisearch and return a minisearch and so does each submethod
+      # => testing things in isolation
+      search = check_quotes(search)
+
+      search = check_parens(search)
+
+      search = check_nested_fields(search)
+
+      # try to actually parse! if it fails, then we add a ??? warning and throw it to solr
+      search = check_parse(search)
+
+      search
     end
 
     def parse(search)
