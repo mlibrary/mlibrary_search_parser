@@ -11,13 +11,6 @@ RSpec.describe "Search" do
             expect(@search.valid?).to eq true
         end
 
-        it "does not change when fix!ed" do
-            orig_search = @search.to_s
-            @search.fix!
-            new_search = @search.to_s
-            expect(orig_search).to eq new_search
-        end
-
         it "has no errors" do
             expect(@search.errors?).to eq false
         end
@@ -51,12 +44,6 @@ RSpec.describe "Search" do
             expect(@search.valid?).to eq true
         end
 
-        it "does not change when fixed" do
-            orig_search = @search.to_s
-            @search.fix!
-            new_search = @search.to_s
-            expect(orig_search).to eq new_search
-        end
 
         it "has no errors" do
             expect(@search.errors?).to eq false
@@ -96,12 +83,6 @@ RSpec.describe "Search" do
             expect(@search.valid?).to eq true
         end
 
-        it "does not change when fixed" do
-            orig_search = @search.to_s
-            @search.fix!
-            new_search = @search.to_s
-            expect(orig_search).to eq new_search
-        end
 
         it "has no errors" do
             expect(@search.errors?).to eq false
@@ -144,11 +125,6 @@ RSpec.describe "Search" do
 
         it "says it is not valid" do
             #expect(@search.valid?).to eq false
-        end
-
-        it "does change when fixed" do
-            #@search.fix!
-            #expect(search.to_s).to eq "(title:something) AND (somebody)"
         end
 
         it "has no errors" do
