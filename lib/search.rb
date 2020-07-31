@@ -22,27 +22,30 @@ module MLibrarySearchParser
   # end
 
   class Search
-    attr_accessor :errors, :warnings, :search_tree, :original_input
+    attr_reader :search_tree, :original_input, :mini_search
     # could come from search box, from adv search form, or from solr output
 
-    def initialize(original_input)
+    def initialize(original_input, search_handler)
       @original_input = original_input
-      search_handler = SearchHandler.new('spec/data/fields_file.json')
-      mini_search = MiniSearch.new(original_input)
-      mini_search = search_handler.pre_process(mini_search)
-      @errors = mini_search.errors
-      @warnings = mini_search.warnings
-      @search_tree = search_handler.parse(mini_search.to_s) #this might make errors
+      @search_handler = search_handler
+      @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 
-    #def search_tree
-      # might not be able to produce a search tree, if it won't parse
-      # @search_tree ||= search_handler.parse(mini_search.to_s)
-    #end
+    def search_tree
+      @search_tree ||= @search_handler.parse(mini_search.to_s)
+    end
 
     def valid?
       # if errors is empty?
       true
+    end
+
+    def errors
+      mini_search.errors
+    end
+
+    def warnings
+      mini_search.warnings
     end
 
     def errors?

@@ -107,7 +107,7 @@ module MLibrarySearchParser
   end
 
   class FallbackParser < Parslet::Parser
-    rule(:unparseable) { match('.').repeat(0).as(:unparseable)}
+    rule(:unparseable) { any.repeat(0).as(:unparseable)}
     root(:unparseable)
   end
 
