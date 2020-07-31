@@ -25,4 +25,10 @@ module MLibrarySearchParser::Node
       {"query" => text}
     end
   end
+
+  class UnparseableNode < TokensNode
+    def inspect
+      "<UnparseableNode: [#{text}]>"
+    end
+  end
 end

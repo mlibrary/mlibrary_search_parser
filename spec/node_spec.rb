@@ -8,6 +8,20 @@ RSpec.describe "Node" do
     end
   end
 
+  describe "UnparseableNode" do
+    before do
+      @node = MLibrarySearchParser::Node::UnparseableNode.new("title:something AND blah")
+    end
+
+    it "has to_s" do
+      expect(@node.to_s).to eq "title:something AND blah"
+    end
+
+    it "has to_webform" do
+      expect(@node.to_s).to eq "title:something AND blah"
+    end
+  end
+
   describe "TokensNode" do
     before do
       @node = MLibrarySearchParser::Node::TokensNode.new("some text")
