@@ -28,11 +28,20 @@ module MLibrarySearchParser
     def initialize(original_input)
       @original_input = original_input
       search_handler = SearchHandler.new('spec/data/fields_file.json')
-      mini_search = search_handler.pre_process(original_input)
-      @search_tree = search_handler.parse(mini_search.to_s)
+      mini_search = MiniSearch.new(original_input)
+      mini_search = search_handler.pre_process(mini_search)
+      @errors = mini_search.errors
+      @warnings = mini_search.warnings
+      @search_tree = search_handler.parse(mini_search.to_s) #this might make errors
     end
 
+    #def search_tree
+      # might not be able to produce a search tree, if it won't parse
+      # @search_tree ||= search_handler.parse(mini_search.to_s)
+    #end
+
     def valid?
+      # if errors is empty?
       true
     end
 
@@ -56,6 +65,8 @@ module MLibrarySearchParser
 
     def to_solr_query
       # the string to give to solr
+      # producing a complicated highly specific solr query
+      # with edismax stuff and lists of fields and all that
       search_tree.to_s
     end
   end
