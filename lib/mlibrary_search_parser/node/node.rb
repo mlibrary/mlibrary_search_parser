@@ -10,7 +10,7 @@ module MLibrarySearchParser::Node
   class TokensNode < BaseNode
     attr_accessor :text
     def initialize(text)
-      @text = text
+      @text = text.to_s
     end
 
     def to_s

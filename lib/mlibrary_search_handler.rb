@@ -107,22 +107,18 @@ module MLibrarySearchParser
       MiniSearch.new(search_string, errors)
     end
 
-    def pre_process(search)
-      # pull out into separate methods
-      # each one adds to errors and warnings, is informed by previous errors and warnings
-      # e.g. if it's empty, or no actual text, no point continuing
-      # this method will take a minisearch and return a minisearch and so does each submethod
-      # => testing things in isolation
-      search = check_quotes(search)
+    def pre_process(mini_search)
 
-      search = check_parens(search)
+      mini_search = check_quotes(mini_search)
 
-      search = check_nested_fields(search)
+      mini_search = check_parens(mini_search)
+
+      mini_search = check_nested_fields(mini_search)
 
       # try to actually parse! if it fails, then we add a ??? warning and throw it to solr
-      search = check_parse(search)
+      mini_search = check_parse(mini_search)
 
-      search
+      mini_search
     end
 
     def parse(search)
