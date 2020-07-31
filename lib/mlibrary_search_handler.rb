@@ -37,6 +37,7 @@ module MLibrarySearchParser
       @paren_preparser = PreQueryParenthesisParser.new
       @field_preparser = PreQueryNestedFieldsParser.new(filename)
       @main_parser = QueryParser.new(filename)
+      @fallback_parser = FallbackParser.new
       @transformer = QueryTransformer.new
     end
 
@@ -122,7 +123,11 @@ module MLibrarySearchParser
     end
 
     def parse(search)
-      parsed = @main_parser.parse(search)
+      begin
+        parsed = @main_parser.parse(search)
+      rescue Parslet::ParseFailed
+        parsed = @fallback_parser.parse(search)
+      end
       @transformer.apply(parsed)
     end
   end

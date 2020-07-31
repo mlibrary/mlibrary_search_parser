@@ -106,6 +106,11 @@ module MLibrarySearchParser
 
   end
 
+  class FallbackParser < Parslet::Parser
+    rule(:unparseable) { match('.').repeat(0).as(:unparseable)}
+    root(:unparseable)
+  end
+
   class QueryParser < FieldParser
 
 
@@ -180,5 +185,6 @@ module MLibrarySearchParser
     rule(:search => simple(:s)) { Node::SearchNode.new(s) }
     rule(:search => sequence(:s)) { Node::SearchNode.new(s) }
     rule(:search => subtree(:s)) { Node::SearchNode.new(s) }
+    rule(:unparseable => simple(:u)) { Node::SearchNode.new(Node::UnparseableNode.new(u)) }
   end
 end
