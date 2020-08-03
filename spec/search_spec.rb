@@ -118,6 +118,23 @@ RSpec.describe "Search" do
             ])
         end
     end
+
+    describe "webform input" do
+        before do
+            @form = [{"field" => "title"},
+                {"query" => "somebody"},
+                {"operator" => "OR"},
+                {"field" => "author"},
+                {"query" => "something"},
+                {"operator" => "NOT"},
+                {"field" => "author"},
+                {"query" => "whozit"}
+                ]
+            @search = MLibrarySearchParser::Search.new(@form, @search_handler)
         end
+
+        #it "returns its original input" do
+            #expect(@search.original_input).to eq "title:somebody OR author:something NOT author:whozit"
+        #end
     end
 end
