@@ -36,24 +36,23 @@ module MLibrarySearchParser
     end
 
     def valid?
-      # if errors is empty?
-      true
+      not errors? or warnings?
     end
 
     def errors
-      mini_search.errors
+      Array(mini_search.errors)
     end
 
     def warnings
-      mini_search.warnings
+      Array(mini_search.warnings)
     end
 
     def errors?
-      false
+      errors.any?
     end
 
     def warnings?
-      false
+      warnings.any?
     end
 
     def to_s

@@ -43,19 +43,6 @@ RSpec.describe "Search" do
             expect(@search.original_input).to eq "a query AND some more query"
         end
 
-        it "says it is valid" do
-            expect(@search.valid?).to eq true
-        end
-
-
-        it "has no errors" do
-            expect(@search.errors?).to eq false
-        end
-
-        it "has no warnings" do
-            expect(@search.warnings?).to eq false
-        end
-
         it "returns to_s with explicit scoping" do
             expect(@search.to_s).to eq "(a query) AND (some more query)"
         end
@@ -80,19 +67,6 @@ RSpec.describe "Search" do
 
         it "returns its original input" do
             expect(@search.original_input).to eq "title:somebody OR author:something NOT author:whozit"
-        end
-
-        it "says it is valid" do
-            expect(@search.valid?).to eq true
-        end
-
-
-        it "has no errors" do
-            expect(@search.errors?).to eq false
-        end
-
-        it "has no warnings" do
-            expect(@search.warnings?).to eq false
         end
 
         it "returns to_s with explicit scoping" do
@@ -127,15 +101,23 @@ RSpec.describe "Search" do
         end
 
         it "says it is not valid" do
-            #expect(@search.valid?).to eq false
+            expect(@search.valid?).to eq false
         end
 
-        it "has no errors" do
-            #expect(@search.errors?).to eq true
+        it "has errors" do
+            expect(@search.errors?).to eq true
+            expect(@search.errors).to match_array [MLibrarySearchParser::UnevenParensError]
         end
 
-        it "has no warnings" do
-            expect(@search.warnings?).to eq false
+        it "has to_webform" do
+            expect(@search.to_webform).to eq([
+                {"field" => "title"},
+                {"query" => "something"},
+                {"operator" => "AND"},
+                {"query" => "somebody"}
+            ])
+        end
+    end
         end
     end
 end
