@@ -21,9 +21,37 @@ module MLibrarySearchParser
   #   end
   # end
 
+  class WebformParser
+    attr_reader :input_form
+
+    def initialize(input_form)
+      @input_form = input_form
+    end
+
+    def to_s
+      keys = []
+      values = []
+      components = []
+      input_form.map { |hash| hash.map{ |item| keys.push(item[0])
+      values.push(item[1]) } }
+      keys.each_with_index {|val, index| 
+        if keys[index-1] == "field"
+          components.push("#{values[index-1]}:#{values[index]}")
+        else
+          components.push(values[index]) unless val == "field"
+        end
+      }
+      components.join(' ')
+    end
+  end
+
   class Search
     attr_reader :search_tree, :original_input, :mini_search
     # could come from search box, from adv search form, or from solr output
+
+    def self.from_form(input, search_handler)
+      
+    end
 
     def initialize(original_input, search_handler)
       @original_input = original_input
