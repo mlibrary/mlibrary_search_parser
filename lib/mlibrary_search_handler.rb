@@ -25,6 +25,8 @@ module MLibrarySearchParser
 
   class SearchHandler
     attr_reader :fieldnames,
+      :special_char_parser,
+      :special_char_transformer,
       :quote_preparser,
       :paren_preparser,
       :field_preparser,
@@ -33,6 +35,8 @@ module MLibrarySearchParser
 
     def initialize(filename)
       @fieldnames = load_fieldnames(filename)
+      @special_char_parser = SpecialCharParser.new
+      @special_char_transformer = SpecialCharTransformer.new
       @quote_preparser = PreQueryDoubleQuotesParser.new
       @paren_preparser = PreQueryParenthesisParser.new
       @field_preparser = PreQueryNestedFieldsParser.new(filename)
@@ -45,6 +49,12 @@ module MLibrarySearchParser
       field_file = File.read(filename)
       field_obj = JSON.parse(field_file)
       field_obj.keys
+    end
+
+    def fix_special_chars(search)
+      search_string = special_char_parser.parse(search.search_string)
+      search_string = special_char_transformer.apply(search_string)
+      MiniSearch.new(search_string, search.errors)
     end
 
     def check_quotes(search)
@@ -109,6 +119,7 @@ module MLibrarySearchParser
     end
 
     def pre_process(mini_search)
+      mini_search = fix_special_chars(mini_search)
 
       mini_search = check_quotes(mini_search)
 

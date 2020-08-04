@@ -36,19 +36,21 @@ module MLibrarySearchParser
     # "Smart" quotes and other near-miss characters
     ##################################################
 
-    rule(:smart_dash) { str("\u2013") | str("\u2014") | str("\u2015") }
+    rule(:smart_dash) { (str("\u2013") | str("\u2014") | str("\u2015")).as(:smart_dash) }
 
-    rule(:smart_underscore) { str("\u2017") }
+    rule(:smart_underscore) { str("\u2017").as(:smart_underscore) }
 
-    rule(:smart_comma) { str("\u201a") }
+    rule(:smart_comma) { str("\u201a").as(:smart_comma) }
 
-    rule(:smart_squote) { str("\u2018") | str("\u2019") |
-      str("\u201b") | str("\u2032") }
+    rule(:smart_squote) { (str("\u2018") | str("\u2019") |
+      str("\u201b") | str("\u2032")).as(:smart_squote) }
 
-    rule(:smart_dquote) { str("\u201c") | str("\u201d") |
-      str("\u201e") | str("\u2033") }
+    rule(:smart_dquote) { (str("\u201c") | str("\u201d") |
+      str("\u201e") | str("\u201f") | str("\u2033")).as(:smart_dquote) }
 
     rule(:smartquote) { smart_squote | smart_dquote }
+
+    rule(:smart_char) { smart_underscore | smart_comma | smart_dash | smartquote }
 
     ###################################
     # Phrase: Double-quoted strings
@@ -57,6 +59,22 @@ module MLibrarySearchParser
 
     rule(:phrase) { dquote >> nondquote.repeat(1) >> dquote }
 
+  end
+
+  class SpecialCharParser < BaseParser
+    rule(:simple_char) { any.as(:simple_char) }
+    rule(:composite_string) { (smart_char | simple_char).repeat.as(:composite_string) }
+    root(:composite_string)
+  end
+
+  class SpecialCharTransformer < Parslet::Transform
+    rule(:smart_underscore => simple(:u)) { '_' }
+    rule(:smart_comma => simple(:c)) { ',' }
+    rule(:smart_dash => simple(:d)) { '-' }
+    rule(:smart_squote => simple(:q)) { "'" }
+    rule(:smart_dquote => simple(:q)) { '"' }
+    rule(:simple_char => simple(:s)) { s }
+    rule(:composite_string => sequence(:s)) { s.join('') }
   end
 
   class FieldParser < BaseParser
@@ -187,4 +205,6 @@ module MLibrarySearchParser
     rule(:search => subtree(:s)) { Node::SearchNode.new(s) }
     rule(:unparseable => simple(:u)) { Node::SearchNode.new(Node::UnparseableNode.new(u)) }
   end
+
+
 end

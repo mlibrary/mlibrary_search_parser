@@ -92,6 +92,13 @@ RSpec.describe "MLibrarySearchHandler" do
       expect(output.errors).to be_empty
     end
 
+    it "fixes special characters" do
+      search = MLibrarySearchParser::MiniSearch.new('a “search”')
+      output = @handler.pre_process(search)
+      expect(output.to_s).to eq 'a "search"'
+      expect(output.errors).to be_empty
+    end
+
     it "collects multiple errors where applicable" do
       search = MLibrarySearchParser::MiniSearch.new('test) "with title:(author:many problems)')
       output = @handler.pre_process(search)
