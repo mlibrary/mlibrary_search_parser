@@ -28,6 +28,42 @@ module MLibrarySearchParser
       @input_form = input_form
     end
 
+    # given something like this:
+    # [ {"fielded" => {"field" => "title", "query" => "something"}},
+    # {"operator" => "OR"},
+    # etc ]
+    # run each subquery through the search handler, then build FieldedNodes,
+    # then build Boolean nodes, then stick em all together
+
+    def to_tree_s
+      field_nodes = []
+      operators = []
+      input_form.each { |node|
+        case node.keys.first
+        when "fielded"
+          field = node["fielded"]["field"]
+          query = node["fielded"]["query"]
+          query_search = Search.new(query, MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json'))
+          field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)    
+          field_nodes.push(field_node)
+        when "operator"
+          operators.push(node["operator"])
+        end
+      }
+      tree = operators.reduce(field_nodes.shift) { |root, new_oper|
+        oper_class = case new_oper
+        when "OR"
+          MLibrarySearchParser::Node::OrNode
+        when "AND"
+          MLibrarySearchParser::Node::AndNode
+        end
+        pp oper_class
+        new_node = oper_class.new(root, field_nodes.shift)
+        new_node
+      }
+      tree.to_s
+    end
+
     def to_s
       keys = []
       values = []

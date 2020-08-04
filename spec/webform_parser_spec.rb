@@ -20,6 +20,21 @@ RSpec.describe "WebformParser" do
         expect(parsed.to_s).to eq "title:something"
     end
 
+    it "builds search tree from a field" do
+        form = [{"fielded" => {"field" => "title",
+            "query" => "something AND something else"}}]
+        parsed = MLibrarySearchParser::WebformParser.new(form)
+        expect(parsed.to_tree_s).to eq "title:((something) AND (something else))"
+    end
+
+    it "builds search tree from a boolean" do
+        form = [{"fielded" => {"field" => "title", "query" => "something AND something else"}},
+            {"operator" => "OR"},
+            {"fielded" => {"field" => "author", "query" => "somebody"}}]
+        parsed = MLibrarySearchParser::WebformParser.new(form)
+        expect(parsed.to_tree_s).to eq "(title:((something) AND (something else))) OR (author:(somebody))"
+    end
+
     it "parses something complicated" do
         form = [ 
             {"field" => "title"},
