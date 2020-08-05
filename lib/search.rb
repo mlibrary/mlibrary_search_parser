@@ -35,7 +35,7 @@ module MLibrarySearchParser
     # run each subquery through the search handler, then build FieldedNodes,
     # then build Boolean nodes, then stick em all together
 
-    def to_tree_s
+    def search_tree
       field_nodes = []
       operators = []
       input_form.each { |node|
@@ -50,34 +50,15 @@ module MLibrarySearchParser
           operators.push(node["operator"])
         end
       }
-      tree = operators.reduce(field_nodes.shift) { |root, new_oper|
-        oper_class = case new_oper
-        when "OR"
-          MLibrarySearchParser::Node::OrNode
-        when "AND"
-          MLibrarySearchParser::Node::AndNode
-        end
-        pp oper_class
-        new_node = oper_class.new(root, field_nodes.shift)
-        new_node
+      operators.reduce(field_nodes.shift) { |root, new_oper|
+        MLibrarySearchParser::Node::Boolean.for_operator(new_oper,
+          root,
+          field_nodes.shift)
       }
-      tree.to_s
     end
 
     def to_s
-      keys = []
-      values = []
-      components = []
-      input_form.map { |hash| hash.map{ |item| keys.push(item[0])
-      values.push(item[1]) } }
-      keys.each_with_index {|val, index| 
-        if keys[index-1] == "field"
-          components.push("#{values[index-1]}:#{values[index]}")
-        else
-          components.push(values[index]) unless val == "field"
-        end
-      }
-      components.join(' ')
+      search_tree.to_s
     end
   end
 
