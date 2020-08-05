@@ -2,7 +2,6 @@ require 'parslet'
 require 'json'
 require 'pry'
 require "mlibrary_search_parser/node/boolean"
-require "mlibrary_search_parser/node/unary"
 require "mlibrary_search_parser/node/fielded"
 require "mlibrary_search_parser/node/search"
 require "mlibrary_search_parser/node/node"
