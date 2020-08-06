@@ -20,6 +20,7 @@ RSpec.describe MLibrarySearchParser do
 
   it "demarcates AND left/right scopes" do
     parsed = @parser.parse("mark twain AND huck finn")
+    pp parsed
     expect(@transformer.apply(parsed).to_s).to eq "(mark twain) AND (huck finn)"
   end
 
@@ -147,7 +148,11 @@ RSpec.describe MLibrarySearchParser do
     expect(@transformer.apply(parsed).to_s).to eq '"my name" | bill'
   end
 
-  it 'works with multiple clauses in parens of a boolean' do
+  xit "does something with empty parens" do
+    
+  end
+
+  xit 'works with multiple clauses in parens of a boolean' do
     parsed = @parser.parse('bill AND (author:one title:two')
     pp parsed
     expect(@transformer.apply(parsed).to_s).to eq('')
