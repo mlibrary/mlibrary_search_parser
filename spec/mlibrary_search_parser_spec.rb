@@ -146,4 +146,10 @@ RSpec.describe MLibrarySearchParser do
     parsed = @parser.parse('"my name"bill')
     expect(@transformer.apply(parsed).to_s).to eq '"my name" | bill'
   end
+
+  it 'works with multiple clauses in parens of a boolean' do
+    parsed = @parser.parse('bill AND (author:one title:two')
+    pp parsed
+    expect(@transformer.apply(parsed).to_s).to eq('')
+  end
 end
