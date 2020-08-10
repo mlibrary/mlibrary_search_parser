@@ -178,7 +178,8 @@ module MLibrarySearchParser
     # These include the normal booleans and NOT, where we
     # have spaces around them
 
-    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
+    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) | multi_parens }
+    rule(:multi_parens) { lparen >> (fielded.as(:fielded) >> space?).repeat(1).as(:multi_parens) >> rparen }
     rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? }
     rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
     rule(:or_expr) { (and_expr.as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
@@ -190,6 +191,7 @@ module MLibrarySearchParser
   end
 
   class QueryTransformer < Parslet::Transform
+    rule(:multi_parens => sequence(:t)) { Node::SearchNode.new(t)}
     rule(:tokens => simple(:t)) { Node::TokensNode.new(t.to_s) }
     rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
       Node::AndNode.new(l, r)
