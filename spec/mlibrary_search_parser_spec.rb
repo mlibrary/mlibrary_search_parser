@@ -125,8 +125,8 @@ RSpec.describe MLibrarySearchParser do
     expect(parse_and_transform('"my name"bill').to_s).to eq '"my name" | bill'
   end
 
-  xit "does something with empty parens" do
-    
+  it "does something with empty parens" do
+    expect(parse_and_transform('()').to_s).to eq ''
   end
 
   it 'works with multiple clauses in parens of a boolean' do
