@@ -126,10 +126,14 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "does something with empty parens" do
-    expect(parse_and_transform('()').to_s).to eq ''
+    expect(parse_and_transform('something ()').to_s).to eq 'something | '
   end
 
   it 'works with multiple clauses in parens of a boolean' do
     expect(parse_and_transform('bill AND (author:one title:two)').to_s).to eq("(bill) AND (author:(one) | title:(two))")
+  end
+
+  it 'works with a multi-clause thing inside a multi-clause thing' do
+    expect(parse_and_transform('(one title:two (three AND (four author:five)))').to_s).to eq 'one | title:(two) | (three) AND (four | author:(five))'
   end
 end
