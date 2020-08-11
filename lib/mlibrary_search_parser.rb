@@ -191,7 +191,7 @@ module MLibrarySearchParser
   end
 
   class QueryTransformer < Parslet::Transform
-    rule(:multi_parens => sequence(:t)) { Node::SearchNode.new(t)}
+    rule(:multi_parens => sequence(:t)) { Node::SearchNode.new(t) }
     rule(:tokens => simple(:t)) { Node::TokensNode.new(t.to_s) }
     rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
       Node::AndNode.new(l, r)
