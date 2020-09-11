@@ -11,3 +11,5 @@ RSpec::Core::RakeTask.new(:solr_specs) do |task|
   file_list = FileList['solr_spec/**/*_spec.rb']
   task.pattern = file_list
 end
+
+task :solr_stuff => [:solr_specs]
