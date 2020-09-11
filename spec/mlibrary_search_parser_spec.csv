@@ -1,0 +1,30 @@
+A search,<TokensNode: [A search]>
+mark twain and huck finn,mark twain and huck finn
+mark twain AND huck finn,(mark twain) AND (huck finn)
+mark twain or huck finn,mark twain or huck finn
+mark twain OR huck finn,(mark twain) OR (huck finn)
+mark twain not huck finn,mark twain not huck finn
+NOT huck finn,NOT (huck finn)
+mark twain NOT huck finn,mark twain | NOT (huck finn)
+mark twain OR samuel clemens AND huck finn,(mark twain) OR ((samuel clemens) AND (huck finn))
+mark twain AND samuel clemens OR huck finn,((mark twain) AND (samuel clemens)) OR (huck finn)
+mark "twain AND clemens",mark "twain AND clemens"
+mark twain AND OR huck finn,(mark twain) AND (huck finn)
+mark twain OR AND huck finn,(mark twain) OR (huck finn)
+mark twain AND NOT huck finn,(mark twain) AND (NOT (huck finn))
+(mark twain OR samuel clemens) AND huck finn,((mark twain) OR (samuel clemens)) AND (huck finn)
+title:huck finn,title:(huck finn)
+author:mark twain AND title:huck finn,(author:(mark twain)) AND (title:(huck finn))
+title:tom sawyer title:huck finn,title:(tom sawyer) | title:(huck finn)
+author:(mark twain AND samuel clemens),author:((mark twain) AND (samuel clemens))
+huck finn author:mark twain,huck finn | author:(mark twain)
+huck finn author:(mark twain) tom sawyer,huck finn | author:(mark twain) | tom sawyer
+callnum:blah,callnum:(blah)
+author huck finn,author huck finn
+random:huck finn,random:huck finn
+title:one:author,title:(one:author)
+author: huck finn,author: huck finn
+"my name"bill,"my name" | bill
+something (),something | 
+bill AND (author:one title:two),(bill) AND (author:(one) | title:(two))
+(one title:two (three AND (four author:five))),one | title:(two) | (three) AND (four | author:(five))
