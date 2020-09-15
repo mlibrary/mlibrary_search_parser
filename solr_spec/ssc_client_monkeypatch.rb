@@ -15,3 +15,12 @@ module SimpleSolrClient
   end
 
 end
+
+module SimpleSolrClient::Core::Search
+  def fv_search(field, value)
+    v = value
+    v = SimpleSolrClient.lucene_escape Array(value).join(' ') unless v == '*'
+    kv = "#{field}:(#{v})"
+    get('select', {:q => kv, :rows => 50}, SimpleSolrClient::Response::QueryResponse)
+  end
+end
