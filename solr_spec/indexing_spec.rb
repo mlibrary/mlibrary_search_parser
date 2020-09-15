@@ -15,7 +15,13 @@ RSpec.describe "indexing" do
       core.add_docs(TestDocs::DOCS)
       core.commit
       expect(core.number_of_documents).to eq 45
-      # find 2, not 3
+      # search title:(huck finn)
+      # find 19, 22
+      # do not find 1, 21, 37
+      found = core.fv_search(:title_t, "huck finn")
+      found_ids = found.docs.collect { |d| d.id }
+      expect(found_ids).to include("19", "22")
+      expect(found_ids).not_to include("1", "24")
     end
   end
 end
