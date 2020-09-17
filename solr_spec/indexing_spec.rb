@@ -22,6 +22,13 @@ def add_copy_field(client)
   )
 end
 
+def assert_search_results(core, field, value, should_include, should_not_include)
+  found = core.fv_search(field, value)
+  found_ids = found.docs.collect {|d| d.id}
+  expect(found_ids).to include(*should_include)
+  expect(found_ids).not_to include(*should_not_include)
+end
+
 RSpec.describe "indexing" do
   it "finds the right docs when searching" do
     SolrWrapper.wrap do |solr|
@@ -37,10 +44,7 @@ RSpec.describe "indexing" do
       # search title:(huck finn)
       # find 19, 22
       # do not find 1, 21, 37
-      found = core.fv_search(:title_t, "huck finn")
-      found_ids = found.docs.collect {|d| d.id}
-      expect(found_ids).to include("19", "22")
-      expect(found_ids).not_to include("1", "24")
+      assert_search_results(core, :title_t, "huck finn", ["19", "22"], ["1", "24"])
     end
   end
 end
