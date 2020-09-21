@@ -6,6 +6,14 @@ module MLibrarySearchParser::Node
       @clauses = Array(clauses).map { |c| c.set_parent!(self) }
     end
 
+    def multi_clause_node?
+      true
+    end
+
+    def children
+      clauses
+    end
+
     def to_s
       clauses.join(" | ")
     end

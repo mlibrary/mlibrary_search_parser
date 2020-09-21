@@ -8,6 +8,14 @@ module MLibrarySearchParser
         @query = query.set_parent!(self)
       end
 
+      def fielded_node?
+        true
+      end
+
+      def children
+        [query]
+      end
+
       def to_s
         "#{field}:(#{query})"
       end

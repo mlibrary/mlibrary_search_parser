@@ -130,6 +130,8 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it 'works with multiple clauses in parens of a boolean' do
+    stree = parse_and_transform('bill AND (author:one title:two)')
+    require 'pry'; binding.pry
     expect(parse_and_transform('bill AND (author:one title:two)').to_s).to eq("(bill) AND (author:(one) | title:(two))")
   end
 

@@ -21,6 +21,14 @@ module MLibrarySearchParser
         @right = right.set_parent!(self)
       end
 
+      def binary_node?
+        true
+      end
+
+      def children
+        [left, right]
+      end
+
       def operator
         :undefined
       end
@@ -42,11 +50,19 @@ module MLibrarySearchParser
       def operator
         :and
       end
+
+      def and_node?
+        true
+      end
     end
 
     class OrNode < BinaryNode
       def operator
         :or
+      end
+
+      def or_node?
+        true
       end
     end
 
@@ -58,6 +74,10 @@ module MLibrarySearchParser
 
       def operator
         :undefined
+      end
+
+      def children
+        [operand]
       end
 
       def to_s
@@ -76,6 +96,10 @@ module MLibrarySearchParser
     class NotNode < UnaryNode
       def operator
         :not
+      end
+
+      def not_node?
+        true
       end
     end
 
