@@ -137,4 +137,8 @@ RSpec.describe MLibrarySearchParser do
   it 'works with a multi-clause thing inside a multi-clause thing' do
     expect(parse_and_transform('(one title:two (three AND (four author:five)))').to_s).to eq 'one | title:(two) | (three) AND (four | author:(five))'
   end
+
+  it "handles two clauses before an OR" do
+    expect(parse_and_transform("one author:mark twain OR one").to_s).to be_an_instance_of MLibrarySearchParser::Node::SearchNode
+  end
 end
