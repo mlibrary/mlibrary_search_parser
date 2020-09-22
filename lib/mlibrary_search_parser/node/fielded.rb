@@ -20,6 +20,10 @@ module MLibrarySearchParser
         "#{field}:(#{query})"
       end
 
+      def to_clean_string
+        "#{field}:#{query.to_clean_string}"
+      end
+
       def inspect
         "<FieldedNode[#{field}]: #{query.inspect}>"
       end

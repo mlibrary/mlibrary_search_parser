@@ -7,6 +7,18 @@ module MLibrarySearchParser::Node
       self
     end
 
+    def parenthesize_multiwords(s)
+      if s.match(/\s/) and !s.match(/\A\(.*\)\Z/)
+        "(#{s})"
+      else
+        s
+      end
+    end
+
+    def to_clean_string
+      parenthesize_multiwords(to_s)
+    end
+
     def tokens_node?
       false
     end

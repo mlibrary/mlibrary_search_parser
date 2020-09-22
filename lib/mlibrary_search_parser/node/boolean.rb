@@ -37,6 +37,11 @@ module MLibrarySearchParser
         "(#{left}) #{operator.upcase} (#{right})"
       end
 
+      def to_clean_string
+        "(#{left.to_clean_string} #{operator.upcase} #{right.to_clean_string})"
+      end
+
+
       def inspect
         "<#{operator.upcase} [#{left.inspect}] [#{right.inspect}]>"
       end
