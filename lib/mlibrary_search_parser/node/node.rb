@@ -51,10 +51,10 @@ module MLibrarySearchParser::Node
       children.flat_map(&:flatten)
     end
 
-    def each
-      return enum_for(:each) unless block_given?
-      descendants.each {|x| yield x}
-    end
+    # def each
+    #   return enum_for(:each) unless block_given?
+    #   descendants.each {|x| yield x}
+    # end
 
     def flatten
       descendants.unshift(self)
@@ -112,6 +112,10 @@ module MLibrarySearchParser::Node
 
     def unparseable_node?
       true
+    end
+
+    def children
+      []
     end
   end
 end
