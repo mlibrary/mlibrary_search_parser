@@ -200,7 +200,7 @@ module MLibrarySearchParser
       Node::OrNode.new(l,r)
     }
     rule(:not => simple(:n)) { Node::NotNode.new(n) }
-    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn, q) }
+    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn.to_s, q) }
     rule(:search => simple(:s)) { Node::SearchNode.new(s) }
     rule(:search => sequence(:s)) { Node::SearchNode.new(s) }
     rule(:search => subtree(:s)) { Node::SearchNode.new(s) }
