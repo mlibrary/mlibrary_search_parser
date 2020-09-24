@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "PreQueryNestedFieldsParser" do
   before do
     @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new('spec/data/fields_file.json')
