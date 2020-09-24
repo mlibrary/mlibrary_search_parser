@@ -103,8 +103,16 @@ module MLibrarySearchParser
         [operand]
       end
 
+      def to_clean_string
+
+      end
+
       def to_s
         "#{operator.upcase} (#{operand})"
+      end
+
+      def to_clean_string
+        "#{operator.upcase} #{parenthesize_multiwords(operand.to_clean_string)}"
       end
 
       def inspect
