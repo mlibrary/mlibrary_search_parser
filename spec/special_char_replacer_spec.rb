@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "SpecialCharReplacer" do
     before do
         @parser = MLibrarySearchParser::SpecialCharParser.new

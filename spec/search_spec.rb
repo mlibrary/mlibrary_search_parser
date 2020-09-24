@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "Search" do
     before do
         @search_handler = MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json')

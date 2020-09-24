@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "Node" do
   describe "BaseNode" do
     it "has a parent" do

@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe MLibrarySearchParser do
   it "has a version number" do
     expect(MLibrarySearchParser::VERSION).not_to be nil
@@ -139,6 +141,35 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "handles two clauses before an OR" do
-    expect(parse_and_transform("one author:mark twain OR one").to_s).to be_an_instance_of MLibrarySearchParser::Node::SearchNode
+    # expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
+    string = "one author:mark twain OR two"
+    pp string
+    parsed = @parser.parse(string)
+    pp parsed
   end
+
+  it "parses a lone NOT after another clause" do
+    expect(parse_and_transform("one NOT two").to_s).to eq "one | NOT (two)"
+    string = "one NOT two"
+    pp string
+    parsed = @parser.parse(string)
+    pp parsed
+  end
+
+  it "parses a lone NOT after another clause in parens" do
+    # expect(parse_and_transform("(one NOT two)").to_s).to eq "(one | NOT (two))"
+    string = "(one NOT two)"
+    pp string
+    parsed = @parser.parse(string)
+    pp parsed
+  end
+
+  it "parses a lone NOT after another clause in a fielded" do
+    # expect(parse_and_transform("title:(one NOT two)").to_s).to eq "title:(one | NOT (two))"
+    string = "title:(one NOT two)"
+    pp string
+    parsed = @parser.parse(string)
+    pp parsed
+  end
+
 end

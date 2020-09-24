@@ -179,14 +179,19 @@ module MLibrarySearchParser
     # have spaces around them
 
     rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) | multi_parens }
-    rule(:multi_parens) { lparen >> (parens >> space?).repeat.as(:multi_parens) >> rparen }
-    rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? }
+    rule(:multi_parens) { lparen >> (parens >> space?).repeat.as(:multi_parens) >> rparen | multi_op_parens.as(:multi_op_parens)}
+    rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? | multi_non_op.as(:multi_non_op)}
     rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
     rule(:or_expr) { (and_expr.as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
 
+    rule(:failing_test_3) { ((multi_non_op).as(:left) >> or_op >> or_expr.as(:right)).as(:or) }
+    rule(:multi_op) { (or_expr >> space?).repeat(2) }
+    rule(:multi_non_op) { ((tokens.as(:tokens) | fielded.as(:fielded)) >> space?).repeat(2) }
+    rule(:multi_op_parens) { lparen >> multi_op >> rparen }
+
     rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
-    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? }
+    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? | failing_test_3.as(:fail_3) }
     root(:search)
   end
 
@@ -200,7 +205,7 @@ module MLibrarySearchParser
       Node::OrNode.new(l,r)
     }
     rule(:not => simple(:n)) { Node::NotNode.new(n) }
-    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn, q) }
+    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn.to_s, q) }
     rule(:search => simple(:s)) { Node::SearchNode.new(s) }
     rule(:search => sequence(:s)) { Node::SearchNode.new(s) }
     rule(:search => subtree(:s)) { Node::SearchNode.new(s) }

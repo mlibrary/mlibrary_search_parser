@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "WebformParser" do
     it "parses a field" do
         form = [{"fielded" => {"field" => "title",
