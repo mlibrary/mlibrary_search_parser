@@ -7,6 +7,9 @@ module MLibrarySearchParser
         @field = field
         @query = query.set_parent!(self)
       end
+      def node_type
+        :fielded
+      end
 
       def fielded_node?
         true

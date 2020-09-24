@@ -88,6 +88,21 @@ module MLibrarySearchParser::Node
       ancestors.any? {|x| x.fielded_node }
     end
 
+    def tokens
+      self.flatten.map {|x| x.tokens_node? ? x.to_s : nil }.compact
+    end
+
+    def tokens_string
+      tokens.join(" ")
+    end
+
+    def tokens_phrase
+      %Q["#{tokens_string.gsub('"', '')}"]
+    end
+
+    alias_method :qq, :tokens_phrase
+
+
   end
 
   class TokensNode < BaseNode
@@ -95,6 +110,11 @@ module MLibrarySearchParser::Node
     def initialize(text)
       @text = text.to_s
     end
+
+    def node_type
+      :tokens
+    end
+
 
     def tokens_node?
       true
@@ -120,6 +140,10 @@ module MLibrarySearchParser::Node
   class UnparseableNode < TokensNode
     def inspect
       "<UnparseableNode: [#{text}]>"
+    end
+
+    def node_type
+      :unparseable
     end
 
     def unparseable_node?

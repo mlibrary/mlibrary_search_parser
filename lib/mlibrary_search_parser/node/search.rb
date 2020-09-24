@@ -19,6 +19,11 @@ module MLibrarySearchParser::Node
       true
     end
 
+    def node_type
+      :multi
+    end
+
+
     def children
       clauses
     end
@@ -36,7 +41,12 @@ module MLibrarySearchParser::Node
           str
         end
       else
-        clauses.map(&:to_clean_string).join(" ")
+        str = clauses.map(&:to_clean_string).join(" ")
+        if root_node?
+          str
+        else
+          '(' + str + ')'
+        end
       end
     end
 

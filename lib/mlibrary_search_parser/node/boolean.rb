@@ -21,6 +21,10 @@ module MLibrarySearchParser
         @right = right.set_parent!(self)
       end
 
+      def node_type
+        :binary
+      end
+
       def binary_node?
         true
       end
@@ -52,6 +56,11 @@ module MLibrarySearchParser
     end
 
     class AndNode < BinaryNode
+
+      def node_type
+        :and
+      end
+
       def operator
         :and
       end
@@ -62,6 +71,11 @@ module MLibrarySearchParser
     end
 
     class OrNode < BinaryNode
+
+      def node_type
+        :or
+      end
+
       def operator
         :or
       end
@@ -75,6 +89,10 @@ module MLibrarySearchParser
       attr_accessor :operand
       def initialize(operand)
         @operand = operand
+      end
+
+      def node_type
+        :unary
       end
 
       def operator
@@ -99,6 +117,11 @@ module MLibrarySearchParser
     end
 
     class NotNode < UnaryNode
+
+      def node_type
+        :not
+      end
+
       def operator
         :not
       end
