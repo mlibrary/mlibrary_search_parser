@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe MLibrarySearchParser do
   it "has a version number" do
     expect(MLibrarySearchParser::VERSION).not_to be nil

@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "PreQueryDoubleQuotesParser" do
   before do
     @parser = MLibrarySearchParser::PreQueryDoubleQuotesParser.new

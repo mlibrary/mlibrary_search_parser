@@ -1,3 +1,5 @@
+require_relative 'spec_helper'
+
 RSpec.describe "PreQueryParenthesisParser" do
   before do
     @parser = MLibrarySearchParser::PreQueryParenthesisParser.new
