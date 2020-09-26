@@ -37,6 +37,15 @@ module MLibrarySearchParser
         :undefined
       end
 
+      def trim(&blk)
+        if blk.call(self)
+          EmptyNode.new
+        else
+          self.class.new(left.trim(&blk), right.trim(&blk))
+        end
+
+      end
+
       def to_s
         "(#{left}) #{operator.upcase} (#{right})"
       end

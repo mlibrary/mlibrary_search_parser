@@ -1,6 +1,5 @@
 module MLibrarySearchParser::Node
   class BaseNode
-    include Enumerable
     attr_accessor :parent
     def set_parent!(parent)
       @parent = parent
@@ -51,6 +50,14 @@ module MLibrarySearchParser::Node
       false
     end
 
+    def empty_node?
+      false
+    end
+
+    def empty?
+      false
+    end
+
     def root_node?
       self.parent.nil?
     end
@@ -59,21 +66,27 @@ module MLibrarySearchParser::Node
       []
     end
 
+
+    def trim(&blk)
+      if blk.call(self)
+        EmptyNode.new
+      else
+        self
+      end
+    end
+
+
     def descendants
       children.flat_map(&:flatten)
     end
 
-    # def each
-    #   return enum_for(:each) unless block_given?
-    #   descendants.each {|x| yield x}
-    # end
 
     def flatten
       descendants.unshift(self)
     end
 
     def contains_fielded?
-      self.any?{|x| x.fielded_node?}
+      self.children.any?{|x| x.fielded_node?}
     end
 
     def ancestors
@@ -88,8 +101,9 @@ module MLibrarySearchParser::Node
       ancestors.any? {|x| x.fielded_node }
     end
 
+
     def tokens
-      self.flatten.map {|x| x.tokens_node? ? x.to_s : nil }.compact
+      self.flatten.map {|x| x.tokens_node? ? x.to_s : nil }.compact.reject{|x|x =~ /\A\s*\Z/}
     end
 
     def tokens_string
@@ -124,6 +138,7 @@ module MLibrarySearchParser::Node
       []
     end
 
+
     def to_s
       text
     end
@@ -152,6 +167,37 @@ module MLibrarySearchParser::Node
 
     def children
       []
+    end
+  end
+
+  class EmptyNode < TokensNode
+
+    def initialize
+      # nothing; just overriding
+    end
+
+    def inspect
+      "<EmptyNode>"
+    end
+
+    def node_type
+      :empty
+    end
+
+    def empty_node?
+      true
+    end
+
+    def children
+      []
+    end
+
+    def to_s
+      ""
+    end
+
+    def trim(&blk)
+      self
     end
   end
 end

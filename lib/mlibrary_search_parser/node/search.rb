@@ -28,6 +28,10 @@ module MLibrarySearchParser::Node
       clauses
     end
 
+    def trim(&blk)
+      self.class.new( clauses.map{|x| x.trim(&blk)}.reject{|x| x.empty_node?})
+    end
+
     def to_s
       clauses.join(" | ")
     end
