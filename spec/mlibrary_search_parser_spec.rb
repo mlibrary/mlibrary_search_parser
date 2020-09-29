@@ -147,6 +147,14 @@ RSpec.describe MLibrarySearchParser do
     pp parsed
   end
 
+  it "handles two clauses before an AND" do
+    # expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
+    string = "one author:mark twain AND two"
+    pp string
+    parsed = @parser.parse(string)
+    pp parsed
+  end
+
   it "parses a lone NOT after another clause" do
     expect(parse_and_transform("one NOT two").to_s).to eq "one | NOT (two)"
     string = "one NOT two"
