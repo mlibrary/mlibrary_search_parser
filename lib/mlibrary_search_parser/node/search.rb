@@ -23,6 +23,9 @@ module MLibrarySearchParser::Node
       :multi
     end
 
+    def shake
+      self.class.new(clauses.map(&:shake))
+    end
 
     def children
       clauses

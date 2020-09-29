@@ -67,6 +67,10 @@ module MLibrarySearchParser::Node
     end
 
 
+    def shake
+      self
+    end
+
     def trim(&blk)
       if blk.call(self)
         EmptyNode.new
@@ -128,7 +132,6 @@ module MLibrarySearchParser::Node
     def node_type
       :tokens
     end
-
 
     def tokens_node?
       true

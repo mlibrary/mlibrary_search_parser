@@ -1,7 +1,8 @@
 module MLibrarySearchParser
   module Transform
+    INCLUDABLES = %w[BaseNode BinaryNode TokensNode UnaryNode AndNode OrNode NotNode FieldedNode SearchNode]
+
     module SolrJson
-      INCLUDABLES = %w[BaseNode BinaryNode TokensNode UnaryNode AndNode OrNode NotNode FieldedNode SearchNode]
 
       def self.mix_into_base!
         INCLUDABLES.each do |klassname|
@@ -29,14 +30,16 @@ module MLibrarySearchParser
           children.reject(&:not_node?)
         end
 
+        # Create a bool node where the "positive" (non-negated) items go into the should/must,
+        # and the negated clauses go into the must_not
+        # @todo Deal with double-negation
         def boolnode(shouldmust)
           q = {
-              bool: { shouldmust.to_sym =>  positives.map(&:solr_json_edismax)}
+              bool: {shouldmust.to_sym => positives.map(&:solr_json_edismax)}
           }
           if negatives.size > 0
             q[:bool][:must_not] = negatives.map(&:solr_json_edismax)
           end
-
           q
         end
 
@@ -74,7 +77,7 @@ module MLibrarySearchParser
           if contains_fielded?
             boolnode(:should).merge(extras)
           else
-            edismaxify(to_clean_string)
+            edismaxify(extras: extras)
           end
         end
 
@@ -95,10 +98,15 @@ module MLibrarySearchParser
 
       module SearchNode
         def solr_json_edismax(extras: {})
-          if clauses.size == 1
-            clauses.first.solr_json_edismax
+          q = if clauses.size == 1
+                clauses.first.solr_json_edismax
+              else
+                boolnode(:must)
+              end
+          if self.root_node?
+            {query: q}
           else
-            boolnode(:must)
+            q
           end
         end
 

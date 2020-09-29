@@ -37,6 +37,15 @@ module MLibrarySearchParser
         :undefined
       end
 
+      def shake
+        if [left,right].all? {|x| x.kind_of? MLibrarySearchParser::Node::FieldedNode} and
+            left.field == right.field
+          FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
+        else
+          self
+        end
+      end
+
       def trim(&blk)
         if blk.call(self)
           EmptyNode.new
@@ -145,6 +154,12 @@ module MLibrarySearchParser
 
       def not_node?
         true
+      end
+
+      def shake
+        if operand.kind_of?(NotNode)
+          operand.operand.shake
+        end
       end
     end
 
