@@ -24,7 +24,8 @@ module MLibrarySearchParser
   end
 
   class SearchHandler
-    attr_reader :fieldnames,
+    attr_reader :config,
+                :fieldnames,
                 :special_char_parser,
                 :special_char_transformer,
                 :quote_preparser,
@@ -34,7 +35,8 @@ module MLibrarySearchParser
                 :transformer
 
     def initialize(filename)
-      @fieldnames               = load_fieldnames(filename)
+      @config                   = load_config(filename)
+      @fieldnames               = config.keys
       @special_char_parser      = SpecialCharParser.new
       @special_char_transformer = SpecialCharTransformer.new
       @quote_preparser          = PreQueryDoubleQuotesParser.new
@@ -45,10 +47,9 @@ module MLibrarySearchParser
       @transformer              = QueryTransformer.new
     end
 
-    def load_fieldnames(filename)
+    def load_config(filename)
       field_file = File.read(filename)
-      field_obj  = JSON.parse(field_file)
-      field_obj.keys
+      JSON.parse(field_file)
     end
 
     def fix_special_chars(search)
