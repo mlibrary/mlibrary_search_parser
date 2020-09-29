@@ -178,20 +178,21 @@ module MLibrarySearchParser
     # These include the normal booleans and NOT, where we
     # have spaces around them
 
-    rule(:parens) { lparen >> or_expr >> rparen | tokens.as(:tokens) | fielded.as(:fielded) | multi_parens }
+    rule(:parens) { lparen >> or_expr >> rparen | multi_non_op.as(:multi_parens) | tokens.as(:tokens) | fielded.as(:fielded) | multi_parens }
     rule(:multi_parens) { lparen >> (parens >> space?).repeat.as(:multi_parens) >> rparen | multi_op_parens.as(:multi_op_parens)}
-    rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? | multi_non_op.as(:multi_non_op)}
+    rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? }
     rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
-    rule(:or_expr) { (and_expr.as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
+    rule(:or_expr) { ((and_expr).as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
 
-    rule(:failing_test_3) { ((multi_non_op).as(:left) >> or_op >> or_expr.as(:right)).as(:or) }
+    rule(:failing_test_3) { ((multi_non_op | and_expr).as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
+    rule(:failing_test_4) { ((multi_non_op).as(:left) >> and_op >> and_expr.as(:right)).as(:and) }
     rule(:multi_op) { (or_expr >> space?).repeat(2) }
     rule(:multi_non_op) { ((tokens.as(:tokens) | fielded.as(:fielded)) >> space?).repeat(2) }
     rule(:multi_op_parens) { lparen >> multi_op >> rparen }
 
     rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
-    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? | failing_test_3.as(:fail_3) }
+    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? | failing_test_3.as(:fail_3) | failing_test_4.as(:fail_4) }
     root(:search)
   end
 
