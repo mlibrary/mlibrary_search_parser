@@ -106,6 +106,14 @@ module MLibrarySearchParser::Node
     end
 
 
+    def negatives
+      children.select(&:not_node?).map(&:operand)
+    end
+
+    def positives
+      children.reject(&:not_node?)
+    end
+
     def tokens
       self.flatten.map {|x| x.tokens_node? ? x.to_s : nil }.compact.reject{|x|x =~ /\A\s*\Z/}
     end

@@ -22,13 +22,6 @@ module MLibrarySearchParser
           }
         end
 
-        def negatives
-          children.select(&:not_node?).map(&:operand)
-        end
-
-        def positives
-          children.reject(&:not_node?)
-        end
 
         # Create a bool node where the "positive" (non-negated) items go into the should/must,
         # and the negated clauses go into the must_not
