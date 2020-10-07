@@ -1,18 +1,18 @@
+require_relative 'base.rb'
+
 module MLibrarySearchParser
   module Transform
-    INCLUDABLES = %w[BaseNode BinaryNode TokensNode UnaryNode AndNode OrNode NotNode FieldedNode SearchNode]
-
     module SolrJson
+      extend Base
 
-      def self.mix_into_base!
-        INCLUDABLES.each do |klassname|
-          baseclass = MLibrarySearchParser::Node.const_get(klassname)
-          baseclass.include self.const_get(klassname)
+      module Search
+        def solr_json_edismax
+          search_tree.solr_json_edismax
         end
       end
 
       module BaseNode
-        def edismaxify(field: :allfields, extras: {})
+        def solr_json_edismaxify(field: :allfields, extras: {})
           {
               edismax: {
                            qf: field,
@@ -42,22 +42,13 @@ module MLibrarySearchParser
           end
           q
         end
-
-      end
-
-      module BinaryNode
-
       end
 
       module TokensNode
 
         def solr_json_edismax(extras: {})
-          edismaxify(field: :allfields, extras: extras)
+          solr_json_edismaxify(field: :allfields, extras: extras)
         end
-      end
-
-      module UnaryNode
-
       end
 
       module AndNode
@@ -66,7 +57,7 @@ module MLibrarySearchParser
           if contains_fielded?
             boolnode(:must).merge(extras)
           else
-            edismaxify(extras: extras)
+            solr_json_edismaxify(extras: extras)
           end
         end
       end
@@ -77,41 +68,34 @@ module MLibrarySearchParser
           if contains_fielded?
             boolnode(:should).merge(extras)
           else
-            edismaxify(extras: extras)
+            solr_json_edismaxify(extras: extras)
           end
         end
 
       end
 
-      module NotNode
-
-      end
-
-
       module FieldedNode
 
         def solr_json_edismax(extras: {})
-          query.edismaxify(field: field, extras: extras)
+          query.solr_json_edismaxify(field: field, extras: extras)
         end
 
       end
 
       module SearchNode
+        # can just be sent as json.query = q.solr_json_edismax.to_json
         def solr_json_edismax(extras: {})
           q = if clauses.size == 1
                 clauses.first.solr_json_edismax
               else
                 boolnode(:must)
               end
-          if self.root_node?
-            {query: q}
-          else
-            q
-          end
         end
 
       end
     end
+
+    SolrJson.mix_into_base!
 
   end
 end

@@ -9,7 +9,6 @@ require 'mlibrary_search_handler'
 require "search"
 
 require 'mlibrary_search_parser/transform/solr_json'
-MLibrarySearchParser::Transform::SolrJson.mix_into_base!
 
 module MLibrarySearchParser
   class Error < StandardError; end
