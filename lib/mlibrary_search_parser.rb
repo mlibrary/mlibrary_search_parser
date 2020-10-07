@@ -5,8 +5,11 @@ require "mlibrary_search_parser/node/boolean"
 require "mlibrary_search_parser/node/fielded"
 require "mlibrary_search_parser/node/search"
 require "mlibrary_search_parser/node/node"
+require "mlibrary_search_parser/transform/solr_json"
 require 'mlibrary_search_handler'
 require "search"
+
+MLibrarySearchParser::Transform::SolrJson.mix_into_base!
 
 module MLibrarySearchParser
   class Error < StandardError; end
