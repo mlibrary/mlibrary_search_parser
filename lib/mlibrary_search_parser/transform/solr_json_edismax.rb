@@ -3,20 +3,20 @@ module MLibrarySearchParser
   class Transform
     class SolrJsonEdismax < Transform
 
-      LUCENE_SPECIAL_CHARS_RE = /([!\(\){}\[\]^"~?:])/
-      def solr_json_edismaxify(q:, qq: nil, field: :allfields, extras: {})
-        qq ||= q
+      LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^"~?:])/
+      def solr_json_edismaxify(node, field: :allfields, extras: {})
+        v = lucene_escape node.to_clean_string
+        qq = lucene_remove node.tokens_phrase
         {
             edismax: {
                          qf: field,
-                         v:  node.to_clean_string,
-                         qq: %Q["#{lucene_remove node.tokens_phrase}"]
+                         v:  v,
+                         qq: qq
                      }.merge(extras)
         }
       end
 
       def lucene_escape(str)
-        puts "IN LE"
         str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1').
             gsub(/(?:\|\||&&)/, '')
       end
@@ -42,9 +42,8 @@ module MLibrarySearchParser
       end
 
       def transform_tokens_node(node, extras: {})
-        puts "IN HERE with #{node.text}"
-        escaped_node = MLibrarySearchParser::Node::TokensNode.new(lucene_escape(node.text))
-        solr_json_edismaxify(escaped_node, field: :allfields, extras: extras)
+        # escaped_node = MLibrarySearchParser::Node::TokensNode.new(lucene_escape(node.text))
+        solr_json_edismaxify(node, field: :allfields, extras: extras)
       end
 
       def transform_and_node(node, extras: {})
@@ -64,7 +63,7 @@ module MLibrarySearchParser
       end
 
       def transform_fielded_node(node, extras: {})
-        solr_json_edismaxify(node: node.query, field: node.field, extras: extras)
+        solr_json_edismaxify(node.query, field: node.field, extras: extras)
       end
 
       def transform_search_node(node, extras: {})
