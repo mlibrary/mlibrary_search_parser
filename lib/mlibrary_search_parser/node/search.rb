@@ -15,12 +15,12 @@ module MLibrarySearchParser::Node
       @clauses = Array(c).map { |c| c.set_parent!(self) }
     end
 
-    def multi_clause_node?
+    def search_node?
       true
     end
 
     def node_type
-      :multi
+      :search
     end
 
     def shake

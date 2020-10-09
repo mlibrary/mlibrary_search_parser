@@ -1,19 +1,30 @@
-require_relative 'base.rb'
-
+require_relative '../transform'
 module MLibrarySearchParser
   class Transform
     class SolrJsonEdismax < Transform
 
-      def solr_json_edismaxify(node: node, field: :allfields, extras: {})
+      LUCENE_SPECIAL_CHARS_RE = /([!\(\){}\[\]^"~?:])/
+      def solr_json_edismaxify(q:, qq: nil, field: :allfields, extras: {})
+        qq ||= q
         {
             edismax: {
                          qf: field,
                          v:  node.to_clean_string,
-                         qq: node.tokens_phrase
+                         qq: %Q["#{lucene_remove node.tokens_phrase}"]
                      }.merge(extras)
         }
       end
 
+      def lucene_escape(str)
+        puts "IN LE"
+        str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1').
+            gsub(/(?:\|\||&&)/, '')
+      end
+
+      def lucene_remove(str)
+        str.gsub(LUCENE_SPECIAL_CHARS_RE, '').
+            gsub(/(?:\|\||&&)/, '')
+      end
 
       # Create a bool node where the "positive" (non-negated) items go into the should/must,
       # and the negated clauses go into the must_not
@@ -31,11 +42,13 @@ module MLibrarySearchParser
       end
 
       def transform_tokens_node(node, extras: {})
-        solr_json_edismaxify(node: node, field: :allfields, extras: extras)
+        puts "IN HERE with #{node.text}"
+        escaped_node = MLibrarySearchParser::Node::TokensNode.new(lucene_escape(node.text))
+        solr_json_edismaxify(escaped_node, field: :allfields, extras: extras)
       end
 
       def transform_and_node(node, extras: {})
-        if contains_fielded?
+        if node.contains_fielded?
           boolnode(node,:must).merge(extras)
         else
           solr_json_edismaxify(node, extras: extras)
@@ -43,7 +56,7 @@ module MLibrarySearchParser
       end
 
       def transform_or_node(node, extras: {})
-        if contains_fielded?
+        if node.contains_fielded?
           boolnode(node,:should).merge(extras)
         else
           solr_json_edismaxify(node, extras: extras)
@@ -56,9 +69,9 @@ module MLibrarySearchParser
 
       def transform_search_node(node, extras: {})
         if node.clauses.size == 1
-          transform(clauses.first, extras: extras)
+          transform(node.clauses.first, extras: extras)
         else
-          boolnode(node, :must, extras: extras)
+          boolnode(node, :must)
         end
       end
     end

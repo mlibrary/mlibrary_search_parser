@@ -1,7 +1,7 @@
 module MLibrarySearchParser
   class Transform
 
-    def initialize(confi:, **kwargs)
+    def initialize(config:, **kwargs)
       @config = config
     end
 
@@ -27,7 +27,7 @@ module MLibrarySearchParser
     end
 
 
-    def transform_unknown_node(node, extras: extras)
+    def transform_unknown_node(node, extras: {})
       node.to_clean_string
     end
 

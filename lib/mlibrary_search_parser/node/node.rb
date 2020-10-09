@@ -46,7 +46,7 @@ module MLibrarySearchParser::Node
       false
     end
 
-    def multi_clause_node?
+    def search_node?
       false
     end
 
