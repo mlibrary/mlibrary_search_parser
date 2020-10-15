@@ -19,6 +19,15 @@ module MLibrarySearchParser
         [query]
       end
 
+      def deep_dup(&blk)
+        n = self.class.new(field, query.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
+      end
+
       def to_s
         "#{field}:(#{query})"
       end

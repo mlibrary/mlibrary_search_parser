@@ -37,6 +37,17 @@ module MLibrarySearchParser
         :undefined
       end
 
+      def deep_dup(&blk)
+        n = self.class.new(
+            left.deep_dup(&blk),
+            right.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
+      end
+
       def shake
         if [left,right].all? {|x| x.kind_of? MLibrarySearchParser::Node::FieldedNode} and
             left.field == right.field
@@ -121,8 +132,13 @@ module MLibrarySearchParser
         [operand]
       end
 
-      def to_clean_string
-
+      def deep_dup(&blk)
+        n = self.class.new(operand.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
       end
 
       def to_s

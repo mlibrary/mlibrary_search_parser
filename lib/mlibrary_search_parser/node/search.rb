@@ -23,6 +23,15 @@ module MLibrarySearchParser::Node
       :search
     end
 
+    def deep_dup(&blk)
+      n = self.class.new(clauses.map{|c| c.deep_dup(&blk)})
+      if block_given?
+        blk.call(n)
+      else
+        n
+      end
+    end
+
     def shake
       self.class.new(clauses.map(&:shake))
     end

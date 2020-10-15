@@ -80,8 +80,18 @@ module MLibrarySearchParser
       :search_object
     end
 
+    def search_tree=(parsed)
+      @search_tree = parsed
+    end
+
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
+    end
+
+    def deep_dup(&blk)
+      n = self.clone
+      n.search_tree = search_tree.deep_dup(&blk)
+      n
     end
 
     def valid?

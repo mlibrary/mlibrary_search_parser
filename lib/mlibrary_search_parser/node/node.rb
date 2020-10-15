@@ -90,7 +90,7 @@ module MLibrarySearchParser::Node
     end
 
     def contains_fielded?
-      self.children.any?{|x| x.fielded_node?}
+      self.children.any?{|x| x.fielded_node? or x.contains_fielded?}
     end
 
     def ancestors
@@ -149,6 +149,14 @@ module MLibrarySearchParser::Node
       []
     end
 
+    def deep_dup(&blk)
+      n = self.class.new(self.text)
+      if block_given?
+        blk.call(n)
+      else
+        n
+      end
+    end
 
     def to_s
       text
@@ -210,5 +218,6 @@ module MLibrarySearchParser::Node
     def trim(&blk)
       self
     end
+
   end
 end

@@ -1,30 +1,23 @@
 require_relative '../transform'
+require_relative 'solr_utils'
+
 module MLibrarySearchParser
   class Transform
     class SolrJsonEdismax < Transform
 
-      LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^"~?:])/
-      def solr_json_edismaxify(node, field: :allfields, extras: {})
-        v = lucene_escape node.to_clean_string
-        qq = lucene_remove node.tokens_phrase
+      include SolrUtils
+
+
+      def edismaxify(node, field: :allfields, extras: {}, escape: false)
+        v = node.to_clean_string
         {
             edismax: {
                          qf: field,
                          v:  v,
-                         qq: qq
                      }.merge(extras)
         }
       end
 
-      def lucene_escape(str)
-        str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1').
-            gsub(/(?:\|\||&&)/, '')
-      end
-
-      def lucene_remove(str)
-        str.gsub(LUCENE_SPECIAL_CHARS_RE, '').
-            gsub(/(?:\|\||&&)/, '')
-      end
 
       # Create a bool node where the "positive" (non-negated) items go into the should/must,
       # and the negated clauses go into the must_not
@@ -42,28 +35,27 @@ module MLibrarySearchParser
       end
 
       def transform_tokens_node(node, extras: {})
-        # escaped_node = MLibrarySearchParser::Node::TokensNode.new(lucene_escape(node.text))
-        solr_json_edismaxify(node, field: :allfields, extras: extras)
+        edismaxify(node, extras: extras, escape: true)
       end
 
       def transform_and_node(node, extras: {})
         if node.contains_fielded?
-          boolnode(node,:must).merge(extras)
+          boolnode(node,:must)
         else
-          solr_json_edismaxify(node, extras: extras)
+          edismaxify(node, extras: extras)
         end
       end
 
       def transform_or_node(node, extras: {})
         if node.contains_fielded?
-          boolnode(node,:should).merge(extras)
+          boolnode(node,:should)
         else
-          solr_json_edismaxify(node, extras: extras)
+          edismaxify(node, extras: extras)
         end
       end
 
       def transform_fielded_node(node, extras: {})
-        solr_json_edismaxify(node.query, field: node.field, extras: extras)
+        edismaxify(node.query, field: node.field, extras: extras)
       end
 
       def transform_search_node(node, extras: {})
