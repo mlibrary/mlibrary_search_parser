@@ -42,10 +42,10 @@ module MLibrarySearchParser
     rule(:smart_comma) { str("\u201a").as(:smart_comma) }
 
     rule(:smart_squote) { (str("\u2018") | str("\u2019") |
-      str("\u201b") | str("\u2032")).as(:smart_squote) }
+        str("\u201b") | str("\u2032")).as(:smart_squote) }
 
     rule(:smart_dquote) { (str("\u201c") | str("\u201d") |
-      str("\u201e") | str("\u201f") | str("\u2033")).as(:smart_dquote) }
+        str("\u201e") | str("\u201f") | str("\u2033")).as(:smart_dquote) }
 
     rule(:smartquote) { smart_squote | smart_dquote }
 
@@ -81,13 +81,13 @@ module MLibrarySearchParser
     def initialize(filename)
       super()
       field_file = File.read(filename)
-      field_obj = JSON.parse(field_file)
+      field_obj  = JSON.parse(field_file)
       setup_fieldnames(field_obj.keys)
     end
 
     def setup_fieldnames(flist)
       tmp = str(flist.first)
-      flist[1..-1].each {|x| tmp = tmp | str(x)}
+      flist[1..-1].each { |x| tmp = tmp | str(x) }
       define_singleton_method(:field_name) { tmp.as(:field_name) >> colon }
     end
 
@@ -124,12 +124,11 @@ module MLibrarySearchParser
   end
 
   class FallbackParser < Parslet::Parser
-    rule(:unparseable) { any.repeat(0).as(:unparseable)}
+    rule(:unparseable) { any.repeat(0).as(:unparseable) }
     root(:unparseable)
   end
 
   class QueryParser < FieldParser
-
 
 
     ###################################
@@ -161,14 +160,14 @@ module MLibrarySearchParser
     # ####################################
 
     rule(:and_op) { space? >> str('AND') >> space }
-    rule(:or_op)  { space? >> str('OR') >> space }
+    rule(:or_op) { space? >> str('OR') >> space }
     rule(:binary_op) { and_op | or_op }
 
     #######################################
     # UNARY OPERATORS
     #####################################
 
-    rule(:not_op) { space? >> str('NOT')  >> space }
+    rule(:not_op) { space? >> str('NOT') >> space }
 
     rule(:any_op) { binary_op | not_op }
 
@@ -178,35 +177,41 @@ module MLibrarySearchParser
     # These include the normal booleans and NOT, where we
     # have spaces around them
 
-    rule(:parens) { lparen >> or_expr >> rparen | multi_non_op.as(:multi_parens) | tokens.as(:tokens) | fielded.as(:fielded) | multi_parens }
-    rule(:multi_parens) { lparen >> (parens >> space?).repeat.as(:multi_parens) >> rparen | multi_op_parens.as(:multi_op_parens)}
+    rule(:parens) do  lparen >> or_expr >> rparen |
+        tokens.as(:tokens) |
+        fielded.as(:fielded) |
+        multi_parens
+    end
+    rule(:multi_parens) { lparen >> (parens >> space?).repeat.as(:multi_parens) >> rparen | multi_op_parens.as(:multi_parens) }
     rule(:not_expr) { not_op >> parens.as(:not) | parens >> space? }
     rule(:and_expr) { (not_expr.as(:left) >> and_op >> binary_op.maybe >> and_expr.as(:right)).as(:and) | not_expr }
     rule(:or_expr) { ((and_expr).as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
 
-    rule(:failing_test_3) { ((multi_non_op | and_expr).as(:left) >> or_op >> binary_op.maybe >> or_expr.as(:right)).as(:or) | and_expr }
-    rule(:failing_test_4) { ((multi_non_op).as(:left) >> and_op >> and_expr.as(:right)).as(:and) }
+
+
     rule(:multi_op) { (or_expr >> space?).repeat(2) }
-    rule(:multi_non_op) { ((tokens.as(:tokens) | fielded.as(:fielded)) >> space?).repeat(2) }
+    # rule(:multi_non_op) { ((tokens.as(:tokens) | fielded.as(:fielded)) >> space?).repeat(2) }
     rule(:multi_op_parens) { lparen >> multi_op >> rparen }
 
-    rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
 
-    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? | failing_test_3.as(:fail_3) | failing_test_4.as(:fail_4) }
+    # rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
+    rule(:bare_expr) { (or_expr >> or_expr.repeat(0)) }
+
+    rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? }
     root(:search)
   end
 
   class QueryTransformer < Parslet::Transform
     rule(:multi_parens => sequence(:t)) { Node::SearchNode.new(t) }
     rule(:tokens => simple(:t)) { Node::TokensNode.new(t.to_s) }
-    rule(:and => { :left => simple(:l), :right => simple(:r) } ) {
+    rule(:and => {:left => simple(:l), :right => simple(:r)}) {
       Node::AndNode.new(l, r)
     }
-    rule(:or => { :left => simple(:l), :right => simple(:r) } ) {
-      Node::OrNode.new(l,r)
+    rule(:or => {:left => simple(:l), :right => simple(:r)}) {
+      Node::OrNode.new(l, r)
     }
     rule(:not => simple(:n)) { Node::NotNode.new(n) }
-    rule(:fielded => { :field_name => simple(:fn), :query => simple(:q) }) { Node::FieldedNode.new(fn.to_s, q) }
+    rule(:fielded => {:field_name => simple(:fn), :query => simple(:q)}) { Node::FieldedNode.new(fn.to_s, q) }
     rule(:search => simple(:s)) { Node::SearchNode.new(s) }
     rule(:search => sequence(:s)) { Node::SearchNode.new(s) }
     rule(:search => subtree(:s)) { Node::SearchNode.new(s) }
