@@ -40,11 +40,23 @@ RSpec.describe "Node" do
     it "returns that text for to_webform" do
       expect(@node.to_webform).to eq({"query" => "some text"})
     end
+
+    it "can parenthesize itself if need be" do
+      expect(@node.to_clean_string).to eq "(some text)"
+      n2 = MLibrarySearchParser::Node::TokensNode.new("text")
+      expect(n2.to_clean_string).to eq "text"
+    end
+
+    it "can duplicate itself" do
+      n2 = @node.deep_dup
+      expect(n2).to_not equal(@node)
+      expect(n2.text).to eq @node.text
+    end
   end
 
   describe "BooleanNode" do
     before do
-      @left = MLibrarySearchParser::Node::TokensNode.new("left terms")
+      @left  = MLibrarySearchParser::Node::TokensNode.new("left terms")
       @right = MLibrarySearchParser::Node::TokensNode.new("right terms")
     end
 
@@ -58,11 +70,11 @@ RSpec.describe "Node" do
       end
 
       it "has to_webform" do
-        expect(@node.to_webform).to eq([ 
-          {"query" => "left terms"},
-          {"operator" => "AND"},
-          {"query" => "right terms"}
-          ])
+        expect(@node.to_webform).to eq([
+                                           {"query" => "left terms"},
+                                           {"operator" => "AND"},
+                                           {"query" => "right terms"}
+                                       ])
       end
     end
 
@@ -76,16 +88,16 @@ RSpec.describe "Node" do
       end
 
       it "has to_webform" do
-        expect(@node.to_webform).to eq([ 
-          {"query" => "left terms"},
-          {"operator" => "OR"},
-          {"query" => "right terms"}
-          ])
+        expect(@node.to_webform).to eq([
+                                           {"query" => "left terms"},
+                                           {"operator" => "OR"},
+                                           {"query" => "right terms"}
+                                       ])
       end
 
       describe "Nested" do
         before do
-          not_node = MLibrarySearchParser::Node::NotNode.new(MLibrarySearchParser::Node::TokensNode.new("unwanted terms"))
+          not_node   = MLibrarySearchParser::Node::NotNode.new(MLibrarySearchParser::Node::TokensNode.new("unwanted terms"))
           @nest_node = MLibrarySearchParser::Node::AndNode.new(@node, not_node)
         end
 
@@ -95,16 +107,16 @@ RSpec.describe "Node" do
 
         it "to_webform" do
           expect(@nest_node.to_webform).to eq([
-            {"query" => "left terms"},
-            {"operator" => "OR"},
-            {"query" => "right terms"},
-            {"operator" => "AND"},
-            {"operator" => "NOT"},
-            {"query" => "unwanted terms"}
-          ])
+                                                  {"query" => "left terms"},
+                                                  {"operator" => "OR"},
+                                                  {"query" => "right terms"},
+                                                  {"operator" => "AND"},
+                                                  {"operator" => "NOT"},
+                                                  {"query" => "unwanted terms"}
+                                              ])
         end
       end
-  
+
     end
 
   end
@@ -120,14 +132,14 @@ RSpec.describe "Node" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([{"operator" => "NOT"},
-        {"query" => "something"}])
+                                      {"query" => "something"}])
     end
   end
-  
+
   describe "FieldedNode" do
     before do
       tokens = MLibrarySearchParser::Node::TokensNode.new("some terms")
-      @node = MLibrarySearchParser::Node::FieldedNode.new("title", tokens)
+      @node  = MLibrarySearchParser::Node::FieldedNode.new("title", tokens)
     end
 
     it "has to_s" do
@@ -136,9 +148,9 @@ RSpec.describe "Node" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([
-        {"field" => "title"},
-        {"query" => "some terms"}
-      ])
+                                         {"field" => "title"},
+                                         {"query" => "some terms"}
+                                     ])
     end
   end
 end

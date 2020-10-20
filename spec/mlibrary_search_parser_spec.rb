@@ -6,7 +6,7 @@ RSpec.describe MLibrarySearchParser do
   end
 
   before do
-    @parser = MLibrarySearchParser::QueryParser.new('spec/data/fields_file.json')
+    @parser      = MLibrarySearchParser::QueryParser.new('spec/data/fields_file.json')
     @transformer = MLibrarySearchParser::QueryTransformer.new
 
     def parse_and_transform(string)
@@ -76,7 +76,7 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "doesn't allow a fielded in tokens" do
-    expect{@parser.tokens.parse("one two title:three four")}.to raise_error(Parslet::ParseFailed)
+    expect { @parser.tokens.parse("one two title:three four") }.to raise_error(Parslet::ParseFailed)
   end
 
   it "picks up a title field" do
@@ -131,6 +131,10 @@ RSpec.describe MLibrarySearchParser do
     expect(parse_and_transform('something ()').to_s).to eq 'something | '
   end
 
+  it "handles consecutive fieldeds" do
+    expect(parse_and_transform('author:one title:two').to_s).to eq("author:(one) | title:(two)")
+  end
+
   it 'works with multiple clauses in parens of a boolean' do
     expect(parse_and_transform('bill AND (author:one title:two)').to_s).to eq("(bill) AND (author:(one) | title:(two))")
   end
@@ -140,43 +144,24 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "handles two clauses before an OR" do
-    # expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
-    string = "one author:mark twain OR two"
-    pp string
-    parsed = @parser.parse(string)
-    pp parsed
+    expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
   end
 
   it "handles two clauses before an AND" do
-    # expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
-    string = "one author:mark twain AND two"
-    pp string
-    parsed = @parser.parse(string)
-    pp parsed
+    expect(parse_and_transform("one author:mark twain OR two").to_s).to eq "one | (author:(mark twain)) OR (two)"
   end
 
   it "parses a lone NOT after another clause" do
     expect(parse_and_transform("one NOT two").to_s).to eq "one | NOT (two)"
-    string = "one NOT two"
-    pp string
-    parsed = @parser.parse(string)
-    pp parsed
   end
 
   it "parses a lone NOT after another clause in parens" do
-    # expect(parse_and_transform("(one NOT two)").to_s).to eq "(one | NOT (two))"
-    string = "(one NOT two)"
-    pp string
-    parsed = @parser.parse(string)
-    pp parsed
+    expect(parse_and_transform("three AND (one NOT two)").to_s).to eq "(three) AND (one | NOT (two))"
+
   end
 
   it "parses a lone NOT after another clause in a fielded" do
-    # expect(parse_and_transform("title:(one NOT two)").to_s).to eq "title:(one | NOT (two))"
-    string = "title:(one NOT two)"
-    pp string
-    parsed = @parser.parse(string)
-    pp parsed
+    expect(parse_and_transform("title:(one NOT two)").to_s).to eq "title:(one | NOT (two))"
   end
 
 end

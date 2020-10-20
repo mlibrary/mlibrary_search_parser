@@ -1,8 +1,12 @@
-require "mlibrary_search_parser/node/node"
+# frozen_string_literal: true
+
+require_relative 'base'
+
 module MLibrarySearchParser
   module Node
     class FieldedNode < BaseNode
       attr_accessor :field, :query
+
       def initialize(field, query)
         @field = field
         @query = query.set_parent!(self)

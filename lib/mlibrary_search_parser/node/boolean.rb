@@ -1,4 +1,7 @@
-require "mlibrary_search_parser/node/node"
+# frozen_string_literal: true
+
+require_relative 'base'
+
 module MLibrarySearchParser
   module Node
     class Boolean < BaseNode
