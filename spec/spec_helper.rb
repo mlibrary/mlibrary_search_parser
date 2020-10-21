@@ -40,3 +40,9 @@ end
 def not_node(node_or_string)
   MLibrarySearchParser::Node::NotNode.new(nodeify(node_or_string))
 end
+
+TEST_HANDLER =  MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json')
+
+def search_node(*clauses)
+  MLibrarySearchParser::Node::SearchNode.new(clauses.map{|c| nodeify(c)})
+end

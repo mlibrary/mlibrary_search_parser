@@ -12,7 +12,11 @@ RSpec.describe "FieldedNode" do
     expect(@node.to_s).to eq "title:(some terms)"
   end
 
-  it "has simple to_clean_string" do
+  it "has a simple to_clean_string" do
+    expect(fielded_node('title', 'one').to_clean_string).to eq("title:one")
+  end
+
+  it "has multi-term to_clean_string" do
     expect(@node.to_clean_string).to eq("title:(some terms)")
   end
 
