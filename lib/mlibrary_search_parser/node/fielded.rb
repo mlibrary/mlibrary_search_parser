@@ -12,8 +12,29 @@ module MLibrarySearchParser
         @query = query.set_parent!(self)
       end
 
+      def node_type
+        :fielded
+      end
+
+      def children
+        [query]
+      end
+
+      def deep_dup(&blk)
+        n = self.class.new(field, query.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
+      end
+
       def to_s
         "#{field}:(#{query})"
+      end
+
+      def to_clean_string
+        "#{field}:#{query.to_clean_string}"
       end
 
       def inspect

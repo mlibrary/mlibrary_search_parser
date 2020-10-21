@@ -103,6 +103,11 @@ module MLibrarySearchParser::Node
       end
     end
 
+    # Trim off the NOT clauses
+    def trim_not
+      trim { |n| n.is_type?(:not) }
+    end
+
     # Is the current node an ancestor of a fielded node?
     # Useful for determining when to add parens and whether
     # there are weirdnesses in how fielded searches are nested
@@ -144,7 +149,7 @@ module MLibrarySearchParser::Node
 
     # Select, for the given type
     def select_type(type)
-      select { |x| x.node_type == type.to_sym }
+      select { |x| x.is_type?(type.to_sym) }
     end
 
     # Get a string joining all the tokens in the normal

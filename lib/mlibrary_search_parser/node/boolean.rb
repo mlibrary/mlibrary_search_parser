@@ -39,7 +39,7 @@ module MLibrarySearchParser
       # Equals determined by node type and equality of left/right
       # @param [BinaryNode] other The other binary node to compare
       def ==(other)
-        node_type = other.node_type and
+        other.is_type?(node_type) and
             left == other.left and
             right == other.right
       end
@@ -65,7 +65,19 @@ module MLibrarySearchParser
         if blk.call(self)
           EmptyNode.new
         else
-          self.class.new(left.trim(&blk), right.trim(&blk))
+          trimmed_left = left.trim(&blk)
+          trimmed_right = right.trim(&blk)
+          combo = [trimmed_left, trimmed_right].map{|n| n.is_type?(:empty) ? :empty : :not_empty}
+          case combo
+          when [:empty, :empty]
+            EmptyNode
+          when [:not_empty, :empty]
+            trimmed_left
+          when [:empty, :not_empty]
+            trimmed_right
+          when [:not_empty, :not_empty]
+            self.class.new(trimmed_left, trimmed_right)
+          end
         end
       end
 
@@ -83,9 +95,11 @@ module MLibrarySearchParser
 
       # Shake out stuff like title:one AND title:two to title:(one AND two)
       def shake
-        if [left,right].all? {|x| x.kind_of? MLibrarySearchParser::Node::FieldedNode} and
+        if [left,right].all? {|x| x.is_type?(:fielded)} and
             left.field == right.field
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
+        elsif left.shake == right.shake
+          left.shake
         else
           self
         end
@@ -104,10 +118,18 @@ module MLibrarySearchParser
       def operator
         :and
       end
+
+      def node_type
+        :and
+      end
     end
 
     class OrNode < BinaryNode
       def operator
+        :or
+      end
+
+      def node_type
         :or
       end
     end
@@ -122,8 +144,25 @@ module MLibrarySearchParser
         :undefined
       end
 
+      def children
+        [operand]
+      end
+
       def to_s
         "#{operator.upcase} (#{operand})"
+      end
+
+      def deep_dup(&blk)
+        n = self.class.new(operand.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
+      end
+
+      def ==(other)
+        other.is_type?(node_type) && operand == other.operand
       end
 
       def inspect
@@ -137,6 +176,10 @@ module MLibrarySearchParser
 
     class NotNode < UnaryNode
       def operator
+        :not
+      end
+
+      def node_type
         :not
       end
     end

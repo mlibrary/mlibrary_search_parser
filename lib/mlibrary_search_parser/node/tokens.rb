@@ -23,7 +23,7 @@ module MLibrarySearchParser::Node
     # Equality is having the same node type and text
     # @param [#text] other The other node
     def ==(other)
-      node_type == other.node_type and text == other.text
+      other.is_type?(node_type) and text == other.text
     end
 
     # A tokens node is always a leaf
@@ -39,6 +39,10 @@ module MLibrarySearchParser::Node
       else
         n
       end
+    end
+
+    def shake
+      self
     end
 
 

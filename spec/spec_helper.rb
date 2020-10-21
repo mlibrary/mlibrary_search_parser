@@ -13,22 +13,30 @@ RSpec.configure do |config|
   end
 end
 
-def tnode(str)
-  MLibrarySearchParser::Node::TokensNode.new(str)
+def nodeify(node_or_string)
+  if node_or_string.kind_of? MLibrarySearchParser::Node::BaseNode
+    node_or_string
+  else
+    MLibrarySearchParser::Node::TokensNode.new(node_or_string)
+  end
 end
 
-def and_node(str1, str2)
-  MLibrarySearchParser::Node::AndNode.new(tnode(str1), tnode(str2))
+def tnode(node_or_string)
+  nodeify(node_or_string)
 end
 
-def or_node(str1, str2)
-  MLibrarySearchParser::Node::OrNode.new(tnode(str1), tnode(str2))
+def and_node(node_or_string1, node_or_string2)
+  MLibrarySearchParser::Node::AndNode.new(nodeify(node_or_string1), nodeify(node_or_string2))
 end
 
-def fielded_node(str)
-  MLibrarySearchParser::Node::FieldedNode.new("title", tnode(str))
+def or_node(node_or_string1, node_or_string2)
+  MLibrarySearchParser::Node::OrNode.new(nodeify(node_or_string1), nodeify(node_or_string2))
 end
 
-def not_node(str)
-  MLibrarySearchParser::Node::NotNode.new(str)
+def fielded_node(node_or_string)
+  MLibrarySearchParser::Node::FieldedNode.new("title", nodeify(node_or_string))
+end
+
+def not_node(node_or_string)
+  MLibrarySearchParser::Node::NotNode.new(nodeify(node_or_string))
 end
