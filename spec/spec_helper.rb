@@ -33,8 +33,8 @@ def or_node(node_or_string1, node_or_string2)
   MLibrarySearchParser::Node::OrNode.new(nodeify(node_or_string1), nodeify(node_or_string2))
 end
 
-def fielded_node(node_or_string)
-  MLibrarySearchParser::Node::FieldedNode.new("title", nodeify(node_or_string))
+def fielded_node(field, node_or_string)
+  MLibrarySearchParser::Node::FieldedNode.new(field, nodeify(node_or_string))
 end
 
 def not_node(node_or_string)

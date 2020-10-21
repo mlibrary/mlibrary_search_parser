@@ -29,6 +29,10 @@ module MLibrarySearchParser
         end
       end
 
+      def ==(other)
+        other.is_type?(node_type) && other.field == field && other.query == query
+      end
+
       def to_s
         "#{field}:(#{query})"
       end

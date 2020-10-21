@@ -5,8 +5,12 @@ module MLibrarySearchParser::Node
   class BaseNode
     attr_accessor :parent
 
+    # A hash into which you can stuff whatever you want
+    attr_accessor :payload
+
     def set_parent!(parent)
-      @parent = parent
+      @parent  = parent
+      @payload = {}
       self
     end
 
@@ -130,12 +134,12 @@ module MLibrarySearchParser::Node
     # boolean, and the operand of a unary.
     # @return [Array<BaseNode>]
     def positives
-      children.reject{|x| x.is_type?(:not)}
+      children.reject { |x| x.is_type?(:not) }
     end
 
     # @see positives
     def negatives
-      children.select{|x| x.is_type?(:not)}.map(&:operand)
+      children.select { |x| x.is_type?(:not) }.map(&:operand)
     end
 
     # Get a depth-first list of all nodes in the current subtree (including self)
@@ -164,6 +168,33 @@ module MLibrarySearchParser::Node
     # in new double-quotes
     def tokens_phrase
       %Q("#{tokens_string.gsub('"', '')}")
+    end
+
+    # Assign each node in this tree an arbitrary number, useful for
+    # splitting out extra query information in a way you know will
+    # be unique for each node.
+    #
+    # Initial use case is tracking q and qq values in solr queries for use in
+    # filter or boost queries on a per-edismax-clause basis
+    #
+    # These numbers *will* change on every call to #renumber! after a tree
+    # is changed, so never count on a cached value.
+    #
+    # This method is *manual only*; it isn't automatically called whenever
+    # the tree changes. Maybe a TODO?
+    #
+    # @return [BaseNode] self
+    def renumber!
+      flatten.each_with_index { |n, i| n.number = i }
+    end
+
+    # A convenience accessor for the payload number
+    def number
+      payload[:number]
+    end
+
+    def number=(i)
+      payload[:number] = i
     end
   end
 end
