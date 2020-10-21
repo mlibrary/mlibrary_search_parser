@@ -15,7 +15,7 @@ module MLibrarySearchParser::Node
     end
 
     def to_webform
-      clauses.collect { |c| c.to_webform}.flatten
+      clauses.collect { |c| c.to_webform }.flatten
     end
   end
 end

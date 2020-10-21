@@ -38,23 +38,23 @@ module MLibrarySearchParser
     def search_tree
       field_nodes = []
       operators = []
-      input_form.each { |node|
+      input_form.each do |node|
         case node.keys.first
         when "fielded"
           field = node["fielded"]["field"]
           query = node["fielded"]["query"]
           query_search = Search.new(query, MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json'))
-          field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)    
+          field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)
           field_nodes.push(field_node)
         when "operator"
           operators.push(node["operator"])
         end
-      }
-      operators.reduce(field_nodes.shift) { |root, new_oper|
+      end
+      operators.reduce(field_nodes.shift) do |root, new_oper|
         MLibrarySearchParser::Node::Boolean.for_operator(new_oper,
-          root,
-          field_nodes.shift)
-      }
+                                                         root,
+                                                         field_nodes.shift)
+      end
     end
 
     def to_s
@@ -66,9 +66,7 @@ module MLibrarySearchParser
     attr_reader :search_tree, :original_input, :mini_search
     # could come from search box, from adv search form, or from solr output
 
-    def self.from_form(input, search_handler)
-      
-    end
+    def self.from_form(input, search_handler); end
 
     def initialize(original_input, search_handler)
       @original_input = original_input

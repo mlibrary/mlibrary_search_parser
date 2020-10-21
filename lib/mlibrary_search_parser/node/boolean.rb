@@ -34,7 +34,7 @@ module MLibrarySearchParser
       end
 
       def to_webform
-        [left.to_webform, {"operator" => "#{operator.upcase}"}, right.to_webform].flatten
+        [left.to_webform, { "operator" => "#{operator.upcase}" }, right.to_webform].flatten
       end
     end
 
@@ -69,7 +69,7 @@ module MLibrarySearchParser
       end
 
       def to_webform
-        [{"operator" => "#{operator.upcase}"}, operand.to_webform]
+        [{ "operator" => "#{operator.upcase}" }, operand.to_webform]
       end
     end
 
@@ -78,6 +78,5 @@ module MLibrarySearchParser
         :not
       end
     end
-
   end
 end

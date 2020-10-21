@@ -41,4 +41,3 @@ RSpec.describe "PreQueryParenthesisParser" do
     expect { @parser.parse('( one two "three )" four)') }.not_to raise_error
   end
 end
-

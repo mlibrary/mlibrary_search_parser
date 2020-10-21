@@ -58,11 +58,11 @@ RSpec.describe "Node" do
       end
 
       it "has to_webform" do
-        expect(@node.to_webform).to eq([ 
-          {"query" => "left terms"},
-          {"operator" => "AND"},
-          {"query" => "right terms"}
-          ])
+        expect(@node.to_webform).to eq([
+                                         {"query" => "left terms"},
+                                         {"operator" => "AND"},
+                                         {"query" => "right terms"}
+                                       ])
       end
     end
 
@@ -76,11 +76,11 @@ RSpec.describe "Node" do
       end
 
       it "has to_webform" do
-        expect(@node.to_webform).to eq([ 
-          {"query" => "left terms"},
-          {"operator" => "OR"},
-          {"query" => "right terms"}
-          ])
+        expect(@node.to_webform).to eq([
+                                         {"query" => "left terms"},
+                                         {"operator" => "OR"},
+                                         {"query" => "right terms"}
+                                       ])
       end
 
       describe "Nested" do
@@ -95,18 +95,16 @@ RSpec.describe "Node" do
 
         it "to_webform" do
           expect(@nest_node.to_webform).to eq([
-            {"query" => "left terms"},
-            {"operator" => "OR"},
-            {"query" => "right terms"},
-            {"operator" => "AND"},
-            {"operator" => "NOT"},
-            {"query" => "unwanted terms"}
-          ])
+                                                {"query" => "left terms"},
+                                                {"operator" => "OR"},
+                                                {"query" => "right terms"},
+                                                {"operator" => "AND"},
+                                                {"operator" => "NOT"},
+                                                {"query" => "unwanted terms"}
+                                              ])
         end
       end
-  
     end
-
   end
 
   describe "UnaryNode" do
@@ -120,10 +118,10 @@ RSpec.describe "Node" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([{"operator" => "NOT"},
-        {"query" => "something"}])
+                                      {"query" => "something"}])
     end
   end
-  
+
   describe "FieldedNode" do
     before do
       tokens = MLibrarySearchParser::Node::TokensNode.new("some terms")
@@ -136,9 +134,9 @@ RSpec.describe "Node" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([
-        {"field" => "title"},
-        {"query" => "some terms"}
-      ])
+                                       {"field" => "title"},
+                                       {"query" => "some terms"}
+                                     ])
     end
   end
 end

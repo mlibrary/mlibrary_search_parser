@@ -13,7 +13,7 @@ module MLibrarySearchParser
   class MiniSearch
     attr_accessor :search_string, :errors, :warnings
 
-    def initialize(search_string, errors=[])
+    def initialize(search_string, errors = [])
       @search_string = search_string
       @errors = errors
     end
@@ -25,13 +25,13 @@ module MLibrarySearchParser
 
   class SearchHandler
     attr_reader :fieldnames,
-      :special_char_parser,
-      :special_char_transformer,
-      :quote_preparser,
-      :paren_preparser,
-      :field_preparser,
-      :main_parser,
-      :transformer
+                :special_char_parser,
+                :special_char_transformer,
+                :quote_preparser,
+                :paren_preparser,
+                :field_preparser,
+                :main_parser,
+                :transformer
 
     def initialize(filename)
       @fieldnames = load_fieldnames(filename)
