@@ -20,6 +20,12 @@ module MLibrarySearchParser::Node
       text
     end
 
+    # Equality is having the same node type and text
+    # @param [#text] other The other node
+    def ==(other)
+      node_type == other.node_type and text == other.text
+    end
+
     # A tokens node is always a leaf
     def children
       []

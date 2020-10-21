@@ -22,4 +22,12 @@ RSpec.describe "TokensNode" do
   it "parenthesizes multiple words" do
     expect(@node.to_clean_string).to eq "(some text)"
   end
+
+  it "recognizes equality of itself" do
+    expect(@node).to eq(@node)
+  end
+
+  it "implements equality" do
+    expect(tnode("one")).to eq(tnode('one'))
+  end
 end

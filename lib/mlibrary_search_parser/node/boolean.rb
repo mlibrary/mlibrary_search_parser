@@ -24,12 +24,71 @@ module MLibrarySearchParser
         @right = right.set_parent!(self)
       end
 
+      def node_type
+        :binary
+      end
+
+      def children
+        [left, right]
+      end
+
       def operator
         :undefined
       end
 
+      # Equals determined by node type and equality of left/right
+      # @param [BinaryNode] other The other binary node to compare
+      def ==(other)
+        node_type = other.node_type and
+            left == other.left and
+            right == other.right
+      end
+
+      def flatten
+        [left.flatten, self, right.flatten].flatten
+      end
+
       def to_s
         "(#{left}) #{operator.upcase} (#{right})"
+      end
+
+      def to_clean_string
+        cs = "#{left.to_clean_string} #{operator.upcase} #{right.to_clean_string}"
+        if root_node?
+          cs
+        else
+          "(#{cs})"
+        end
+      end
+
+      def trim(&blk)
+        if blk.call(self)
+          EmptyNode.new
+        else
+          self.class.new(left.trim(&blk), right.trim(&blk))
+        end
+      end
+
+      # @see BaseNode#deep_dup
+      def deep_dup(&blk)
+        n = self.class.new(
+            left.deep_dup(&blk),
+            right.deep_dup(&blk))
+        if block_given?
+          blk.call(n)
+        else
+          n
+        end
+      end
+
+      # Shake out stuff like title:one AND title:two to title:(one AND two)
+      def shake
+        if [left,right].all? {|x| x.kind_of? MLibrarySearchParser::Node::FieldedNode} and
+            left.field == right.field
+          FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
+        else
+          self
+        end
       end
 
       def inspect

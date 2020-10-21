@@ -12,3 +12,23 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+def tnode(str)
+  MLibrarySearchParser::Node::TokensNode.new(str)
+end
+
+def and_node(str1, str2)
+  MLibrarySearchParser::Node::AndNode.new(tnode(str1), tnode(str2))
+end
+
+def or_node(str1, str2)
+  MLibrarySearchParser::Node::OrNode.new(tnode(str1), tnode(str2))
+end
+
+def fielded_node(str)
+  MLibrarySearchParser::Node::FieldedNode.new("title", tnode(str))
+end
+
+def not_node(str)
+  MLibrarySearchParser::Node::NotNode.new(str)
+end

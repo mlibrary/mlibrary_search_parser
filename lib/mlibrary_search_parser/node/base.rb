@@ -125,12 +125,12 @@ module MLibrarySearchParser::Node
     # boolean, and the operand of a unary.
     # @return [Array<BaseNode>]
     def positives
-      children.reject(&:not_node?)
+      children.reject{|x| x.is_type?(:not)}
     end
 
     # @see positives
     def negatives
-      children.select(&:not_node?).map(&:operand)
+      children.select{|x| x.is_type?(:not)}.map(&:operand)
     end
 
     # Get a depth-first list of all nodes in the current subtree (including self)
