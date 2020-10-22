@@ -41,6 +41,18 @@ Style/RedundantInterpolation:
 Style/RedundantPercentQ:
   Enabled: false
 
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
 
+Layout/ArgumentAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
 
+Layout/MultilineMethodArgumentLineBreaks:
+  Enabled: true
 
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Layout/FirstMethodArgumentLineBreak:
+  Enabled: true
