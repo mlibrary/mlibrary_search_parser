@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 RSpec.describe "PreQueryNestedFieldsParser" do
@@ -30,5 +32,4 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     expect(parsed[0]).not_to have_key(:fielded)
     expect(parsed[0]).to have_key(:tokens)
   end
-
 end

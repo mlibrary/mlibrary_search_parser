@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 RSpec.describe "MLibrarySearchHandler" do
@@ -57,11 +59,11 @@ RSpec.describe "MLibrarySearchHandler" do
       output = @handler.check_nested_fields(search)
       expect(output.to_s).to eq "title:author thing"
       expect(output.errors).to match_array([
-        MLibrarySearchParser::NestedFieldsError,
-        MLibrarySearchParser::NestedFieldsError
-      ])
+                                             MLibrarySearchParser::NestedFieldsError,
+                                             MLibrarySearchParser::NestedFieldsError
+                                           ])
     end
-   
+
     it "ignores things that look like nested fields but aren't" do
       search = MLibrarySearchParser::MiniSearch.new("title:one:author")
       output = @handler.check_nested_fields(search)
@@ -106,10 +108,10 @@ RSpec.describe "MLibrarySearchHandler" do
       output = @handler.pre_process(search)
       expect(output.to_s).to eq "test with title:author many problems"
       expect(output.errors).to match_array([
-        MLibrarySearchParser::UnevenQuotesError,
-        MLibrarySearchParser::UnevenParensError,
-        MLibrarySearchParser::NestedFieldsError
-      ])
+                                             MLibrarySearchParser::UnevenQuotesError,
+                                             MLibrarySearchParser::UnevenParensError,
+                                             MLibrarySearchParser::NestedFieldsError
+                                           ])
     end
   end
 
@@ -117,12 +119,11 @@ RSpec.describe "MLibrarySearchHandler" do
     it "returns useful object with to_webform" do
       output = @handler.parse("title:huck finn AND author:mark twain")
       expect(output.to_s).to eq "(title:(huck finn)) AND (author:(mark twain))"
-      expect(output.to_webform).to eq([{"field"=>"title"},
-        {"query"=>"huck finn"},
-        {"operator"=>"AND"},
-        {"field"=>"author"},
-        {"query"=>"mark twain"}
-        ])
+      expect(output.to_webform).to eq([{"field" => "title"},
+                                       {"query" => "huck finn"},
+                                       {"operator" => "AND"},
+                                       {"field" => "author"},
+                                       {"query" => "mark twain"}])
     end
 
     it "returns something useful even on a parser error" do

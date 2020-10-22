@@ -40,8 +40,8 @@ module MLibrarySearchParser
       # @param [BinaryNode] other The other binary node to compare
       def ==(other)
         other.is_type?(node_type) and
-            left == other.left and
-            right == other.right
+          left == other.left and
+          right == other.right
       end
 
       def flatten
@@ -67,15 +67,15 @@ module MLibrarySearchParser
         else
           trimmed_left = left.trim(&blk)
           trimmed_right = right.trim(&blk)
-          combo = [trimmed_left, trimmed_right].map{|n| n.is_type?(:empty) ? :empty : :not_empty}
+          combo = [trimmed_left, trimmed_right].map { |n| n.is_type?(:empty) ? :empty : :not_empty}
           case combo
-          when [:empty, :empty]
+          when %i[empty empty]
             EmptyNode
-          when [:not_empty, :empty]
+          when %i[not_empty empty]
             trimmed_left
-          when [:empty, :not_empty]
+          when %i[empty not_empty]
             trimmed_right
-          when [:not_empty, :not_empty]
+          when %i[not_empty not_empty]
             self.class.new(trimmed_left, trimmed_right)
           end
         end
@@ -84,8 +84,9 @@ module MLibrarySearchParser
       # @see BaseNode#deep_dup
       def deep_dup(&blk)
         n = self.class.new(
-            left.deep_dup(&blk),
-            right.deep_dup(&blk))
+          left.deep_dup(&blk),
+          right.deep_dup(&blk)
+        )
         if block_given?
           blk.call(n)
         else
@@ -95,8 +96,8 @@ module MLibrarySearchParser
 
       # Shake out stuff like title:one AND title:two to title:(one AND two)
       def shake
-        if [left,right].all? {|x| x.is_type?(:fielded)} and
-            left.field == right.field
+        if [left, right].all? { |x| x.is_type?(:fielded)} &&
+           (left.field == right.field)
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
         elsif left.shake == right.shake
           left.shake
@@ -110,7 +111,7 @@ module MLibrarySearchParser
       end
 
       def to_webform
-        [left.to_webform, {"operator" => "#{operator.upcase}"}, right.to_webform].flatten
+        [left.to_webform, { "operator" => "#{operator.upcase}"}, right.to_webform].flatten
       end
     end
 
@@ -183,6 +184,5 @@ module MLibrarySearchParser
         :not
       end
     end
-
   end
 end

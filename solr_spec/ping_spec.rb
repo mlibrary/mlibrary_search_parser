@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'solr_wrapper'
 require 'simple_solr_client'
 require 'pry-byebug'

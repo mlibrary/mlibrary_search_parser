@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-
 RSpec.describe "SearchNode" do
-
   before do
     @simple       = search_node("one")
     @fielded      = search_node(fielded_node('title', 'two'))
@@ -30,10 +28,8 @@ RSpec.describe "SearchNode" do
     end
 
     it "deep_dups with a block" do
-      dup = @complex.deep_dup {|n| n.is_type?(:or) ? tnode("XXX") : n }
+      dup = @complex.deep_dup { |n| n.is_type?(:or) ? tnode("XXX") : n }
       expect(dup.to_clean_string).to eq "(one AND two) XXX"
     end
-
   end
-
 end

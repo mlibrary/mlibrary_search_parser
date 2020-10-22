@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module MLibrarySearchParser::Node
   # The base of all the node types. Has everything you need
   # for inspecting and traversing the tree
@@ -25,7 +26,7 @@ module MLibrarySearchParser::Node
     # the block (if given) to each node as it's duplicated
     # @abstract
     # @return [BaseNode]
-    def deep_dup(&blk)
+    def deep_dup
       raise "#{self.class} needs to implement deep_dup(&blk)"
     end
 
@@ -40,7 +41,7 @@ module MLibrarySearchParser::Node
     # spaces and isn't already surrounded by parens
     # @param [String] s The string to maybe parenthesize
     def parenthesize_multiwords(s)
-      if s.match(/\s/) and !s.match(/\A\(.*\)\Z/)
+      if s.match(/\s/) && !s.match(/\A\(.*\)\Z/)
         "(#{s})"
       else
         s
@@ -161,13 +162,13 @@ module MLibrarySearchParser::Node
     # booleans/fields/etc, and skipping any empty strings
     # @return [String]
     def tokens_string
-      select_type(:tokens).map(&:to_s).reject { |str| str.empty? }.join(" ")
+      select_type(:tokens).map(&:to_s).reject(&:empty?).join(" ")
     end
 
     # The tokens_string, but devoid of double-quotes and then wrapped
     # in new double-quotes
     def tokens_phrase
-      %Q("#{tokens_string.gsub('"', '')}")
+      %("#{tokens_string.gsub('"', '')}")
     end
 
     # Assign each node in this tree an arbitrary number, useful for

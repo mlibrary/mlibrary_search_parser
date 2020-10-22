@@ -1,9 +1,9 @@
 # frozen_string_literal: true
+
 require_relative 'base'
 
 module MLibrarySearchParser::Node
   class UnparseableNode < TokensNode
-
     def node_type
       :unparseable
     end

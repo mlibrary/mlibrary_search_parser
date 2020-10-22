@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe "BooleanNode" do
@@ -9,7 +10,6 @@ RSpec.describe "BooleanNode" do
     @genericOr  = or_node("left left", "right")
     @complex    = and_node(or_node('one', 'two'), or_node('three', not_node('four')))
   end
-
 
   describe "Generic and AND Boolean node" do
     before do
@@ -22,9 +22,9 @@ RSpec.describe "BooleanNode" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([
-                                         {"query" => "left terms"},
-                                         {"operator" => "AND"},
-                                         {"query" => "right terms"}
+                                       {"query" => "left terms"},
+                                       {"operator" => "AND"},
+                                       {"query" => "right terms"}
                                      ])
     end
 
@@ -57,7 +57,6 @@ RSpec.describe "BooleanNode" do
       expect(tnode(string)).to eq(tnode(string))
     end
 
-
     it "gets the 'positive' clauses" do
       node = MLibrarySearchParser::Node::AndNode.new(tnode('one'), not_node('two'))
       expect(node.positives).to match_array([tnode('one')])
@@ -81,9 +80,9 @@ RSpec.describe "BooleanNode" do
 
     it "has to_webform" do
       expect(@node.to_webform).to eq([
-                                         {"query" => "left terms"},
-                                         {"operator" => "OR"},
-                                         {"query" => "right terms"}
+                                       {"query" => "left terms"},
+                                       {"operator" => "OR"},
+                                       {"query" => "right terms"}
                                      ])
     end
 
@@ -99,20 +98,24 @@ RSpec.describe "BooleanNode" do
 
       it "to_webform" do
         expect(@nest_node.to_webform).to eq([
-                                                {"query" => "left terms"},
-                                                {"operator" => "OR"},
-                                                {"query" => "right terms"},
-                                                {"operator" => "AND"},
-                                                {"operator" => "NOT"},
-                                                {"query" => "unwanted terms"}
+                                              {"query" => "left terms"},
+                                              {"operator" => "OR"},
+                                              {"query" => "right terms"},
+                                              {"operator" => "AND"},
+                                              {"operator" => "NOT"},
+                                              {"query" => "unwanted terms"}
                                             ])
       end
 
       it "provides equality for trees of booleans" do
-        node_1 = and_node(or_node("one two", "three four"),
-                          and_node("five six", "seven"))
-        node_2 = and_node(or_node("one two", "three four"),
-                          and_node("five six", "seven"))
+        node_1 = and_node(
+          or_node("one two", "three four"),
+          and_node("five six", "seven")
+        )
+        node_2 = and_node(
+          or_node("one two", "three four"),
+          and_node("five six", "seven")
+        )
 
         expect(node_1).to eq(node_2)
       end
@@ -121,10 +124,14 @@ RSpec.describe "BooleanNode" do
         b1 = and_node("one", "two")
         b2 = or_node("three", "four")
         b3 = and_node("five", "six")
-        b4 = and_node(or_node("one two", "three four"),
-                      and_node("five six", "seven"))
-        b5 = and_node(or_node("one two", "three four"),
-                      and_node("five six", "XXXXXXX"))
+        b4 = and_node(
+          or_node("one two", "three four"),
+          and_node("five six", "seven")
+        )
+        b5 = and_node(
+          or_node("one two", "three four"),
+          and_node("five six", "XXXXXXX")
+        )
         expect(b1).to_not eq(b2)
         expect(b4).to_not eq(b5)
       end
@@ -145,7 +152,5 @@ RSpec.describe "BooleanNode" do
         expect(dup.tokens_string).to eq 'X X X X'
       end
     end
-
   end
-
 end

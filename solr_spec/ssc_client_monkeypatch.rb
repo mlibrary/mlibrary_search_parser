@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module SimpleSolrClient
-
   class Client
-
     # Set up files for a temp core
     def temp_core_dir_setup(corename)
       dest = Dir.mktmpdir("simple_solr_#{corename}_#{SecureRandom.uuid}", File.join(SOLR_INSTANCE_DIR, '/server/solr'))
@@ -11,9 +11,7 @@ module SimpleSolrClient
       FileUtils.cp_r File.join(src, '.'), dest
       dest
     end
-
   end
-
 end
 
 module SimpleSolrClient::Core::Search
@@ -21,6 +19,6 @@ module SimpleSolrClient::Core::Search
     v = value
     v = SimpleSolrClient.lucene_escape Array(value).join(' ') unless v == '*'
     kv = "#{field}:(#{v})"
-    get('select', {:q => kv, :rows => 50}, SimpleSolrClient::Response::QueryResponse)
+    get('select', {q: kv, rows: 50}, SimpleSolrClient::Response::QueryResponse)
   end
 end

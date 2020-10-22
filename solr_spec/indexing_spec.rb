@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'solr_wrapper'
 require 'simple_solr_client'
 require 'pry-byebug'
@@ -5,26 +7,28 @@ require_relative 'ssc_client_monkeypatch'
 require_relative 'test_solr_docs'
 
 def add_copy_field(client)
-  client.post_json('test_core/schema',
-                   {"add-field": {
-                       "name": "allfields",
-                       "type": "text_general",
-                       "indexed": true,
-                       "stored": true,
-                       "multiValued": true}
-                   }
+  client.post_json(
+    'test_core/schema',
+    {"add-field": {
+      "name": "allfields",
+      "type": "text_general",
+      "indexed": true,
+      "stored": true,
+      "multiValued": true
+    }}
   )
-  client.post_json('test_core/schema',
-                   {"add-copy-field": {
-                       "source": "*_t",
-                       "dest": ["allfields"]}
-                   }
+  client.post_json(
+    'test_core/schema',
+    {"add-copy-field": {
+      "source": "*_t",
+      "dest": ["allfields"]
+    }}
   )
 end
 
 def assert_search_results(core, field, value, should_include, should_not_include)
   found = core.fv_search(field, value)
-  found_ids = found.docs.collect {|d| d.id}
+  found_ids = found.docs.collect(&:id)
   expect(found_ids).to include(*should_include)
   expect(found_ids).not_to include(*should_not_include)
 end
@@ -44,7 +48,7 @@ RSpec.describe "indexing" do
       # search title:(huck finn)
       # find 19, 22
       # do not find 1, 21, 37
-      assert_search_results(core, :title_t, "huck finn", ["19", "22"], ["1", "24"])
+      assert_search_results(core, :title_t, "huck finn", %w[19 22], %w[1 24])
     end
   end
 end

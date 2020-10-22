@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 RSpec.describe MLibrarySearchParser do
@@ -157,11 +159,9 @@ RSpec.describe MLibrarySearchParser do
 
   it "parses a lone NOT after another clause in parens" do
     expect(parse_and_transform("three AND (one NOT two)").to_s).to eq "(three) AND (one | NOT (two))"
-
   end
 
   it "parses a lone NOT after another clause in a fielded" do
     expect(parse_and_transform("title:(one NOT two)").to_s).to eq "title:(one | NOT (two))"
   end
-
 end

@@ -27,8 +27,8 @@ RSpec.describe "FieldedNode" do
 
   it "has to_webform" do
     expect(@node.to_webform).to eq([
-                                       {"field" => "title"},
-                                       {"query" => "some terms"}
+                                     {"field" => "title"},
+                                     {"query" => "some terms"}
                                    ])
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'dotenv/load'
 
@@ -13,7 +15,7 @@ module MLibrarySearchParser
   class MiniSearch
     attr_accessor :search_string, :errors, :warnings
 
-    def initialize(search_string, errors=[])
+    def initialize(search_string, errors = [])
       @search_string = search_string
       @errors = errors
     end
