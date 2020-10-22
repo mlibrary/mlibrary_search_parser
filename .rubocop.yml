@@ -3,7 +3,9 @@ AllCops:
     - lib/mlibrary_search_parser.rb
 
 
-# I hate this. Hate it.
+# Force single-quotes for strings without interpolation.
+#
+# - I hate this. Hate it.
 Style/StringLiterals:
   Enabled: false
 
@@ -11,7 +13,10 @@ Style/StringLiterals:
 Style/RedundantParentheses:
   Enabled: false
 
-# Can make for too much indentation
+# Force every module start on its own line, as opposed to
+# Module::SubModule
+#
+# - Can make for too much indentation
 Style/ClassAndModuleChildren:
   Enabled: false
 
@@ -26,7 +31,7 @@ Naming/AccessorMethodName:
 Style/Not:
   Enabled: false
 
-# Use of an explicit if block is generally chosen
+# Use of an explicit 'if' block is generally chosen
 # in special cases for readability -- trust the
 # programmer on this one
 Style/IfUnlessModifier:
@@ -40,6 +45,19 @@ Style/RedundantInterpolation:
 
 Style/RedundantPercentQ:
   Enabled: false
+
+# The following are all focused on aligning method defnitions
+# or calls when the params/arguments don't all fit on the calling line.
+#
+# This gives us all on one line if possible; if not, give each argument
+# its own line and indent two spaces.
+#
+# Example:
+#    myobject.methodname(
+#      one,
+#      two,
+#      three
+#    )
 
 Layout/FirstMethodParameterLineBreak:
   Enabled: true
