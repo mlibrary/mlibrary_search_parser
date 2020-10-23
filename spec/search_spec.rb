@@ -5,7 +5,7 @@ RSpec.describe "Search" do
         before do
             @config_file = './spec/data/00-catalog.yml'
             @config = YAML.load(ERB.new(File.read(@config_file)).result)
-            @search = MLibrarySearchParser::Search.new("a simple search", @config)
+            @search = MLibrarySearchParser::Search.new("a simple search", @config["fields"])
         end
         it "returns its original input" do
             expect(@search.original_input).to eq "a simple search"
@@ -40,7 +40,7 @@ RSpec.describe "Search" do
         before do
             @config_file = './spec/data/00-catalog.yml'
             @config = YAML.load(ERB.new(File.read(@config_file)).result)
-            @search = MLibrarySearchParser::Search.new("a query AND some more query", @config)
+            @search = MLibrarySearchParser::Search.new("a query AND some more query", @config["fields"])
         end
         it "returns its original input" do
             expect(@search.original_input).to eq "a query AND some more query"
@@ -67,7 +67,7 @@ RSpec.describe "Search" do
         before do
             @config_file = './spec/data/00-catalog.yml'
             @config = YAML.load(ERB.new(File.read(@config_file)).result)
-            @search = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @config)
+            @search = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @config["fields"])
         end
 
         it "returns its original input" do
@@ -100,7 +100,7 @@ RSpec.describe "Search" do
         before do
             @config_file = './spec/data/00-catalog.yml'
             @config = YAML.load(ERB.new(File.read(@config_file)).result)
-            @search = MLibrarySearchParser::Search.new("title:something (AND somebody", @config)
+            @search = MLibrarySearchParser::Search.new("title:something (AND somebody", @config["fields"])
         end
 
         it "returns its original input" do
@@ -139,7 +139,7 @@ RSpec.describe "Search" do
                 ]
             @config_file = './spec/data/00-catalog.yml'
             @config = YAML.load(ERB.new(File.read(@config_file)).result)
-            @search = MLibrarySearchParser::Search.new(@form, @config)
+            @search = MLibrarySearchParser::Search.new(@form, @config["fields"])
         end
 
         #it "returns its original input" do

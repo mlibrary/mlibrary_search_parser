@@ -6,6 +6,17 @@ require 'mlibrary_search_handler'
 require "search"
 
 module MLibrarySearchParser
+  class SearchParser
+    attr_reader :field_names
+
+    def initialize(field_names)
+      @field_names = field_names
+    end
+
+    def parse(search_string)
+      Search.new(search_string, field_names)
+    end
+  end
   class Error < StandardError; end
 
   class BaseParser < Parslet::Parser

@@ -45,7 +45,7 @@ module MLibrarySearchParser
           query = node["fielded"]["query"]
           @config_file = './spec/data/00-catalog.yml'
           @config = YAML.load(ERB.new(File.read(@config_file)).result)
-          query_search = Search.new(query, @config)
+          query_search = Search.new(query, @config["fields"])
           field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)    
           field_nodes.push(field_node)
         when "operator"
@@ -65,17 +65,17 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search, :yaml_config
+    attr_reader :search_tree, :original_input, :mini_search, :field_names
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler)
       
     end
 
-    def initialize(original_input, yaml_config)
+    def initialize(original_input, field_names)
       @original_input = original_input
-      @yaml_config = yaml_config
-      @search_handler = MLibrarySearchParser::SearchHandler.new(@yaml_config["fields"])
+      @field_names = field_names
+      @search_handler = MLibrarySearchParser::SearchHandler.new(@field_names)
       @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 
@@ -108,6 +108,10 @@ module MLibrarySearchParser
       search_tree.to_s
     end
 
+    def to_clean_string
+      search_tree.to_clean_string
+    end
+
     def to_webform
       # might return an ordered list of duples
       search_tree.to_webform
@@ -120,4 +124,6 @@ module MLibrarySearchParser
       search_tree.to_s
     end
   end
+
+
 end
