@@ -6,7 +6,9 @@ RSpec.describe MLibrarySearchParser do
   end
 
   before do
-    @parser      = MLibrarySearchParser::QueryParser.new('spec/data/fields_file.json')
+    @config_file = './spec/data/00-catalog.yml'
+    @config = YAML.load(ERB.new(File.read(@config_file)).result)
+    @parser      = MLibrarySearchParser::QueryParser.new(@config["fields"])
     @transformer = MLibrarySearchParser::QueryTransformer.new
 
     def parse_and_transform(string)
