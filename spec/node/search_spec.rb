@@ -15,10 +15,10 @@ RSpec.describe "SearchNode" do
 
   describe "Basics" do
     it "stringifies" do
-      expect(@simple.to_clean_string).to eq "one"
-      expect(@fielded.to_clean_string).to eq "title:two"
-      expect(@simple_multi.to_clean_string).to eq "one two three"
-      expect(@complex.to_clean_string).to eq "(one AND two) (three OR four)"
+      expect(@simple.clean_string).to eq "one"
+      expect(@fielded.clean_string).to eq "title:two"
+      expect(@simple_multi.clean_string).to eq "one two three"
+      expect(@complex.clean_string).to eq "(one AND two) (three OR four)"
     end
 
     it "provides equality" do
@@ -31,7 +31,7 @@ RSpec.describe "SearchNode" do
 
     it "deep_dups with a block" do
       dup = @complex.deep_dup {|n| n.is_type?(:or) ? tnode("XXX") : n }
-      expect(dup.to_clean_string).to eq "(one AND two) XXX"
+      expect(dup.clean_string).to eq "(one AND two) XXX"
     end
 
   end

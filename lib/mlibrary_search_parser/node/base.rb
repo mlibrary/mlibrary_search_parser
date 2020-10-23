@@ -51,13 +51,32 @@ module MLibrarySearchParser::Node
     # Default implementation just returns the string with optional
     # parens
     # @return [String] the clean string representation of the subtree
-    def to_clean_string
+    def clean_string
       parenthesize_multiwords(to_s)
     end
 
     # Is this the root node?
     def root_node?
       parent.nil?
+    end
+
+    # How far down are we?
+    # @return [Integer] depth from the root (where root is 0)
+    def depth
+      if root_node?
+        0
+      else
+        1 + parent.depth
+      end
+    end
+
+    # Just an indent for printing the tree
+    def tree_indent
+      if depth.zero?
+        ""
+      else
+        parent.tree_indent + "  ┝  "
+      end
     end
 
     # Get the immediate children -- nothing for leaves, left/right
