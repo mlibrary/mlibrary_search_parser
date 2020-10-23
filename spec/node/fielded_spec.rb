@@ -13,16 +13,16 @@ RSpec.describe "FieldedNode" do
   end
 
   it "has a simple to_clean_string" do
-    expect(fielded_node('title', 'one').to_clean_string).to eq("title:one")
+    expect(fielded_node('title', 'one').clean_string).to eq("title:one")
   end
 
   it "has multi-term to_clean_string" do
-    expect(@node.to_clean_string).to eq("title:(some terms)")
+    expect(@node.clean_string).to eq("title:(some terms)")
   end
 
   it "has a more complex to_clean_string" do
     n = and_node(fielded_node('title', and_node('one', 'two')), fielded_node("author", '"phrase here"'))
-    expect(n.to_clean_string).to eq('title:(one AND two) AND author:("phrase here")')
+    expect(n.clean_string).to eq('title:(one AND two) AND author:("phrase here")')
   end
 
   it "has to_webform" do

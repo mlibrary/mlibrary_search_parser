@@ -29,11 +29,11 @@ RSpec.describe "BooleanNode" do
     end
 
     it "produces a clean string with multi terms" do
-      expect(@node.to_clean_string).to eq("(left terms) AND (right terms)")
+      expect(@node.clean_string).to eq("(left terms) AND (right terms)")
     end
 
     it "produces a clean string with single terms" do
-      expect(@genericAnd.to_clean_string).to eq("left AND (right right)")
+      expect(@genericAnd.clean_string).to eq("left AND (right right)")
     end
 
     it "has two children" do
