@@ -44,7 +44,7 @@ module MLibrarySearchParser
       end
 
       def tree_string
-        "#{tree_indent}<#{field}>\n#{query.tree_string}"
+        "#{tree_indent}FIELD: #{field}\n#{query.tree_string}"
       end
 
       def inspect
