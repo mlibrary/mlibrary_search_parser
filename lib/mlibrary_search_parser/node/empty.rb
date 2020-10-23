@@ -8,6 +8,10 @@ module MLibrarySearchParser::Node
       # nothing; just overriding
     end
 
+    def tree_string
+      "#{tree_indent}<EMPTY>"
+    end
+
     def inspect
       "<EmptyNode>"
     end
