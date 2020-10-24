@@ -2,7 +2,9 @@ require_relative 'spec_helper'
 
 RSpec.describe "MLibrarySearchHandler" do
   before do
-    @handler = MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json')
+    @config_file = './spec/data/00-catalog.yml'
+    @config = YAML.load(ERB.new(File.read(@config_file)).result)
+    @handler = MLibrarySearchParser::SearchHandler.new(@config["fields"])
   end
 
   describe "check_quotes" do
