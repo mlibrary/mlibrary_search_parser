@@ -16,7 +16,7 @@ RSpec.configure do |config|
 end
 
 def nodeify(node_or_string)
-  if node_or_string.is_a? MLibrarySearchParser::Node::BaseNode
+  if node_or_string.kind_of? MLibrarySearchParser::Node::BaseNode
     node_or_string
   else
     MLibrarySearchParser::Node::TokensNode.new(node_or_string)
@@ -43,7 +43,9 @@ def not_node(node_or_string)
   MLibrarySearchParser::Node::NotNode.new(nodeify(node_or_string))
 end
 
-TEST_HANDLER = MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json')
+@config_file = './spec/data/00-catalog.yml'
+@config = YAML.load(ERB.new(File.read(@config_file)).result)
+TEST_HANDLER =  MLibrarySearchParser::SearchHandler.new( @config["fields"])
 
 def search_node(*clauses)
   MLibrarySearchParser::Node::SearchNode.new(clauses.map { |c| nodeify(c)})

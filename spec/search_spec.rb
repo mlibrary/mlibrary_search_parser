@@ -3,12 +3,11 @@
 require_relative 'spec_helper'
 
 RSpec.describe "Search" do
-  before do
-    @search_handler = MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json')
-  end
   describe "a simple search" do
     before do
-      @search = MLibrarySearchParser::Search.new("a simple search", @search_handler)
+      @config_file = './spec/data/00-catalog.yml'
+      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search      = MLibrarySearchParser::Search.new("a simple search", @config)
     end
     it "returns its original input" do
       expect(@search.original_input).to eq "a simple search"
@@ -41,7 +40,9 @@ RSpec.describe "Search" do
 
   describe "a query AND some more query" do
     before do
-      @search = MLibrarySearchParser::Search.new("a query AND some more query", @search_handler)
+      @config_file = './spec/data/00-catalog.yml'
+      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search      = MLibrarySearchParser::Search.new("a query AND some more query", @config)
     end
     it "returns its original input" do
       expect(@search.original_input).to eq "a query AND some more query"
@@ -53,9 +54,9 @@ RSpec.describe "Search" do
 
     it "has to_webform" do
       expect(@search.to_webform).to eq([
-                                         {"query" => "a query"},
-                                         {"operator" => "AND"},
-                                         {"query" => "some more query"}
+                                           {"query" => "a query"},
+                                           {"operator" => "AND"},
+                                           {"query" => "some more query"}
                                        ])
     end
 
@@ -66,7 +67,9 @@ RSpec.describe "Search" do
 
   describe "title:somebody OR author:something NOT author:whozit" do
     before do
-      @search = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @search_handler)
+      @config_file = './spec/data/00-catalog.yml'
+      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search      = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @config)
     end
 
     it "returns its original input" do
@@ -79,14 +82,14 @@ RSpec.describe "Search" do
 
     it "has to_webform" do
       expect(@search.to_webform).to eq([
-                                         {"field" => "title"},
-                                         {"query" => "somebody"},
-                                         {"operator" => "OR"},
-                                         {"field" => "author"},
-                                         {"query" => "something"},
-                                         {"operator" => "NOT"},
-                                         {"field" => "author"},
-                                         {"query" => "whozit"}
+                                           {"field" => "title"},
+                                           {"query" => "somebody"},
+                                           {"operator" => "OR"},
+                                           {"field" => "author"},
+                                           {"query" => "something"},
+                                           {"operator" => "NOT"},
+                                           {"field" => "author"},
+                                           {"query" => "whozit"}
                                        ])
     end
 
@@ -97,7 +100,9 @@ RSpec.describe "Search" do
 
   describe "title:something (AND somebody" do
     before do
-      @search = MLibrarySearchParser::Search.new("title:something (AND somebody", @search_handler)
+      @config_file = './spec/data/00-catalog.yml'
+      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search      = MLibrarySearchParser::Search.new("title:something (AND somebody", @config)
     end
 
     it "returns its original input" do
@@ -115,29 +120,32 @@ RSpec.describe "Search" do
 
     it "has to_webform" do
       expect(@search.to_webform).to eq([
-                                         {"field" => "title"},
-                                         {"query" => "something"},
-                                         {"operator" => "AND"},
-                                         {"query" => "somebody"}
+                                           {"field" => "title"},
+                                           {"query" => "something"},
+                                           {"operator" => "AND"},
+                                           {"query" => "somebody"}
                                        ])
     end
   end
 
   describe "webform input" do
     before do
-      @form = [{"field" => "title"},
-               {"query" => "somebody"},
-               {"operator" => "OR"},
-               {"field" => "author"},
-               {"query" => "something"},
-               {"operator" => "NOT"},
-               {"field" => "author"},
-               {"query" => "whozit"}]
-      @search = MLibrarySearchParser::Search.new(@form, @search_handler)
+      @form        = [{"field" => "title"},
+                      {"query" => "somebody"},
+                      {"operator" => "OR"},
+                      {"field" => "author"},
+                      {"query" => "something"},
+                      {"operator" => "NOT"},
+                      {"field" => "author"},
+                      {"query" => "whozit"}
+      ]
+      @config_file = './spec/data/00-catalog.yml'
+      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search      = MLibrarySearchParser::Search.new(@form, @config)
     end
 
-    # it "returns its original input" do
-    # expect(@search.original_input).to eq "title:somebody OR author:something NOT author:whozit"
-    # end
+    #it "returns its original input" do
+    #expect(@search.original_input).to eq "title:somebody OR author:something NOT author:whozit"
+    #end
   end
 end

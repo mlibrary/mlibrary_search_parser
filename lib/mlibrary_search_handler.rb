@@ -35,22 +35,16 @@ module MLibrarySearchParser
       :main_parser,
       :transformer
 
-    def initialize(filename)
-      @fieldnames = load_fieldnames(filename)
+    def initialize(fields)
+      @fieldnames = fields
       @special_char_parser = SpecialCharParser.new
       @special_char_transformer = SpecialCharTransformer.new
       @quote_preparser = PreQueryDoubleQuotesParser.new
       @paren_preparser = PreQueryParenthesisParser.new
-      @field_preparser = PreQueryNestedFieldsParser.new(filename)
-      @main_parser = QueryParser.new(filename)
+      @field_preparser = PreQueryNestedFieldsParser.new(@fieldnames)
+      @main_parser = QueryParser.new(@fieldnames)
       @fallback_parser = FallbackParser.new
       @transformer = QueryTransformer.new
-    end
-
-    def load_fieldnames(filename)
-      field_file = File.read(filename)
-      field_obj = JSON.parse(field_file)
-      field_obj.keys
     end
 
     def fix_special_chars(search)
