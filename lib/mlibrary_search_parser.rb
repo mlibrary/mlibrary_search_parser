@@ -75,11 +75,9 @@ module MLibrarySearchParser
 
   class FieldParser < BaseParser
     # @param [Array<String>] fieldnames Names of the indexed files (title, author)
-    def initialize(filename)
+    def initialize(fieldnames)
       super()
-      field_file = File.read(filename)
-      field_obj  = JSON.parse(field_file)
-      setup_fieldnames(field_obj.keys)
+      setup_fieldnames(fieldnames)
     end
 
     def setup_fieldnames(flist)
