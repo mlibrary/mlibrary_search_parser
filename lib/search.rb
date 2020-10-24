@@ -43,7 +43,9 @@ module MLibrarySearchParser
         when "fielded"
           field = node["fielded"]["field"]
           query = node["fielded"]["query"]
-          query_search = Search.new(query, MLibrarySearchParser::SearchHandler.new('spec/data/fields_file.json'))
+          @config_file = './spec/data/00-catalog.yml'
+          @config = YAML.load(ERB.new(File.read(@config_file)).result)
+          query_search = Search.new(query, @config)
           field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)    
           field_nodes.push(field_node)
         when "operator"
@@ -63,16 +65,17 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search
+    attr_reader :search_tree, :original_input, :mini_search, :yaml_config
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler)
       
     end
 
-    def initialize(original_input, search_handler)
+    def initialize(original_input, yaml_config)
       @original_input = original_input
-      @search_handler = search_handler
+      @yaml_config = yaml_config
+      @search_handler = MLibrarySearchParser::SearchHandler.new(@yaml_config["fields"])
       @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 

@@ -2,7 +2,9 @@ require_relative 'spec_helper'
 
 RSpec.describe "PreQueryNestedFieldsParser" do
   before do
-    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new('spec/data/fields_file.json')
+    @config_file = './spec/data/00-catalog.yml'
+    @config = YAML.load(ERB.new(File.read(@config_file)).result)
+    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new(@config["fields"])
   end
 
   it "validates a single field" do
