@@ -45,6 +45,9 @@ module MLibrarySearchParser::Node
       self
     end
 
+    def tree_string
+      "#{tree_indent}#{clean_string}"
+    end
 
     def inspect
       "<TokensNode: [#{text}]>"

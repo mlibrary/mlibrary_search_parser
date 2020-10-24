@@ -44,8 +44,18 @@ module MLibrarySearchParser::Node
       clauses.join(" | ")
     end
 
-    def to_clean_string
-      clauses.map(&:to_clean_string).join(' ')
+    def clean_string
+      clauses.map(&:clean_string).join(' ')
+    end
+
+    # Since the search node is just a holder for multiple clauses,
+    # we don't count it as deepening the tree
+    def depth
+      super - 1
+    end
+
+    def tree_string
+      clauses.map(&:tree_string).join("\n")
     end
 
     def inspect
