@@ -20,6 +20,8 @@ module MLibrarySearchParser
         [query]
       end
 
+
+
       def deep_dup(&blk)
         n = self.class.new(field, query.deep_dup(&blk))
         if block_given?
@@ -37,8 +39,12 @@ module MLibrarySearchParser
         "#{field}:(#{query})"
       end
 
-      def to_clean_string
-        "#{field}:#{query.to_clean_string}"
+      def clean_string
+        "#{field}:#{query.clean_string}"
+      end
+
+      def tree_string
+        "#{tree_indent}FIELD: #{field}\n#{query.tree_string}"
       end
 
       def inspect
