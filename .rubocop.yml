@@ -1,2 +1,76 @@
+AllCops:
+  Exclude:
+    - lib/mlibrary_search_parser.rb
+
+
+# Force single-quotes for strings without interpolation.
+#
+# - I hate this. Hate it.
 Style/StringLiterals:
   Enabled: false
+
+# Often added for clarity
+Style/RedundantParentheses:
+  Enabled: false
+
+# Force every module start on its own line, as opposed to
+# Module::SubModule
+#
+# - Can make for too much indentation
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# We never use method name `set_*` unless we
+# really need to show something weird is
+# happening, so don't disallow it
+Naming/AccessorMethodName:
+  Enabled: false
+
+# I don't understand the desire to use ! instead of `not`
+# The former is so much easier to miss when scanning code.
+Style/Not:
+  Enabled: false
+
+# Use of an explicit 'if' block is generally chosen
+# in special cases for readability -- trust the
+# programmer on this one
+Style/IfUnlessModifier:
+  Enabled: false
+
+# Switching between interpolation and `to_s` is a pain
+# compared to just adding/removing stuff between the
+# double-quotes. Ditto with %[qQ]
+Style/RedundantInterpolation:
+  Enabled: false
+
+Style/RedundantPercentQ:
+  Enabled: false
+
+# The following are all focused on aligning method defnitions
+# or calls when the params/arguments don't all fit on the calling line.
+#
+# This gives us all on one line if possible; if not, give each argument
+# its own line and indent two spaces.
+#
+# Example:
+#    myobject.methodname(
+#      one,
+#      two,
+#      three
+#    )
+
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Layout/ArgumentAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/MultilineMethodArgumentLineBreaks:
+  Enabled: true
+
+Layout/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Layout/FirstMethodArgumentLineBreak:
+  Enabled: true
