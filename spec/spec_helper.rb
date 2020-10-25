@@ -1,5 +1,6 @@
 require "bundler/setup"
-require "mlibrary_search_parser"
+require "mlibrary_search_parser/query_parser"
+
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

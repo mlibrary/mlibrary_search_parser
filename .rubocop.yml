@@ -1,6 +1,6 @@
 AllCops:
   Exclude:
-    - lib/mlibrary_search_parser.rb
+    - lib/query_parser.rb
 
 
 # Force single-quotes for strings without interpolation.

@@ -1,4 +1,4 @@
-require 'mlibrary_search_handler'
+require 'mlibrary_search_parser/search_handler'
 
 module MLibrarySearchParser
   # class SearchFactory
