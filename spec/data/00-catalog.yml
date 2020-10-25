@@ -4,6 +4,16 @@ metadata:
   name: Catalog
   short_descr: The Library Catalog.
 source: mirlyn
+
+parser_solr_params:
+  series:
+    qf: series^200 series2^50
+    pf: series^500 series2^50
+
+  title:
+    qf: title_common_exact^1000 title_common^120 title_equiv^60 title_rest^30 series^10 series2^5
+    pf: serialTitle_common_exact^600 title_common_exact^500 title_l^150 title_common^100 title_a_exact^50 title_top^30 title_rest^20 series^3 series2^2
+
 solr_params:
 
   f.search_series.pf: series^500 series2^50
