@@ -2,8 +2,8 @@ require 'parslet'
 require 'json'
 require 'pry'
 require "mlibrary_search_parser/node"
-require 'mlibrary_search_handler'
-require "search"
+require 'mlibrary_search_parser/search_handler'
+require "mlibrary_search_parser/search"
 
 module MLibrarySearchParser
   class Error < StandardError; end
