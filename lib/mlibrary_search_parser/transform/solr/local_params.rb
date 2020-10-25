@@ -24,11 +24,11 @@ module MLibrarySearchParser
                    else
                      raise "ShouldMust should only get :should or :must"
                    end
-          "(#{_transform(node.left)} #{joiner} #{_transform(node.right)})"
+          "(#{transform(node.left)} #{joiner} #{transform(node.right)})"
         end
 
         def transform_not_node(node, extras: {})
-          "NOT (#{_transform(node)})"
+          "NOT (#{transform(node)})"
         end
 
       end
