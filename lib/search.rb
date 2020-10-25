@@ -65,17 +65,17 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search, :yaml_config
+    attr_reader :search_tree, :original_input, :mini_search, :config
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler)
       
     end
 
-    def initialize(original_input, yaml_config)
+    def initialize(original_input, config)
       @original_input = original_input
-      @yaml_config = yaml_config
-      @search_handler = MLibrarySearchParser::SearchHandler.new(@yaml_config["fields"])
+      @config         = config
+      @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
       @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 

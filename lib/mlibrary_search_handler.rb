@@ -13,9 +13,9 @@ module MLibrarySearchParser
   class MiniSearch
     attr_accessor :search_string, :errors, :warnings
 
-    def initialize(search_string, errors=[])
+    def initialize(search_string, errors = [])
       @search_string = search_string
-      @errors = errors
+      @errors        = errors
     end
 
     def to_s
@@ -25,24 +25,25 @@ module MLibrarySearchParser
 
   class SearchHandler
     attr_reader :fieldnames,
-      :special_char_parser,
-      :special_char_transformer,
-      :quote_preparser,
-      :paren_preparser,
-      :field_preparser,
-      :main_parser,
-      :transformer
+                :special_char_parser,
+                :special_char_transformer,
+                :quote_preparser,
+                :paren_preparser,
+                :field_preparser,
+                :main_parser,
+                :transformer
 
-    def initialize(fields)
-      @fieldnames = fields
-      @special_char_parser = SpecialCharParser.new
+
+    def initialize(config)
+      @fieldnames               = config["search_fields"].keys
+      @special_char_parser      = SpecialCharParser.new
       @special_char_transformer = SpecialCharTransformer.new
-      @quote_preparser = PreQueryDoubleQuotesParser.new
-      @paren_preparser = PreQueryParenthesisParser.new
-      @field_preparser = PreQueryNestedFieldsParser.new(@fieldnames)
-      @main_parser = QueryParser.new(@fieldnames)
-      @fallback_parser = FallbackParser.new
-      @transformer = QueryTransformer.new
+      @quote_preparser          = PreQueryDoubleQuotesParser.new
+      @paren_preparser          = PreQueryParenthesisParser.new
+      @field_preparser          = PreQueryNestedFieldsParser.new(@fieldnames)
+      @main_parser              = QueryParser.new(@fieldnames)
+      @fallback_parser          = FallbackParser.new
+      @transformer              = QueryTransformer.new
     end
 
     def fix_special_chars(search)
@@ -53,7 +54,7 @@ module MLibrarySearchParser
 
     def check_quotes(search)
       search_string = search.search_string
-      errors = search.errors
+      errors        = search.errors
       begin
         @quote_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -65,7 +66,7 @@ module MLibrarySearchParser
 
     def check_parens(search)
       search_string = search.search_string
-      errors = search.errors
+      errors        = search.errors
       begin
         @paren_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -77,7 +78,7 @@ module MLibrarySearchParser
 
     def check_nested_fields(search)
       search_string = search.search_string
-      errors = search.errors
+      errors        = search.errors
       begin
         @field_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -92,8 +93,8 @@ module MLibrarySearchParser
       # We want to eliminate nested fields like author:title:blah
       # They are unreasonably hard to recognize/prevent with Parslet
       any_fieldname = Regexp.union(@fieldnames)
-      nested_regex = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
-      match        = nested_regex.match(search_string)
+      nested_regex  = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
+      match         = nested_regex.match(search_string)
       if match
         search_string = search_string.gsub(nested_regex, '\1:\2 \3')
         errors << NestedFieldsError.new
@@ -103,7 +104,7 @@ module MLibrarySearchParser
 
     def check_parse(search)
       search_string = search.search_string
-      errors = search.errors
+      errors        = search.errors
       begin
         @main_parser.parse(search_string)
       rescue Parslet::ParseFailed
