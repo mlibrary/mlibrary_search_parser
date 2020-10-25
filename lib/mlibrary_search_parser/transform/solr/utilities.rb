@@ -15,7 +15,7 @@ module MLibrarySearchParser
 
         def lucene_escape_node(node)
           node.deep_dup do |n|
-            if n.tokens_node?
+            if n.is_type?(:tokens)
               n.class.new(lucene_escape(n.text))
             else
               n

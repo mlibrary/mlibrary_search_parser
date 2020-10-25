@@ -13,30 +13,42 @@ module MLibrarySearchParser
       #    [JSON request API](https://lucene.apache.org/solr/guide/8_5/json-request-api.html)
       class SolrSearch
         include Utilities
-        attr_accessor :transform, :params, :payload
+        attr_accessor :transform, :params, :query, :search_tree
 
         # @param [MLibrarySearchParser::Search] search
-        # @param [MLibrarySearchParser::Transformer::Solr::JsonEdismax] transformer
         def initialize(search)
-          @query       = lucene_escape_node(search.search_tree)
-          @params      = Hash.new({})
-          @payload     = {}
-          @config      = search.config
+          @search_tree = lucene_escape_node(search.search_tree.deep_dup)
+          @search_tree.renumber!
+          @params = {}
+          @query  = {}
+          @config = search.config
+          transform!
+        end
+
+        def transform!
+          @query = transform(search_tree)
+        end
+
+        def default_field
+          @config["search_field_default"]
+        end
+
+        def field_config(field)
+          @config['search_fields'][field]
         end
 
         # We can't use a hash to represent params because they can be repeated
         def add_param(key, value)
-          params[key] << value
+          params[key] = value
         end
 
-        def replace_param(key, value)
+        def set_param(key, value)
           params[key] = [value]
         end
 
         # Dispatch to specific methods for transforming
         # each node type
         # @param [MLibrarySearchParser::Node::BaseNode] node
-        # @param [MLibrarySearchParser::Transform::SolrSearch] ss
         # @return [??] depends on that transformation being done
         def transform(node)
           case node.node_type

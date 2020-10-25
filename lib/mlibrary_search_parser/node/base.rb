@@ -12,7 +12,7 @@ module MLibrarySearchParser::Node
     attr_accessor :parent
 
     # A hash into which you can stuff whatever you want
-    attr_accessor :payload
+    attr_accessor :query
 
     def set_parent!(parent)
       @parent  = parent
