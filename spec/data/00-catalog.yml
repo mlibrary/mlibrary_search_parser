@@ -10,9 +10,44 @@ search_fields:
   title:
     qf: title_common_exact^1000 title_common^120 title_equiv^60 title_rest^30 series^10 series2^5
     pf: serialTitle_common_exact^600 title_common_exact^500 title_l^150 title_common^100 title_a_exact^50 title_top^30 title_rest^20 series^3 series2^2
+
   author:
     qf: author^25000 author2^20000 author_top^5000 author_rest^1000
     pf: author^10 author2^5 author_top^2 author_rest^1
+
+  allfields:
+    qf: >-
+      allfieldsProper^2
+      allfields^1
+      title_common^50
+      title_equiv^10
+      mainauthor^80
+      author^50
+      isbn
+      issn
+      oclc
+      lccn
+      barcode
+      htid
+      callnosearch
+
+    pf: >-
+      title_equiv^40
+      title_top^20
+      title_rest^10
+
+      author^80
+      author_top^30
+      author_rest^20
+
+
+    pf2: >-
+      title_author^500
+      title_equiv^80
+      title_l^50
+
+    ps2: 2
+
 
 
 solr_params:
