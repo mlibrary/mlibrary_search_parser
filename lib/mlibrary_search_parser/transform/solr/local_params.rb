@@ -19,7 +19,7 @@ module MLibrarySearchParser
           q_localparams_name  = "q#{node.number}"
           qq_localparams_name = "qq#{node.number}"
 
-          add_param(q_localparams_name, node.clean_string)
+          add_param(q_localparams_name, node.tokens_string)
           add_param(qq_localparams_name, node.tokens_phrase)
 
           args = field_config(field).each_pair.map do |k, v|
