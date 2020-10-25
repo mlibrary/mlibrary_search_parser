@@ -21,10 +21,10 @@ module MLibrarySearchParser::Node
     # @param [BaseNode] other The thing to compare to
     def ==(other)
       other.is_type?(node_type) &&
-      other.clauses.size == clauses.size &&
-      other.clauses.zip(clauses).all? do |n1, n2|
-        n1 == n2
-      end
+        other.clauses.size == clauses.size &&
+        other.clauses.zip(clauses).all? do |n1, n2|
+          n1 == n2
+        end
     end
 
     def shake
