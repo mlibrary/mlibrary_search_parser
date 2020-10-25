@@ -18,23 +18,19 @@ module MLibrarySearchParser
 
         # @param [MLibrarySearchParser::Node::Search] query
         # @return [MLibrarySearchParser::Transform::SolrSearch]
-        def transform(query)
+        def to_search(query)
           q = query.deep_dup { |n| lucene_escape_node(n) }
           q.renumber!
-          _transform(q, SolrSearch.new)
+          transform(q, SolrSearch.new)
         end
 
-
-        def add_config_parmas(fieldname)
-
-        end
 
         # Dispatch to specific methods for transforming
         # each node type
         # @param [MLibrarySearchParser::Node::BaseNode] node
         # @param [MLibrarySearchParser::Transform::SolrSearch] ss
         # @return [??] depends on that transformation being done
-        def _transform(node, ss)
+        def transform(node, ss)
           case node.node_type
           when :tokens
             tokens_node(node, ss)
@@ -72,8 +68,8 @@ module MLibrarySearchParser
         # and the negated clauses go into the must_not
         # @todo Deal with double-negation
         def boolnode(node, shouldmust)
-          pos                 = node.positives.map { |x| _transform(x) }
-          neg                 = node.negatives.map { |x| _transform(x) }
+          pos                 = node.positives.map { |x| transform(x) }
+          neg                 = node.negatives.map { |x| transform(x) }
           q                   = {
               bool: {shouldmust.to_sym => pos}
           }
@@ -107,7 +103,7 @@ module MLibrarySearchParser
 
         def search_node(node, extras: {})
           if node.clauses.size == 1
-            _transform(node.clauses.first, extras: extras)
+            transform(node.clauses.first, extras: extras)
           else
             boolnode(node, :must)
           end

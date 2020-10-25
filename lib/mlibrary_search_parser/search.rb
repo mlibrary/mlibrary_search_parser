@@ -37,16 +37,16 @@ module MLibrarySearchParser
 
     def search_tree
       field_nodes = []
-      operators = []
+      operators   = []
       input_form.each { |node|
         case node.keys.first
         when "fielded"
-          field = node["fielded"]["field"]
-          query = node["fielded"]["query"]
+          field        = node["fielded"]["field"]
+          query        = node["fielded"]["query"]
           @config_file = './spec/data/00-catalog.yml'
-          @config = YAML.load(ERB.new(File.read(@config_file)).result)
+          @config      = YAML.load(ERB.new(File.read(@config_file)).result)
           query_search = Search.new(query, @config)
-          field_node = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)    
+          field_node   = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)
           field_nodes.push(field_node)
         when "operator"
           operators.push(node["operator"])
@@ -54,8 +54,8 @@ module MLibrarySearchParser
       }
       operators.reduce(field_nodes.shift) { |root, new_oper|
         MLibrarySearchParser::Node::Boolean.for_operator(new_oper,
-          root,
-          field_nodes.shift)
+                                                         root,
+                                                         field_nodes.shift)
       }
     end
 
@@ -68,15 +68,13 @@ module MLibrarySearchParser
     attr_reader :search_tree, :original_input, :mini_search, :config
     # could come from search box, from adv search form, or from solr output
 
-    def self.from_form(input, search_handler)
-      
-    end
+    def self.from_form(input, search_handler) end
 
     def initialize(original_input, config)
       @original_input = original_input
       @config         = config
-      @search_handler = MLibrarySearchParser::SearchHandler.new(@config["search_fields"].keys)
-      @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
+      @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
+      @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 
     def search_tree

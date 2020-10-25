@@ -3,6 +3,12 @@ module MLibrarySearchParser::Node
   # The base of all the node types. Has everything you need
   # for inspecting and traversing the tree
   class BaseNode
+
+    # An arbitrary number associated with this node in a given instance. Must be
+    # set with #renumber!
+    attr_accessor :number
+
+    # Parent node, or nil if root
     attr_accessor :parent
 
     # A hash into which you can stuff whatever you want
@@ -207,13 +213,5 @@ module MLibrarySearchParser::Node
       flatten.each_with_index { |n, i| n.number = i }
     end
 
-    # A convenience accessor for the payload number
-    def number
-      payload[:number]
-    end
-
-    def number=(i)
-      payload[:number] = i
-    end
   end
 end
