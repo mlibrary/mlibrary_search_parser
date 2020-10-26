@@ -72,7 +72,7 @@ module MLibrarySearchParser
 
 
         def tokens_node(node)
-          edismaxify(node)
+          edismaxify(default_field, node)
         end
 
         def and_node(node)
@@ -92,7 +92,7 @@ module MLibrarySearchParser
         end
 
         def fielded_node(node)
-          edismaxify(node)
+          edismaxify(node.field, node.query)
         end
 
         def reduce_ands(clauses)
@@ -108,7 +108,6 @@ module MLibrarySearchParser
           if node.clauses.size == 1
             transform(node.clauses.first)
           else
-            reduced_to_one_node = reduce_ands(node.clauses)
             boolnode(reduce_ands(node.clauses), :must)
           end
         end
