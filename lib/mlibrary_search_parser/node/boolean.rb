@@ -52,13 +52,17 @@ module MLibrarySearchParser
         "(#{left}) #{operator.upcase} (#{right})"
       end
 
-      def to_clean_string
-        cs = "#{left.to_clean_string} #{operator.upcase} #{right.to_clean_string}"
+      def clean_string
+        cs = "#{left.clean_string} #{operator.upcase} #{right.clean_string}"
         if root_node?
           cs
         else
           "(#{cs})"
         end
+      end
+
+      def tree_string
+        ["#{tree_indent}#{operator.to_s.upcase}", left.tree_string, right.tree_string].join("\n")
       end
 
       def trim(&blk)
@@ -150,6 +154,10 @@ module MLibrarySearchParser
 
       def to_s
         "#{operator.upcase} (#{operand})"
+      end
+
+      def tree_string
+        "#{tree_indent}#{operator.to_s.upcase}\n#{operand.tree_string}"
       end
 
       def deep_dup(&blk)

@@ -88,7 +88,7 @@ module MLibrarySearchParser
     # @param [Array<String>] fieldnames Names of the indexed files (title, author)
     def initialize(fieldnames)
       super()
-      setup_fieldnames(field_obj.keys)
+      setup_fieldnames(fieldnames)
     end
 
     def setup_fieldnames(flist)
