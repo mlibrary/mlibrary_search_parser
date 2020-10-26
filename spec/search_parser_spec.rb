@@ -16,7 +16,7 @@ RSpec.describe 'SearchParser' do
 
   it "does the right thing" do
     search = @mirlyn_parser.parse("title:one two AND author:three")
-    expect(search.to_clean_string).to eq "(title:(one two) AND author:three)"
+    expect(search.clean_string).to eq "(title:(one two) AND author:three)"
     expect(search.warnings).to be_empty
   end
 

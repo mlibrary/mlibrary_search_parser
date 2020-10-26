@@ -108,8 +108,8 @@ module MLibrarySearchParser
       search_tree.to_s
     end
 
-    def to_clean_string
-      search_tree.to_clean_string
+    def clean_string
+      search_tree.clean_string
     end
 
     def to_webform
