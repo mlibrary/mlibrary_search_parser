@@ -13,10 +13,11 @@ module MLibrarySearchParser
       #    [JSON request API](https://lucene.apache.org/solr/guide/8_5/json-request-api.html)
       class SolrSearch
         include Utilities
-        attr_accessor :transform, :params, :query, :search_tree
+        attr_accessor :transform, :params, :query, :search_tree, :original_search_tree
 
         # @param [MLibrarySearchParser::Search] search
         def initialize(search)
+          @original_search_tree = search
           @search_tree = lucene_escape_node(search.search_tree.deep_dup)
           @search_tree.renumber!
           @params = {}
@@ -94,11 +95,21 @@ module MLibrarySearchParser
           edismaxify(node)
         end
 
-        def search_node(node, extras: {})
+        def reduce_ands(clauses)
+          if clauses.size == 1
+            clauses.first
+          else
+            MLibrarySearchParser::Node::AndNode.new(clauses.first, reduce_ands(clauses[1..-1]))
+          end
+        end
+
+
+        def search_node(node)
           if node.clauses.size == 1
             transform(node.clauses.first)
           else
-            boolnode(node, :must)
+            reduced_to_one_node = reduce_ands(node.clauses)
+            boolnode(reduce_ands(node.clauses), :must)
           end
         end
 

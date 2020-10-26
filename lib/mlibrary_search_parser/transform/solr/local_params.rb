@@ -45,8 +45,8 @@ module MLibrarySearchParser
           "(#{transform(node.left)} #{joiner} #{transform(node.right)})"
         end
 
-        def transform_not_node(node, extras: {})
-          "NOT (#{transform(node)})"
+        def not_node(node, extras: {})
+          "NOT (#{transform(node.operand)})"
         end
 
       end
