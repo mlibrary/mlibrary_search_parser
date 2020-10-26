@@ -77,6 +77,10 @@ module MLibrarySearchParser
       @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
     end
 
+    def clean_string
+      search_tree.clean_string
+    end
+
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
     end
