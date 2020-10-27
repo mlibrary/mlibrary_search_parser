@@ -1,5 +1,6 @@
 require "bundler/setup"
-require "mlibrary_search_parser"
+require "mlibrary_search_parser/query_parser"
+
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -43,7 +44,7 @@ end
 
 @config_file = './spec/data/00-catalog.yml'
 @config = YAML.load(ERB.new(File.read(@config_file)).result)
-TEST_HANDLER =  MLibrarySearchParser::SearchHandler.new( @config["fields"])
+TEST_HANDLER =  MLibrarySearchParser::SearchHandler.new(@config)
 
 def search_node(*clauses)
   MLibrarySearchParser::Node::SearchNode.new(clauses.map{|c| nodeify(c)})
