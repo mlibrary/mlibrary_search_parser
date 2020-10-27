@@ -43,12 +43,12 @@ end
 # Make the solr call with the localparams and get the docs
 # Override solr parms in kwargs
 def get(str, **kwargs)
-  resp = get_respose(str, **kwargs)
+  resp = get_response(str, **kwargs)
   resp['response']['docs']
 end
 
 # In case we need to look at the whole response
-def get_respose(str, **kwargs)
+def get_response(str, **kwargs)
   s = search(str)
   params = lp(s).params.merge(@solr_params).merge(kwargs)
   @core.get('select', params)

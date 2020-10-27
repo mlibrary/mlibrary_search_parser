@@ -79,7 +79,7 @@ module MLibrarySearchParser
           if node.contains_fielded?
             boolnode(node, :must)
           else
-            edismaxify(node)
+            edismaxify(default_field, node)
           end
         end
 
@@ -87,7 +87,7 @@ module MLibrarySearchParser
           if node.contains_fielded?
             boolnode(node, :should)
           else
-            edismaxify(node)
+            edismaxify(default_field, node)
           end
         end
 

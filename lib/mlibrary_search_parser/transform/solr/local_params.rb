@@ -60,7 +60,7 @@ module MLibrarySearchParser
           first = node.clauses.first
           if node.clauses.size == 1 and first.is_type?(:not)
             fake_and = (MLibrarySearchParser::Node::AndNode.new(
-                MLibrarySearchParser::Node::TokensNode.new(""),
+                MLibrarySearchParser::Node::FieldedNode.new("allfields", MLibrarySearchParser::Node::TokensNode.new("")),
                 first
             ))
             fake_and.renumber!
