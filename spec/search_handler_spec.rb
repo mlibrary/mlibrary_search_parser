@@ -4,7 +4,7 @@ RSpec.describe "MLibrarySearchHandler" do
   before do
     @config_file = './spec/data/00-catalog.yml'
     @config = YAML.load(ERB.new(File.read(@config_file)).result)
-    @handler = MLibrarySearchParser::SearchHandler.new(@config["fields"])
+    @handler = MLibrarySearchParser::SearchHandler.new(@config)
   end
 
   describe "check_quotes" do

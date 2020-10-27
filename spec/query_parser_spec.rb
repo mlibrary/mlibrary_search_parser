@@ -1,4 +1,5 @@
 require_relative 'spec_helper'
+require 'mlibrary_search_parser/query_parser'
 
 RSpec.describe MLibrarySearchParser do
   it "has a version number" do
