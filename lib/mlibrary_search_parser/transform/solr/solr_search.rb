@@ -107,8 +107,8 @@ module MLibrarySearchParser
         def search_node(node)
           if node.clauses.size == 1
             transform(node.clauses.first)
-          elsif node.clauses.size == 0
-            add_param("q", "*:*")
+          # elsif node.clauses.size == 0
+          #   add_param("q", "*:*")
           else
             boolnode(reduce_ands(node.clauses), :must)
           end
