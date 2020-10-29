@@ -8,8 +8,12 @@ module MLibrarySearchParser
       class LocalParams < SolrSearch
 
         def transform!
-          super
-          add_param("q", "_query_:#{query}")
+          if ["", "*"].include? original_search_tree.clean_string
+            add_param("q", "*:*")
+          else
+            super
+            add_param("q", "_query_:#{query}")
+          end
         end
 
         # @param [MLibrarySearchParser::Node::BaseNode] node
