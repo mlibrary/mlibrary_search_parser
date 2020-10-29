@@ -21,8 +21,8 @@ module MLibrarySearchParser
           add_param(qq_localparams_name, node.tokens_phrase)
 
           args = field_config(field).each_pair.map do |k, v|
-            v = v.to_s.gsub(/\$q\b/, q_localparams_name)
-            v = v.gsub(/\$qq\b/, qq_localparams_name)
+            v = v.to_s.gsub(/\$q\b/, "$"+q_localparams_name)
+            v = v.gsub(/\$qq\b/, "$"+qq_localparams_name)
             v = v.gsub(/[\n\s]+/, ' ')
             "#{k}=\"#{v}\""
           end
