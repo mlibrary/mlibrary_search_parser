@@ -18,7 +18,7 @@ module MLibrarySearchParser
         # @param [MLibrarySearchParser::Search] search
         def initialize(search)
           @original_search_tree = search
-          @search_tree = lucene_escape_node(search.search_tree.deep_dup)
+          @search_tree          = lucene_escape_node(search.search_tree.deep_dup)
           @search_tree.renumber!
           @params = {}
           @query  = {}
@@ -27,7 +27,11 @@ module MLibrarySearchParser
         end
 
         def transform!
-          @query = transform(search_tree)
+          if ['', '*'].include? @original_search_tree.clean_string.strip
+            add_param('q', '*:*')
+          else
+            @query = transform(search_tree)
+          end
         end
 
         def default_field

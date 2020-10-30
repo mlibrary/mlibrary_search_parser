@@ -64,11 +64,27 @@ module MLibrarySearchParser
     end
   end
 
+  class SearchBuilder
+    attr_accessor :config
+
+    def initialize(config)
+      @config = config
+    end
+
+    def build(original_input)
+      Search.new(original_input, config)
+    end
+  end
+
   class Search
     attr_reader :search_tree, :original_input, :mini_search, :config
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler) end
+    
+    def self.search_builder(config)
+      SearchBuilder.new(config)
+    end
 
     def initialize(original_input, config)
       @original_input = original_input
