@@ -24,8 +24,8 @@ module MLibrarySearchParser
           tokens_name         = "t#{node.number}"
 
           add_param(q_localparams_name, node.clean_string)
-          add_param(qq_localparams_name, node.tokens_phrase)
-          add_param(tokens_name, node.wanted_tokens_string)
+          add_param(qq_localparams_name, lucene_escape(node.tokens_phrase))
+          add_param(tokens_name, lucene_escape(node.wanted_tokens_string))
 
           args = field_config(field).each_pair.map do |k, v|
             v = v.to_s.gsub(/\$q\b/, "$" + q_localparams_name)

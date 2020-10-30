@@ -13,7 +13,7 @@ module MLibrarySearchParser
       #    [JSON request API](https://lucene.apache.org/solr/guide/8_5/json-request-api.html)
       class SolrSearch
         include Utilities
-        attr_accessor :transform, :params, :query, :search_tree, :original_search_tree
+        attr_accessor :transform, :params, :query, :search_tree, :original_search_tree, :config
 
         # @param [MLibrarySearchParser::Search] search
         def initialize(search)
