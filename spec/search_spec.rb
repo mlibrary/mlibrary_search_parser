@@ -34,6 +34,12 @@ RSpec.describe "Search" do
         it "returns solr query" do
             expect(@search.to_solr_query).to eq "a simple search"
         end
+
+        it "constructs a factory" do
+          search_builder = MLibrarySearchParser::Search.search_builder(@config)
+          search         = search_builder.build("a simple search")
+          expect(search.to_s).to eq("a simple search")
+        end
     end
 
     describe "a query AND some more query" do

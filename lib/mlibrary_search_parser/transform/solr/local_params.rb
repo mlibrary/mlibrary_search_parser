@@ -16,17 +16,21 @@ module MLibrarySearchParser
           end
         end
 
+
         # @param [MLibrarySearchParser::Node::BaseNode] node
         def edismaxify(field, node)
           q_localparams_name  = "q#{node.number}"
           qq_localparams_name = "qq#{node.number}"
+          tokens_name         = "t#{node.number}"
 
           add_param(q_localparams_name, node.clean_string)
           add_param(qq_localparams_name, node.tokens_phrase)
+          add_param(tokens_name, node.wanted_tokens_string)
 
           args = field_config(field).each_pair.map do |k, v|
-            v = v.to_s.gsub(/\$q\b/, "$"+q_localparams_name)
-            v = v.gsub(/\$qq\b/, "$"+qq_localparams_name)
+            v = v.to_s.gsub(/\$q\b/, "$" + q_localparams_name)
+            v = v.gsub(/\$qq\b/, "$" + qq_localparams_name)
+            v = v.gsub(/\$t\b/, "$" + tokens_name)
             v = v.gsub(/[\n\s]+/, ' ')
             "#{k}=\"#{v}\""
           end
