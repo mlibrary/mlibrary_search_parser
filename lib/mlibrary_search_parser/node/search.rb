@@ -40,6 +40,10 @@ module MLibrarySearchParser::Node
       end
     end
 
+    def trim(&blk)
+      self.class.new(clauses.map{|c| c.trim(&blk)})
+    end
+
     def to_s
       clauses.join(" | ")
     end

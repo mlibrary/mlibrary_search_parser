@@ -34,6 +34,11 @@ RSpec.describe "SearchNode" do
       expect(dup.clean_string).to eq "(one AND two) XXX"
     end
 
+    it "finds wanted tokens" do
+      neg = search_node(and_node("one", or_node(not_node(tnode("two")), tnode("three"))))
+      expect(neg.wanted_tokens_string).to eq "one three"
+    end
+
   end
 
 end

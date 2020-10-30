@@ -195,6 +195,11 @@ module MLibrarySearchParser::Node
       %Q("#{tokens_string.gsub('"', '')}")
     end
 
+    # Get only the tokens the user actually wants
+    def wanted_tokens_string
+      deep_dup.trim_not.tokens_string
+    end
+
     # Assign each node in this tree an arbitrary number, useful for
     # splitting out extra query information in a way you know will
     # be unique for each node.
