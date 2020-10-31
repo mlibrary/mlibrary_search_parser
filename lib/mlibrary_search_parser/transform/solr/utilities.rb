@@ -6,7 +6,7 @@ module MLibrarySearchParser
       module Utilities
         # We don't escape double-quotes, parens because anything that's there
         # is already validated as part of a phrase
-        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]"^~?:])/.freeze
+        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^~?:])/.freeze
 
         def lucene_escape(str)
           str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1')

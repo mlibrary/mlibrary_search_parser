@@ -34,8 +34,16 @@ module MLibrarySearchParser
           end
         end
 
+        def solr_params
+          @config['solr_params'] || {}
+        end
+
         def default_field
           @config["search_field_default"]
+        end
+
+        def default_attributes
+          @config['search_attr_defaults'] || {}
         end
 
         def field_config(field)
@@ -69,6 +77,8 @@ module MLibrarySearchParser
             or_node(node)
           when :not
             not_node(node)
+          when :unparseable
+            unparseable_node(node)
           else
             raise ArgumentError, "Unknown node type #{node.node_type}"
           end
@@ -116,6 +126,12 @@ module MLibrarySearchParser
           else
             boolnode(reduce_ands(node.clauses), :must)
           end
+        end
+
+        def unparseable_node(node)
+          tok = MLibrarySearchParser::Node::TokensNode.new(node.clean_string.downcase)
+          tok.renumber!
+          edismaxify(default_field, tok)
         end
 
       end
