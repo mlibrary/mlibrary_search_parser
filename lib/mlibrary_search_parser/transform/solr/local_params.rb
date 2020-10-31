@@ -13,6 +13,13 @@ module MLibrarySearchParser
           else
             super
             add_param("q", "_query_:#{query}")
+
+            # Need a df for the boost queries to work
+            set_param('df', 'allfields')
+
+            # merge in the defaults
+            @params = solr_params.merge(@params)
+
           end
         end
 
@@ -27,14 +34,23 @@ module MLibrarySearchParser
           add_param(qq_localparams_name, lucene_escape(node.tokens_phrase))
           add_param(tokens_name, lucene_escape(node.wanted_tokens_string))
 
-          args = field_config(field).each_pair.map do |k, v|
+          attributes = field_config(field)
+          args = attributes.keys.each_with_object({}) do  |k,h|
+            v = attributes[k]
+            fname = "#{field}_#{k}"
+            v = v.to_s
             v = v.to_s.gsub(/\$q\b/, "$" + q_localparams_name)
             v = v.gsub(/\$qq\b/, "$" + qq_localparams_name)
             v = v.gsub(/\$t\b/, "$" + tokens_name)
             v = v.gsub(/[\n\s]+/, ' ')
-            "#{k}=\"#{v}\""
+            set_param(fname, v)
+            h[k] = "$#{fname}"
           end
-          "{!edismax #{args.join(' ')} v=$#{q_localparams_name}}"
+
+          args = default_attributes.merge(args)
+          arg_pairs = args.each_pair.map{|k, v| "#{k}=#{v}"}
+
+          "{!edismax #{arg_pairs.join(' ')} v=$#{q_localparams_name}}"
         end
 
 
