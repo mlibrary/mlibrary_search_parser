@@ -28,7 +28,7 @@ module MLibrarySearchParser
 
         def transform!
           if ['', '*'].include? @original_search_tree.clean_string.strip
-            add_param('q', '*:*')
+            set_param('q', '*:*')
           else
             @query = transform(search_tree)
           end
@@ -50,13 +50,8 @@ module MLibrarySearchParser
           @config['search_fields'][field]
         end
 
-        # We can't use a hash to represent params because they can be repeated
-        def add_param(key, value)
-          params[key] = value
-        end
-
         def set_param(key, value)
-          params[key] = [value]
+          params[key] = value
         end
 
         # Dispatch to specific methods for transforming
@@ -121,8 +116,6 @@ module MLibrarySearchParser
         def search_node(node)
           if node.clauses.size == 1
             transform(node.clauses.first)
-          # elsif node.clauses.size == 0
-          #   add_param("q", "*:*")
           else
             boolnode(reduce_ands(node.clauses), :must)
           end
