@@ -12,6 +12,14 @@ module MLibrarySearchParser::Node
       []
     end
 
+    def clean_string
+      text.downcase
+    end
+
+    def tree_string
+      "#{tree_indent}<UNPARSEABlE> #{clean_string}"
+    end
+
     def inspect
       "<UnparseableNode: [#{text}]>"
     end

@@ -28,27 +28,30 @@ module MLibrarySearchParser
 
         def transform!
           if ['', '*'].include? @original_search_tree.clean_string.strip
-            add_param('q', '*:*')
+            set_param('q', '*:*')
           else
             @query = transform(search_tree)
           end
+        end
+
+        def solr_params
+          @config['solr_params'] || {}
         end
 
         def default_field
           @config["search_field_default"]
         end
 
+        def default_attributes
+          @config['search_attr_defaults'] || {}
+        end
+
         def field_config(field)
           @config['search_fields'][field]
         end
 
-        # We can't use a hash to represent params because they can be repeated
-        def add_param(key, value)
-          params[key] = value
-        end
-
         def set_param(key, value)
-          params[key] = [value]
+          params[key] = value
         end
 
         # Dispatch to specific methods for transforming
@@ -69,6 +72,8 @@ module MLibrarySearchParser
             or_node(node)
           when :not
             not_node(node)
+          when :unparseable
+            unparseable_node(node)
           else
             raise ArgumentError, "Unknown node type #{node.node_type}"
           end
@@ -111,11 +116,15 @@ module MLibrarySearchParser
         def search_node(node)
           if node.clauses.size == 1
             transform(node.clauses.first)
-          # elsif node.clauses.size == 0
-          #   add_param("q", "*:*")
           else
             boolnode(reduce_ands(node.clauses), :must)
           end
+        end
+
+        def unparseable_node(node)
+          tok = MLibrarySearchParser::Node::TokensNode.new(node.clean_string.downcase)
+          tok.renumber!
+          edismaxify(default_field, tok)
         end
 
       end
