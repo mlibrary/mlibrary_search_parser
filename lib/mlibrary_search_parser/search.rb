@@ -81,7 +81,7 @@ module MLibrarySearchParser
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler) end
-    
+
     def self.search_builder(config)
       SearchBuilder.new(config)
     end

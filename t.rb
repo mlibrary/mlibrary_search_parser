@@ -16,7 +16,7 @@ client = SimpleSolrClient::Client.new(portOrURL)
 # Other solr params
 #
 @solr_params = {
-    fl: 'id,title,mainauthor',
+    fl: 'score,id,title,mainauthor',
     rows: 10
 }
 
@@ -53,3 +53,7 @@ def get_response(str, **kwargs)
   params = lp(s).params.merge(@solr_params).merge(kwargs)
   @core.get('select', params)
 end
+
+require 'pry'; binding.pry
+
+puts "Goodbye"
