@@ -38,7 +38,7 @@ module MLibrarySearchParser
     # Note how we have to sort the search fields so the longest ones come first.
     # Otherwise, the peg parser sees 'title' and never gets to 'title_starts_with'
     def initialize(config)
-      @fieldnames               = config["search_fields"].keys.sort{|a,b| b.size <=> a.size }
+      @fieldnames               = config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
       @special_char_parser      = SpecialCharParser.new
       @special_char_transformer = SpecialCharTransformer.new
       @quote_preparser          = PreQueryDoubleQuotesParser.new

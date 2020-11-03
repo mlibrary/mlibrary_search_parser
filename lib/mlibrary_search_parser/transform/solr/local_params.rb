@@ -9,10 +9,10 @@ module MLibrarySearchParser
 
         def transform!
           if ["", "*"].include? original_search_tree.clean_string
-            add_param("q", "*:*")
+            set_param("q", "*:*")
           else
             super
-            add_param("q", "_query_:#{query}")
+            set_param("q", "_query_:#{query}")
 
             # Need a df for the boost queries to work
             set_param('df', 'allfields')
@@ -30,9 +30,9 @@ module MLibrarySearchParser
           qq_localparams_name = "qq#{node.number}"
           tokens_name         = "t#{node.number}"
 
-          add_param(q_localparams_name, node.clean_string)
-          add_param(qq_localparams_name, lucene_escape(node.tokens_phrase))
-          add_param(tokens_name, lucene_escape(node.wanted_tokens_string))
+          set_param(q_localparams_name, node.clean_string)
+          set_param(qq_localparams_name, lucene_escape(node.tokens_phrase))
+          set_param(tokens_name, lucene_escape(node.wanted_tokens_string))
 
           attributes = field_config(field)
           args = attributes.keys.each_with_object({}) do  |k,h|
@@ -69,10 +69,6 @@ module MLibrarySearchParser
 
         def not_node(node)
           "NOT (#{transform(node.operand)})"
-        end
-
-        def search_node(node)
-          super
         end
 
         # We need to special-case a lone "NOT" because solr doesn't seem to accept
