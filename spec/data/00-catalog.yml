@@ -43,13 +43,30 @@ search_fields:
       author_top^30
       author_rest^20
 
+
     pf2: >-
       title_author^500
       title_equiv^80
       title_l^50
 
     ps2: 2
-    boost: $boost1
+    boost: >-
+      product(
+        if(termfreq('format', 'Journal'), 1.4, 1),
+        max(
+          map(
+          query({!field f=title_common_exact v=$q}, 1), 0, 1, 1, 180
+        ),
+        map(
+          query({!field f=title_equiv_exact v=$q}, 1), 0, 1, 1, 50
+        ),
+        map(
+          query({!field f=title_a_exact v=$q}, 1), 0, 1, 1, 10
+        )),
+        map(
+            query({!dismax f=title_author v=$q mm="100%"}, 1), 0, 1, 1, 50
+          ),
+      )
 
   series:
     pf: series^500 series2^50
@@ -101,30 +118,14 @@ search_fields:
 
 
 
+# Note that solr_params will _not_ work if they reference '$q' or whatnot, since
+# these are common to the whole search and those are specific to one edismax
+# clause. (Noted because I tried to reference the allfields boost, which didn't work).
 
 solr_params:
-
   mm: "2<-1 5<67%"
   mm.autoRelax: true
   tie: 0.1
-  boost1: >-
-    product(
-      if(termfreq('format', 'Journal'), 1.4, 1),
-      max(
-        map(
-        query({!field f=title_common_exact v=$q}, 1), 0, 1, 1, 180
-      ),
-      map(
-        query({!field f=title_equiv_exact v=$q}, 1), 0, 1, 1, 50
-      ),
-      map(
-        query({!field f=title_a_exact v=$q}, 1), 0, 1, 1, 10
-      )),
-      map(
-          query({!dismax f=title_author v=$q mm="100%"}, 1), 0, 1, 1, 50
-        ),
-    )
-
 
 qt: standard
 has_holdings: true
