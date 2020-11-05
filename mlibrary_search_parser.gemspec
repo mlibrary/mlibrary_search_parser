@@ -25,10 +25,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency 'dotenv'
   spec.add_dependency 'parslet'
   spec.add_development_dependency 'rspec', '~>3.0'
   spec.add_development_dependency 'pry-byebug'
-  spec.add_development_dependency 'dotenv'
   spec.add_development_dependency 'solr_wrapper'
   spec.add_development_dependency 'simple_solr_client'
 end
