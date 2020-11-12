@@ -76,16 +76,13 @@ module MLibrarySearchParser
     end
   end
 
-  class AdvancedSearchBuilder < SearchBuilder
-    # array of {field: blah, query: blah, booleanType: blah}
-    # where booleanType is an index into [AND, OR, NOT]
-
-    def build(search_form)
+  class AdvancedSearchParser
+    def parse(search_form)
       input = ""
       search_form.each_with_index { |e, i|
         field = e[:field]
         query = e[:query]
-        input += "#{field}:(#{query})"
+        input += "#{field}:#{query}"
         if search_form[i+1] and search_form[i+1][:query] != ""
           bool = case e[:booleanType]
                  when 0
@@ -98,6 +95,22 @@ module MLibrarySearchParser
           input += " #{bool} "
         end
       }
+      input
+    end
+  end
+
+  class AdvancedSearchBuilder < SearchBuilder
+    # array of {field: blah, query: blah, booleanType: blah}
+    # where booleanType is an index into [AND, OR, NOT]
+    attr_accessor :parser
+
+    def initialize(config)
+      super
+      @parser = AdvancedSearchParser.new
+    end
+
+    def build(search_form)
+      input = parser.parse(search_form)
       Search.new(input, config)
     end
   end
