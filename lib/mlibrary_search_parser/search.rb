@@ -76,6 +76,32 @@ module MLibrarySearchParser
     end
   end
 
+  class AdvancedSearchBuilder < SearchBuilder
+    # array of {field: blah, query: blah, booleanType: blah}
+    # where booleanType is an index into [AND, OR, NOT]
+
+    def build(search_form)
+      input = ""
+      search_form.each_with_index { |e, i|
+        field = e[:field]
+        query = e[:query]
+        input += "#{field}:(#{query})"
+        if search_form[i+1] and search_form[i+1][:query] != ""
+          bool = case e[:booleanType]
+                 when 0
+                   "AND"
+                 when 1
+                   "OR"
+                 when 2
+                   "NOT"
+                 end
+          input += " #{bool} "
+        end
+      }
+      Search.new(input, config)
+    end
+  end
+
   class Search
     attr_reader :search_tree, :original_input, :mini_search, :config
     # could come from search box, from adv search form, or from solr output
