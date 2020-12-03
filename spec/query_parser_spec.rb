@@ -164,4 +164,9 @@ RSpec.describe MLibrarySearchParser do
     expect(parse_and_transform("title:(one NOT two)").to_s).to eq "title:(one | NOT (two))"
   end
 
+  it "deals with fielded in parens" do
+    str    = '(title:jones OR author:smith)'
+    expect(parse_and_transform(str).clean_string).to eq str
+  end
+
 end

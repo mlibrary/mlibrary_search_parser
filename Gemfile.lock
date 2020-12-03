@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     mlibrary_search_parser (0.1.0)
+      dotenv
       parslet
 
 GEM
@@ -54,7 +55,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  dotenv
   mlibrary_search_parser!
   pry-byebug
   rake (~> 12.0)
