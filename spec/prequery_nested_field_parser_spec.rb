@@ -4,7 +4,8 @@ RSpec.describe "PreQueryNestedFieldsParser" do
   before do
     @config_file = './spec/data/00-catalog.yml'
     @config = YAML.load(ERB.new(File.read(@config_file)).result)
-    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new(@config["fields"])
+    @fieldnames               = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+    @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new(@fieldnames)
   end
 
   it "validates a single field" do

@@ -9,7 +9,8 @@ RSpec.describe MLibrarySearchParser do
   before do
     @config_file = './spec/data/00-catalog.yml'
     @config = YAML.load(ERB.new(File.read(@config_file)).result)
-    @parser      = MLibrarySearchParser::QueryParser.new(@config["fields"])
+    @fieldnames               = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+    @parser      = MLibrarySearchParser::QueryParser.new(@fieldnames)
     @transformer = MLibrarySearchParser::QueryTransformer.new
 
     def parse_and_transform(string)
@@ -105,11 +106,7 @@ RSpec.describe MLibrarySearchParser do
   it "allows bare words before and after fielded in parens" do
     expect(parse_and_transform("huck finn author:(mark twain) tom sawyer").to_s).to eq "huck finn | author:(mark twain) | tom sawyer"
   end
-
-  it "picks up fields from file" do
-    expect(parse_and_transform("callnum:blah").to_s).to eq "callnum:(blah)"
-  end
-
+  
   it "ignores field names with no colon" do
     expect(parse_and_transform("author huck finn").to_s).to eq "author huck finn"
   end
