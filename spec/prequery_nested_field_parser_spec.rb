@@ -16,6 +16,18 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     expect { @parser.parse("title:test author:word") }.not_to raise_error
   end
 
+  it "validates sequential fields inside parens" do
+    expect { @parser.parse("(title:test author:word)") }.not_to raise_error
+  end
+
+  it "validates fields on either side of a binary operator inside parens" do
+    expect { @parser.parse("(title:test OR author:word)") }.not_to raise_error
+  end
+
+  it "validates fields on either side of a binary operator" do
+    expect { @parser.parse("title:test OR author:word") }.not_to raise_error
+  end
+
   it "validates fields with parens in them" do
     expect { @parser.parse("title:(test word) author:thing") }.not_to raise_error
   end

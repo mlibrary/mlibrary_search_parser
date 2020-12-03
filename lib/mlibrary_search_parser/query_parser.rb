@@ -111,7 +111,7 @@ module MLibrarySearchParser
     rule(:token) { word | phrase }
     rule(:fielded) { field_name >> parens_without_field.as(:query) }
     rule(:tokens) { fielded.absent? >> token >> (space >> tokens).repeat(0) }
-    rule(:parens) { lparen >> tokens >> rparen | tokens.as(:tokens) | fielded.as(:fielded) }
+    rule(:parens) { lparen >> tokens >> rparen | tokens.as(:tokens) | fielded.as(:fielded) | lparen >> (fielded.as(:fielded) >> space?).repeat(2) >> rparen }
     rule(:parens_without_field) { lparen >> tokens >> rparen | tokens.as(:tokens) }
     rule(:full_query) { (space? >> parens >> space?).repeat }
     root(:full_query)
