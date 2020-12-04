@@ -183,12 +183,17 @@ RSpec.describe MLibrarySearchParser do
   #   * one NOT two three
   it "allows NOT with clause(s) followed by parenthesized clause" do
     str = "NOT one (two)"
-    expect(parse_and_transform(str).clean_string).to eq "(NOT (one) two)"
+    expect(parse_and_transform(str).clean_string).to eq "(NOT (one)) two"
   end
 
   it "as above but fully parenthesized" do
     str = "(NOT one (two))"
     expect(parse_and_transform(str).clean_string).to eq "(NOT (one)) two"
+  end
+
+  it "allows parenthesized clause following AND NOT clause" do
+    str = "one AND NOT one (two)"
+    expect(parse_and_transform(str).clean_string).to eq "(one AND (NOT (one))) two"
   end
 
 end
