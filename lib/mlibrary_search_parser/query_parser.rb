@@ -185,12 +185,10 @@ module MLibrarySearchParser
 
 
     rule(:multi_op) { (or_expr >> space?).repeat(2) }
-    # rule(:multi_non_op) { ((tokens.as(:tokens) | fielded.as(:fielded)) >> space?).repeat(2) }
     rule(:multi_op_parens) { lparen >> multi_op >> rparen }
 
 
-    # rule(:bare_expr) { (or_expr >> not_expr.repeat(0)) }
-    rule(:bare_expr) { (or_expr >> or_expr.repeat(0)) }
+    rule(:bare_expr) { (or_expr >> (space? >> or_expr).repeat(0)) }
 
     rule(:search) { space? >> (bare_expr.repeat(0)).as(:search) >> space? }
     root(:search)
