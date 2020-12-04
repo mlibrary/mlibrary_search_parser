@@ -8,8 +8,8 @@ RSpec.describe MLibrarySearchParser do
 
   before do
     @config_file = './spec/data/00-catalog.yml'
-    @config = YAML.load(ERB.new(File.read(@config_file)).result)
-    @fieldnames               = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+    @config      = YAML.load(ERB.new(File.read(@config_file)).result)
+    @fieldnames  = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
     @parser      = MLibrarySearchParser::QueryParser.new(@fieldnames)
     @transformer = MLibrarySearchParser::QueryTransformer.new
 
@@ -106,7 +106,7 @@ RSpec.describe MLibrarySearchParser do
   it "allows bare words before and after fielded in parens" do
     expect(parse_and_transform("huck finn author:(mark twain) tom sawyer").to_s).to eq "huck finn | author:(mark twain) | tom sawyer"
   end
-  
+
   it "ignores field names with no colon" do
     expect(parse_and_transform("author huck finn").to_s).to eq "author huck finn"
   end
@@ -165,8 +165,30 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "deals with fielded in parens" do
-    str    = '(title:jones OR author:smith)'
+    str = '(title:jones OR author:smith)'
     expect(parse_and_transform(str).clean_string).to eq str
+  end
+
+  # The following all don't parse (inspired by spreadsheet "NOT sawyer (finn AND twain)")
+  #   * NOT sawyer (finn AND twain)
+  #   * NOT one (two)
+  #   * NOT (one) (two)
+  #   * one NOT two (three)
+  #   * NOT one two (three)
+  #   * NOT one (NOT two)
+  # ...but these are fine
+  #   * NOT one two
+  #   * NOT one two AND three
+  #   * one NOT (two three)
+  #   * one NOT two three
+  it "allows NOT with clause(s) followed by parenthesized clause" do
+    str = "NOT one (two)"
+    expect(parse_and_transform(str).clean_string).to eq "(NOT (one) two)"
+  end
+
+  it "as above but fully parenthesized" do
+    str = "(NOT one (two))"
+    expect(parse_and_transform(str).clean_string).to eq "(NOT (one)) two"
   end
 
 end
