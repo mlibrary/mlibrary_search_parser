@@ -133,7 +133,7 @@ RSpec.describe "Search" do
   end
 
 
-  describe "Testing failures" do
+  describe "Testing failures from spreadsheet" do
     before do
       @config_file = './spec/data/00-catalog.yml'
       @config      = YAML.load(ERB.new(File.read(@config_file)).result)
