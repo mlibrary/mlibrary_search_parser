@@ -89,7 +89,7 @@ module MLibrarySearchParser
         # fields that are explicitly nested using parentheses,
         # so we remove the parentheses
         any_fieldname = Regexp.union(@fieldnames)
-        search_string = search_string.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
+        search_string = search_string.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:(\2 \3)')
         errors << NestedFieldsError.new
       end
 

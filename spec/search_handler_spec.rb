@@ -50,16 +50,15 @@ RSpec.describe "MLibrarySearchHandler" do
     it "removes fields nested in parentheses" do
       search = MLibrarySearchParser::MiniSearch.new("title:(thing author:blah)")
       output = @handler.check_nested_fields(search)
-      expect(output.to_s).to eq "title:thing author:blah"
+      expect(output.to_s).to eq "title:(thing author blah)"
       expect(output.errors).to match_array([MLibrarySearchParser::NestedFieldsError])
     end
 
     it "removes fields differently nested in parentheses" do
       search = MLibrarySearchParser::MiniSearch.new("title:(author:thing)")
       output = @handler.check_nested_fields(search)
-      expect(output.to_s).to eq "title:author thing"
+      expect(output.to_s).to eq "title:(author thing)"
       expect(output.errors).to match_array([
-        MLibrarySearchParser::NestedFieldsError,
         MLibrarySearchParser::NestedFieldsError
       ])
     end
