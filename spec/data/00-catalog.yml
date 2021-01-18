@@ -5,10 +5,10 @@ metadata:
   short_descr: The Library Catalog.
 source: mirlyn
 
-search_field_default: allfields
+search_field_default: all_fields
 search_attr_defaults:
-  mm: $mm
-  mm.autoRelax: $mm.autorelax
+  mm: $default_mm
+  mm.autoRelax: $mm.autoRelax
   tie: $tie
 
 search_fields:
@@ -18,7 +18,7 @@ search_fields:
   author:
     qf: mainauthor^20 author^10 author2^5 author_top^2 author_rest^1
     pf: mainauthor^100 author^50 author2^20 author_top^5 author_rest^2
-  allfields:
+  all_fields:
     qf: >-
       allfieldsProper^2
       allfields^1
@@ -123,7 +123,7 @@ search_fields:
 # clause. (Noted because I tried to reference the allfields boost, which didn't work).
 
 solr_params:
-  mm: "2<-1 5<67%"
+  default_mm: "2<-1 5<67%"
   mm.autoRelax: true
   tie: 0.1
 
