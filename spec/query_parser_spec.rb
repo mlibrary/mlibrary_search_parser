@@ -196,4 +196,12 @@ RSpec.describe MLibrarySearchParser do
     expect(parse_and_transform(str).clean_string).to eq "(one AND (NOT (one))) two"
   end
 
+  it "treats parentheses with only tokens inside as part of tokens" do
+    str = "subject:Moscow (Russia) History"
+    parsed = @parser.parse(str)
+    pp parsed
+    parse_and_transform_value = @transformer.apply(parsed)
+    expect(parse_and_transform_value.to_s).to eq "subject:(Moscow (Russia) History)"
+  end
+
 end
