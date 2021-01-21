@@ -142,7 +142,8 @@ module MLibrarySearchParser
     # that we treat as a single "word"
 
     rule(:token) { phrase | word }
-    rule(:tokens) { any_op.absent? >> fielded.absent? >> token >> (space >> tokens).repeat(0) }
+    rule(:token_parens) { any_op.absent? >> fielded.absent? >> lparen >> token >> (space >> tokens).repeat(0) >> rparen }
+    rule(:tokens) { any_op.absent? >> fielded.absent? >> token >> (space >> tokens).repeat(0) | token_parens }
 
     #######################################
     # FIELDS
