@@ -62,7 +62,7 @@ module MLibrarySearchParser
         @quote_preparser.parse(search_string)
       rescue Parslet::ParseFailed
         search_string = search_string.delete("\"")
-        errors << UnevenQuotesError.new
+        errors << UnevenQuotesError.new("Using: #{search_string}")
       end
       MiniSearch.new(search_string, errors)
     end
@@ -74,7 +74,7 @@ module MLibrarySearchParser
         @paren_preparser.parse(search_string)
       rescue Parslet::ParseFailed
         search_string = search_string.delete("()")
-        errors << UnevenParensError.new
+        errors << UnevenParensError.new("Using: #{search_string}")
       end
       MiniSearch.new(search_string, errors)
     end
@@ -90,7 +90,7 @@ module MLibrarySearchParser
         # so we remove the parentheses
         any_fieldname = Regexp.union(@fieldnames)
         search_string = search_string.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
-        errors << NestedFieldsError.new
+        errors << NestedFieldsError.new("Using: #{search_string}")
       end
 
       # We want to eliminate nested fields like author:title:blah
@@ -100,7 +100,7 @@ module MLibrarySearchParser
       match         = nested_regex.match(search_string)
       if match
         search_string = search_string.gsub(nested_regex, '\1:\2 \3')
-        errors << NestedFieldsError.new
+        errors << NestedFieldsError.new("Using: #{search_string}")
       end
       MiniSearch.new(search_string, errors)
     end
