@@ -52,9 +52,5 @@ module MLibrarySearchParser::Node
     def inspect
       "<TokensNode: [#{text}]>"
     end
-
-    def to_webform
-      {"query" => text}
-    end
   end
 end

@@ -1,68 +1,6 @@
 require 'mlibrary_search_parser/search_handler'
 
 module MLibrarySearchParser
-  # class SearchFactory
-  #   def initialize(config)
-  #   end
-
-  #   def raw_string_search(string)
-  #   end
-
-  #   def webform_search(form_fields)
-  #     # imagining form_fields to look something like:
-  #     # [
-  #     # "field": "all_fields",
-  #     # "query": "blah blah",
-  #     # "operator": "AND",
-  #     # "field": "title",
-  #     # "query": "bler bleh"
-  #     # ]
-  #     # that is, an ordered list of key/value pairs
-  #   end
-  # end
-
-  class WebformParser
-    attr_reader :input_form
-
-    def initialize(input_form)
-      @input_form = input_form
-    end
-
-    # given something like this:
-    # [ {"fielded" => {"field" => "title", "query" => "something"}},
-    # {"operator" => "OR"},
-    # etc ]
-    # run each subquery through the search handler, then build FieldedNodes,
-    # then build Boolean nodes, then stick em all together
-
-    def search_tree
-      field_nodes = []
-      operators   = []
-      input_form.each { |node|
-        case node.keys.first
-        when "fielded"
-          field        = node["fielded"]["field"]
-          query        = node["fielded"]["query"]
-          @config_file = './spec/data/00-catalog.yml'
-          @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-          query_search = Search.new(query, @config)
-          field_node   = MLibrarySearchParser::Node::FieldedNode.new(field, query_search.search_tree)
-          field_nodes.push(field_node)
-        when "operator"
-          operators.push(node["operator"])
-        end
-      }
-      operators.reduce(field_nodes.shift) { |root, new_oper|
-        MLibrarySearchParser::Node::Boolean.for_operator(new_oper,
-                                                         root,
-                                                         field_nodes.shift)
-      }
-    end
-
-    def to_s
-      search_tree.to_s
-    end
-  end
 
   class SearchBuilder
     attr_accessor :config
@@ -124,11 +62,6 @@ module MLibrarySearchParser
     def to_s
       # the string to put back in the search box
       search_tree.to_s
-    end
-
-    def to_webform
-      # might return an ordered list of duples
-      search_tree.to_webform
     end
 
     def to_solr_query

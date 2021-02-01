@@ -112,10 +112,6 @@ module MLibrarySearchParser
       def inspect
         "<#{operator.upcase} [#{left.inspect}] [#{right.inspect}]>"
       end
-
-      def to_webform
-        [left.to_webform, {"operator" => "#{operator.upcase}"}, right.to_webform].flatten
-      end
     end
 
     class AndNode < BinaryNode
@@ -175,10 +171,6 @@ module MLibrarySearchParser
 
       def inspect
         "<#{operator.upcase} [#{operand.inspect}]>"
-      end
-
-      def to_webform
-        [{"operator" => "#{operator.upcase}"}, operand.to_webform]
       end
     end
 
