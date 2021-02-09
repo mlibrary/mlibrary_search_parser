@@ -45,6 +45,8 @@ end
 @config_file = './spec/data/00-catalog.yml'
 @config = YAML.load(ERB.new(File.read(@config_file)).result)
 TEST_HANDLER =  MLibrarySearchParser::SearchHandler.new(@config)
+SEARCH_FACTORY =  MLibrarySearchParser::Search.search_builder(@config)
+
 
 def search_node(*clauses)
   MLibrarySearchParser::Node::SearchNode.new(clauses.map{|c| nodeify(c)})
