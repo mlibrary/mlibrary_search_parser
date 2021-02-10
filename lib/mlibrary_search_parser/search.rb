@@ -77,7 +77,7 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search, :config
+    attr_reader :search_tree, :original_input, :mini_search, :config, :errors, :warnings
     # could come from search box, from adv search form, or from solr output
 
     def self.from_form(input, search_handler) end
@@ -91,6 +91,8 @@ module MLibrarySearchParser
       @config         = config
       @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
       @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
+      @errors         = Array(@mini_search.errors)
+      @warnings       = Array(@mini_search.warnings)
     end
 
     def clean_string
@@ -103,14 +105,6 @@ module MLibrarySearchParser
 
     def valid?
       not errors? or warnings?
-    end
-
-    def errors
-      Array(mini_search.errors)
-    end
-
-    def warnings
-      Array(mini_search.warnings)
     end
 
     def errors?
