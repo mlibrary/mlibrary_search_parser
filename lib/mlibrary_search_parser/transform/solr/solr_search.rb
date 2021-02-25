@@ -50,8 +50,9 @@ module MLibrarySearchParser
           @config['search_fields'][field]
         end
 
+        # Set params, symbolizing the keys on the way in
         def set_param(key, value)
-          params[key] = value
+          params[key.to_sym] = value
         end
 
         # Dispatch to specific methods for transforming
