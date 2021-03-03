@@ -97,10 +97,6 @@ module MLibrarySearchParser
       search_tree.clean_string
     end
 
-    def wanted_tokens_string
-      search_tree.wanted_tokens_string
-    end
-
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
     end
