@@ -2,13 +2,43 @@ require 'json'
 require 'dotenv/load'
 
 module MLibrarySearchParser
-  class UnevenParensError < RuntimeError; end
+  class ParseError
+    DETIALS = "ParseError"
+    attr_reader :original, :actual
 
-  class UnevenQuotesError < RuntimeError; end
+    def initialize(original = nil, actual = nil)
+      @original = original
+      @actual = actual
+    end
 
-  class NestedFieldsError < RuntimeError; end
+    def details
+      self.class::DETAILS
+    end
+  end
 
-  class UnparseableError < RuntimeError; end
+  class UnevenParensError < ParseError
+    DETAILS = <<-EOF
+Unbalanced parentheses detected. Edit your search terms above to revise and rerun this search.
+    EOF
+  end
+
+  class UnevenQuotesError < ParseError
+    DETAILS = <<-EOF
+Unbalanced quotes detected. Edit your search terms above to revise and rerun this search.
+    EOF
+  end
+
+  class NestedFieldsError < ParseError
+    DETAILS = <<-EOF
+Nested fields detected. Edit your search terms above to revise and rerun this search.
+    EOF
+  end
+
+  class UnparseableError < ParseError
+    DETAILS = <<-EOF
+Not able to run requested search due to conflicting parameters. Edit your search terms above to revise and rerun this search. See <Research Guide> for search help.
+    EOF
+  end
 
   class MiniSearch
     attr_accessor :search_string, :errors, :warnings
@@ -62,7 +92,7 @@ module MLibrarySearchParser
         @quote_preparser.parse(search_string)
       rescue Parslet::ParseFailed
         search_string = search_string.delete("\"")
-        errors << UnevenQuotesError.new("Using: #{search_string}")
+        errors << UnevenQuotesError.new(search.search_string, search_string)
       end
       MiniSearch.new(search_string, errors)
     end
@@ -74,7 +104,7 @@ module MLibrarySearchParser
         @paren_preparser.parse(search_string)
       rescue Parslet::ParseFailed
         search_string = search_string.delete("()")
-        errors << UnevenParensError.new("Using: #{search_string}")
+        errors << UnevenParensError.new(search.search_string, search_string)
       end
       MiniSearch.new(search_string, errors)
     end
@@ -90,7 +120,7 @@ module MLibrarySearchParser
         # so we remove the parentheses
         any_fieldname = Regexp.union(@fieldnames)
         search_string = search_string.gsub(/(.*#{any_fieldname}):\((.*#{any_fieldname}):(.*)\)/, '\1:\2:\3')
-        errors << NestedFieldsError.new("Using: #{search_string}")
+        errors << NestedFieldsError.new(search.search_string, search_string)
       end
 
       # We want to eliminate nested fields like author:title:blah
@@ -100,7 +130,7 @@ module MLibrarySearchParser
       match         = nested_regex.match(search_string)
       if match
         search_string = search_string.gsub(nested_regex, '\1:\2 \3')
-        errors << NestedFieldsError.new("Using: #{search_string}")
+        errors << NestedFieldsError.new(search.search_string, search_string)
       end
       MiniSearch.new(search_string, errors)
     end
@@ -111,7 +141,7 @@ module MLibrarySearchParser
       begin
         @main_parser.parse(search_string)
       rescue Parslet::ParseFailed
-        errors << UnparseableError.new
+        errors << UnparseableError.new(search_string)
       end
       MiniSearch.new(search_string, errors)
     end
