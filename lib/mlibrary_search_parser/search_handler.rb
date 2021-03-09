@@ -14,6 +14,14 @@ module MLibrarySearchParser
     def details
       self.class::DETAILS
     end
+
+    def to_h
+      {
+        details: details,
+        original: original,
+        actual: actual,
+      }
+    end
   end
 
   class UnevenParensError < ParseError
