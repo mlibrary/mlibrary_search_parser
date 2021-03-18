@@ -13,7 +13,6 @@ module MLibrarySearchParser
           else
             super
             set_param("q", "_query_:#{query}")
-            set_param("clean_string", original_search_tree.clean_string)
 
             # Need a df for the boost queries to work
             set_param('df', 'allfields')
@@ -23,7 +22,6 @@ module MLibrarySearchParser
 
           end
         end
-
 
         # @param [MLibrarySearchParser::Node::BaseNode] node
         def edismaxify(field, node)
