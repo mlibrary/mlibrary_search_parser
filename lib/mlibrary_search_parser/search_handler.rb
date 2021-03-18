@@ -3,7 +3,7 @@ require 'dotenv/load'
 
 module MLibrarySearchParser
   class ParseError
-    DETIALS = "ParseError"
+    DETAILS = "ParseError"
     attr_reader :original, :actual
 
     def initialize(original = nil, actual = nil)

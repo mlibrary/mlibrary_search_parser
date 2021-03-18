@@ -26,6 +26,11 @@ module MLibrarySearchParser
           transform!
         end
 
+        def clean_string
+          original_search_tree.clean_string
+        end
+
+
         def transform!
           if ['', '*'].include? @original_search_tree.clean_string.strip
             set_param('q', '*:*')

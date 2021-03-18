@@ -24,7 +24,6 @@ module MLibrarySearchParser
           end
         end
 
-
         # @param [MLibrarySearchParser::Node::BaseNode] node
         def edismaxify(field, node)
           q_localparams_name  = "q#{node.number}"
