@@ -14,6 +14,15 @@ RSpec.configure do |config|
   end
 end
 
+# Set up a search builder based on the catalog
+catalog_config_file = './spec/data/00-catalog.yml'
+catalog_config      = YAML.load(ERB.new(File.read(catalog_config_file)).result)
+CATALOG_SEARCH_BUILDER = MLibrarySearchParser::Search.search_builder(catalog_config)
+
+def catalog_search(search_str)
+  CATALOG_SEARCH_BUILDER.build(search_str)
+end
+
 def nodeify(node_or_string)
   if node_or_string.kind_of? MLibrarySearchParser::Node::BaseNode
     node_or_string
