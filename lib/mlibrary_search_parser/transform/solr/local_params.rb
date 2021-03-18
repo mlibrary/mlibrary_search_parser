@@ -47,8 +47,17 @@ module MLibrarySearchParser
           end
 
           args = default_attributes.merge(args)
-          arg_pairs = args.each_pair.map{|k, v| "#{k}=#{v}"}
 
+          # If the node is a boolean, we need to get rid of the mm parameter
+          # because edismax with bools and mm just don't play well together.
+          #
+          # See https://blog.innoventsolutions.com/innovent-solutions-blog/2017/02/solr-edismax-boolean-query.html
+          # and/or SOLR-8812
+
+          if [:and, :or].include? node.node_type
+             args.delete('mm')
+          end
+          arg_pairs = args.each_pair.map{|k, v| "#{k}=#{v}"}
           "{!edismax #{arg_pairs.join(' ')} v=$#{q_localparams_name}}"
         end
 
