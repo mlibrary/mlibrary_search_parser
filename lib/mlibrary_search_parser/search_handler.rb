@@ -4,6 +4,7 @@ require 'dotenv/load'
 module MLibrarySearchParser
   class ParseError
     DETAILS = "ParseError"
+    SUMMARY = "ParseError"
     attr_reader :original, :actual
 
     def initialize(original = nil, actual = nil)
@@ -15,9 +16,14 @@ module MLibrarySearchParser
       self.class::DETAILS
     end
 
+    def summary
+      self.class::SUMMARY
+    end
+
     def to_h
       {
         details: details,
+        summary: summary,
         original: original,
         actual: actual,
       }
@@ -26,25 +32,25 @@ module MLibrarySearchParser
 
   class UnevenParensError < ParseError
     DETAILS = <<-EOF
-Unbalanced parentheses detected. Edit your search terms above to revise and rerun this search.
+<strong>Unpaired parentheses detected.</strong> If you meant to group certain terms together, make sure the intended terms are enclosed with a pair of opening and closing parentheses.
     EOF
   end
 
   class UnevenQuotesError < ParseError
     DETAILS = <<-EOF
-Unbalanced quotes detected. Edit your search terms above to revise and rerun this search.
+<strong>An unpaired quotation mark was detected.</strong> If you meant to search for a phrase, make sure it is enclosed with a pair of opening and closing quotation marks.
     EOF
   end
 
   class NestedFieldsError < ParseError
     DETAILS = <<-EOF
-Nested fields detected. Edit your search terms above to revise and rerun this search.
+<strong>One or more parentheses removed.</strong> When including <strong>author:</strong>, <strong>title:</strong>, or other fields in a search, an error can occur if fields are grouped together with parentheses incorrectly. See <a href="https://guides.lib.umich.edu/c.php?g=914690&amp;p=6590011">Tips for Using Library Search</a> for help or revise your search to run again.
     EOF
   end
 
   class UnparseableError < ParseError
     DETAILS = <<-EOF
-Not able to run requested search due to conflicting parameters. Edit your search terms above to revise and rerun this search. See <Research Guide> for search help.
+<strong>Not able to run requested search due to conflicting parameters.</strong> Edit your search terms above to revise and rerun this search. See <Research Guide> for search help.
     EOF
   end
 
