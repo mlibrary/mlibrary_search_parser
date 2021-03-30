@@ -104,14 +104,18 @@ RSpec.describe "MLibrarySearchHandler" do
     end
 
     it "collects multiple errors where applicable" do
-      search = MLibrarySearchParser::MiniSearch.new('test) "with title:(author:many problems)')
+      search = MLibrarySearchParser::MiniSearch.new('test) "with title:(author:many problems) AND ')
       output = @handler.pre_process(search)
-      expect(output.to_s).to eq "test with title:author many problems"
+      expect(output.to_s).to eq "test with title:author many problems AND "
       expect(output.errors).to match_array([
         MLibrarySearchParser::UnevenQuotesError,
         MLibrarySearchParser::UnevenParensError,
-        MLibrarySearchParser::NestedFieldsError
+        MLibrarySearchParser::NestedFieldsError,
+        MLibrarySearchParser::UnparseableError
       ])
+      for err in output.errors do
+        expect(err.original).to eq 'test) "with title:(author:many problems) AND '
+      end
     end
   end
 
