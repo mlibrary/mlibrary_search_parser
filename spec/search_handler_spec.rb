@@ -117,6 +117,13 @@ RSpec.describe "MLibrarySearchHandler" do
         expect(err.original).to eq 'test) "with title:(author:many problems) AND '
       end
     end
+
+    it "preserves original search string" do
+      search = MLibrarySearchParser::MiniSearch.new("keyword AND ")
+      output = @handler.pre_process(search)
+      expect(output.errors).to match_array(MLibrarySearchParser::UnparseableError)
+      expect(output.errors[0].original).to eq "keyword AND "
+    end
   end
 
   describe "parse" do
