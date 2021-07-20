@@ -38,6 +38,18 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
       lp = localparams("title:one two*three four*")
       expect(lp.params[:q2]).to eq('(one two\\*three four*)')
     end
+
+    it "handles the single-asterisk search" do
+      lp = localparams("*")
+      expect(lp.params[:q]).to eq("*:*")
+    end
+  end
+
+  describe "shakes" do
+    it "combines matching fieldeds into one" do
+      lp = localparams('title:one AND title:two')
+      expect(lp.params[:clean_string]).to eq('title:(one AND two)')
+    end
   end
 
 end
