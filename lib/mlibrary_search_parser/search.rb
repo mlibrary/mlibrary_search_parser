@@ -98,9 +98,12 @@ module MLibrarySearchParser
     def clean_string
       search_tree.clean_string
     end
-
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
+    end
+
+    def shake
+      @search_tree = search_tree.shake
     end
 
     def valid?

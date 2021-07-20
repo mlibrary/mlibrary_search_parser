@@ -20,7 +20,14 @@ module MLibrarySearchParser
         [query]
       end
 
-
+      def shake
+        shaken = query.shake
+        if shaken.is_type?(:empty)
+          EmptyNode.new
+        else
+          self.class.new(field, shaken)
+        end
+      end
 
       def deep_dup(&blk)
         n = self.class.new(field, query.deep_dup(&blk))
@@ -52,7 +59,7 @@ module MLibrarySearchParser
       end
 
       def to_webform
-        [{"field" => field}, query.to_webform]
+        [{ "field" => field }, query.to_webform]
       end
     end
   end

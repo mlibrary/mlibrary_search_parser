@@ -99,11 +99,17 @@ module MLibrarySearchParser
 
       # Shake out stuff like title:one AND title:two to title:(one AND two)
       def shake
+        lshake = left.shake
+        rshake = right.shake
+
+        return EmptyNode.new if  [lshake, rshake].all? {|n| n.is_type?(:empty)}
+        return lshake if rshake.is_type?(:empty)
+        return rshake if lshake.is_type?(:empty)
         if [left,right].all? {|x| x.is_type?(:fielded)} and
             left.field == right.field
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
-        elsif left.shake == right.shake
-          left.shake
+        elsif lshake == rshake
+          lshake
         else
           self
         end

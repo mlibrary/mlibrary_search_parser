@@ -17,7 +17,7 @@ module MLibrarySearchParser
 
         # @param [MLibrarySearchParser::Search] search
         def initialize(search)
-          @original_search_tree = search
+          @original_search_tree = search.shake
           @search_tree          = lucene_escape_node(search.search_tree.deep_dup)
           @search_tree.renumber!
           @params = {}

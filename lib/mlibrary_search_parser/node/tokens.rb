@@ -42,7 +42,11 @@ module MLibrarySearchParser::Node
     end
 
     def shake
-      self
+      if text == '*'
+        EmptyNode.new
+      else
+        self
+      end
     end
 
     def tree_string

@@ -201,4 +201,9 @@ RSpec.describe MLibrarySearchParser do
     expect(parse_and_transform(str).clean_string).to eq "subject:(Moscow (Russia) History)"
   end
 
+  it "leaves asterisks for wildcards alone" do
+    str = "title:one wildcard*"
+    expect(parse_and_transform(str).clean_string).to eq "title:(one wildcard*)"
+  end
+
 end

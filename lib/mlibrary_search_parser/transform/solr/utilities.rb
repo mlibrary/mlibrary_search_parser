@@ -6,7 +6,7 @@ module MLibrarySearchParser
       module Utilities
         # We don't escape double-quotes, parens because anything that's there
         # is already validated as part of a phrase
-        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^~?:*])/.freeze
+        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^~?:])/.freeze
         QUOTED_RE = /\A".*?"\Z/
         PLUS_MINUS_SPACE = /([\-+])(\s+|\Z)/
 
@@ -19,7 +19,20 @@ module MLibrarySearchParser
         def lucene_escape(str)
           escaped = str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1')
               .gsub(/(?:\|\||&&)/, ' ')
+          escaped = escape_asterisks_followed_by_something(escaped)
           escape_plus_minus_followed_by_space(escaped)
+        end
+
+        # We want to hang onto any asterisks that come at the end of
+        # a word and eliminate the others
+        ASTR = /(?<pre>\A.*[\p{L}\d])\*(?<post>[^\p{Z}].*)/
+        def escape_asterisks_followed_by_something(str)
+          m = ASTR.match(str)
+          if m
+            m['pre'] + '\\*' + m['post']
+          else
+            str
+          end
         end
 
         # Solr allows a space after a +/-, treating it as a should/shouldn't
