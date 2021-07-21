@@ -8,7 +8,7 @@ require 'erb'
 
 
 # Your solr port (local) or full URL (remote)
-portOrURL = 'http://julep-1.umdl.umich.edu:8026/solr'
+portOrURL = 'http://julep-1.umdl.umich.edu:8023/solr'
 # portOrURL = 9639
 client = SimpleSolrClient::Client.new(portOrURL)
 @core = client.core(client.cores.first)
