@@ -183,6 +183,13 @@ module MLibrarySearchParser
         "<#{operator.upcase} [#{operand.inspect}]>"
       end
 
+      def shake
+        shaken = operand.shake
+
+        return EmptyNode.new if  shaken.is_type?(:empty)
+        self.class.new(shaken)
+      end
+
       def to_webform
         [{"operator" => "#{operator.upcase}"}, operand.to_webform]
       end

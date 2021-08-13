@@ -50,6 +50,16 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
       lp = localparams('title:one AND title:two')
       expect(lp.params[:clean_string]).to eq('title:(one AND two)')
     end
+
+    it "shakes a NOT" do
+      lp = localparams('subject:one NOT subject:two')
+      expect(lp.params[:clean_string]).to eq('subject:one (NOT (subject:(two)))')
+    end
+
+    it "shakes an AND" do
+      lp = localparams('one AND two')
+      expect(lp.params[:clean_string]).to eq('(one AND two)')
+    end
   end
 
 end
