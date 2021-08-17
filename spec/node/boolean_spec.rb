@@ -20,14 +20,6 @@ RSpec.describe "BooleanNode" do
       expect(@node.to_s).to eq "(left terms) AND (right terms)"
     end
 
-    it "has to_webform" do
-      expect(@node.to_webform).to eq([
-                                         {"query" => "left terms"},
-                                         {"operator" => "AND"},
-                                         {"query" => "right terms"}
-                                     ])
-    end
-
     it "produces a clean string with multi terms" do
       expect(@node.clean_string).to eq("(left terms) AND (right terms)")
     end
@@ -79,14 +71,6 @@ RSpec.describe "BooleanNode" do
       expect(@node.to_s).to eq "(left terms) OR (right terms)"
     end
 
-    it "has to_webform" do
-      expect(@node.to_webform).to eq([
-                                         {"query" => "left terms"},
-                                         {"operator" => "OR"},
-                                         {"query" => "right terms"}
-                                     ])
-    end
-
     describe "Nested" do
       before do
         not_node   = MLibrarySearchParser::Node::NotNode.new(MLibrarySearchParser::Node::TokensNode.new("unwanted terms"))
@@ -97,16 +81,6 @@ RSpec.describe "BooleanNode" do
         expect(@nest_node.to_s).to eq "((left terms) OR (right terms)) AND (NOT (unwanted terms))"
       end
 
-      it "to_webform" do
-        expect(@nest_node.to_webform).to eq([
-                                                {"query" => "left terms"},
-                                                {"operator" => "OR"},
-                                                {"query" => "right terms"},
-                                                {"operator" => "AND"},
-                                                {"operator" => "NOT"},
-                                                {"query" => "unwanted terms"}
-                                            ])
-      end
 
       it "provides equality for trees of booleans" do
         node_1 = and_node(or_node("one two", "three four"),

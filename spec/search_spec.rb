@@ -27,10 +27,6 @@ RSpec.describe "Search" do
       expect(@search.to_s).to eq "a simple search"
     end
 
-    it "returns webform input as hash" do
-      expect(@search.to_webform).to eq([{"query" => "a simple search"}])
-    end
-
     it "returns solr query" do
       expect(@search.to_solr_query).to eq "a simple search"
     end
@@ -56,14 +52,6 @@ RSpec.describe "Search" do
       expect(@search.to_s).to eq "(a query) AND (some more query)"
     end
 
-    it "has to_webform" do
-      expect(@search.to_webform).to eq([
-                                           {"query" => "a query"},
-                                           {"operator" => "AND"},
-                                           {"query" => "some more query"}
-                                       ])
-    end
-
     it "returns solr query" do
       expect(@search.to_solr_query).to eq "(a query) AND (some more query)"
     end
@@ -82,19 +70,6 @@ RSpec.describe "Search" do
 
     it "returns to_s with explicit scoping" do
       expect(@search.to_s).to eq "(title:(somebody)) OR (author:(something)) | NOT (author:(whozit))"
-    end
-
-    it "has to_webform" do
-      expect(@search.to_webform).to eq([
-                                           {"field" => "title"},
-                                           {"query" => "somebody"},
-                                           {"operator" => "OR"},
-                                           {"field" => "author"},
-                                           {"query" => "something"},
-                                           {"operator" => "NOT"},
-                                           {"field" => "author"},
-                                           {"query" => "whozit"}
-                                       ])
     end
 
     it "returns solr query" do
@@ -121,15 +96,6 @@ RSpec.describe "Search" do
       expect(@search.errors?).to eq true
       expect(@search.errors).to match_array [MLibrarySearchParser::UnevenParensError]
     end
-
-    it "has to_webform" do
-      expect(@search.to_webform).to eq([
-                                           {"field" => "title"},
-                                           {"query" => "something"},
-                                           {"operator" => "AND"},
-                                           {"query" => "somebody"}
-                                       ])
-    end
   end
 
 
@@ -145,27 +111,5 @@ RSpec.describe "Search" do
       search = @builder.build(str)
       expect(search.valid?).to be_truthy
     end
-  end
-
-
-  describe "webform input" do
-    before do
-      @form        = [{"field" => "title"},
-                      {"query" => "somebody"},
-                      {"operator" => "OR"},
-                      {"field" => "author"},
-                      {"query" => "something"},
-                      {"operator" => "NOT"},
-                      {"field" => "author"},
-                      {"query" => "whozit"}
-      ]
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @search      = MLibrarySearchParser::Search.new(@form, @config)
-    end
-
-    #it "returns its original input" do
-    #expect(@search.original_input).to eq "title:somebody OR author:something NOT author:whozit"
-    #end
   end
 end

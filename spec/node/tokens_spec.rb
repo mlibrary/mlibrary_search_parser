@@ -15,10 +15,6 @@ RSpec.describe "TokensNode" do
     expect(@node.to_s).to eq "some text"
   end
 
-  it "returns that text for to_webform" do
-    expect(@node.to_webform).to eq({"query" => "some text"})
-  end
-
   it "parenthesizes multiple words" do
     expect(@node.clean_string).to eq "(some text)"
   end
