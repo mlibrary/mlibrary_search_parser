@@ -4,20 +4,7 @@ require_relative 'base'
 
 module MLibrarySearchParser
   module Node
-    class Boolean < BaseNode
-      def self.for_operator(operator, left, right=nil)
-        case operator.upcase
-        when "OR"
-          OrNode.new(left, right)
-        when "AND"
-          AndNode.new(left, right)
-        when "NOT"
-          AndNode.new(left, NotNode.new(right))
-        end
-      end
-    end
-
-    class BinaryNode < Boolean
+    class BinaryNode < BaseNode
       attr_accessor :left, :right
       def initialize(left, right)
         @left = left.set_parent!(self)
@@ -140,7 +127,7 @@ module MLibrarySearchParser
       end
     end
 
-    class UnaryNode < Boolean
+    class UnaryNode < BaseNode
       attr_accessor :operand
       def initialize(operand)
         @operand = operand
