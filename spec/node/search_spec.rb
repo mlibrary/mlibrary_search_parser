@@ -40,8 +40,8 @@ RSpec.describe "SearchNode" do
     end
 
     it "produces a tree string" do
-      ts = @complex.tree_string
-      expect(ts).to eq "AND\n  ┝  one\n  ┝  two\nOR\n  ┝  three\n  ┝  four"
+      expect(@fielded.tree_string).to eq "FIELD: title\n  ┝  two"
+      expect(@complex.tree_string).to eq "AND\n  ┝  one\n  ┝  two\nOR\n  ┝  three\n  ┝  four"
     end
   end
 

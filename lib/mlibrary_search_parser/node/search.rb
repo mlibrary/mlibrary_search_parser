@@ -28,7 +28,12 @@ module MLibrarySearchParser::Node
     end
 
     def shake
-      self.class.new(clauses.map(&:shake).reject{|x| x.is_type?(:empty)})
+      shaken_clauses = clauses.map(&:shake).reject {|x| x.is_type?(:empty)}
+      if shaken_clauses.length > 0
+        self.class.new(shaken_clauses)
+      else
+        EmptyNode.new
+      end
     end
 
     def deep_dup(&blk)

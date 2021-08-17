@@ -27,6 +27,10 @@ module MLibrarySearchParser::Node
     def to_s
       ""
     end
+
+    def deep_dup
+      self
+    end
   end
 end
 

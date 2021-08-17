@@ -25,6 +25,10 @@ RSpec.describe "FieldedNode" do
     expect(n.clean_string).to eq('title:(one AND two) AND author:("phrase here")')
   end
 
+  it "has a reasonable inspect" do
+    expect(@node.inspect).to eq "<FieldedNode[title]: <TokensNode: [some terms]>>"
+  end
+
   describe "Equality and traversing" do
     it "implements ==" do
       n1 = and_node(fielded_node('title', 'one'), fielded_node('author', 'two'))

@@ -72,6 +72,11 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
       lp = localparams('one AND two')
       expect(lp.params[:clean_string]).to eq('(one AND two)')
     end
+
+    it "shakes out an empty node inside a field" do
+      lp = localparams('one title:()')
+      expect(lp.params[:clean_string]).to eq('one')
+    end
   end
 
 end
