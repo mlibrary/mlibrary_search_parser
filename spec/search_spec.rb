@@ -96,6 +96,10 @@ RSpec.describe "Search" do
       expect(@search.errors?).to eq true
       expect(@search.errors).to match_array [MLibrarySearchParser::UnevenParensError]
     end
+
+    it "gives a reasonable clean string" do
+      expect(@search.clean_string).to eq '(title:something AND somebody)'
+    end
   end
 
 
