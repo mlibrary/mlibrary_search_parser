@@ -8,10 +8,6 @@ module MLibrarySearchParser::Node
       :unparseable
     end
 
-    def children
-      []
-    end
-
     def clean_string
       text.downcase
     end

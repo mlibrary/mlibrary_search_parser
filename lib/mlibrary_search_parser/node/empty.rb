@@ -20,10 +20,6 @@ module MLibrarySearchParser::Node
       :empty
     end
 
-    def children
-      []
-    end
-
     def to_s
       ""
     end

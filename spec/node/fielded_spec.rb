@@ -29,6 +29,11 @@ RSpec.describe "FieldedNode" do
     expect(@node.inspect).to eq "<FieldedNode[title]: <TokensNode: [some terms]>>"
   end
 
+  it "contained node knows it's in a fielded" do
+    child = @node.children[0]
+    expect(child.in_fielded?).to eq true
+  end
+
   describe "Equality and traversing" do
     it "implements ==" do
       n1 = and_node(fielded_node('title', 'one'), fielded_node('author', 'two'))

@@ -26,4 +26,8 @@ RSpec.describe "TokensNode" do
   it "implements equality" do
     expect(tnode("one")).to eq(tnode('one'))
   end
+
+  it "knows if it's not in a fielded node" do
+    expect(@node.in_fielded?).to eq false
+  end
 end
