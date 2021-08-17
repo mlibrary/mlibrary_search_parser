@@ -10,9 +10,16 @@ end
 
 RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
 
-  it "handles OR" do
-    lp = localparams("one OR title:two")
-    expect(lp.clean_string).to eq('(one OR title:two)')
+  describe "handles OR" do
+    it "with field" do
+      lp = localparams("one OR title:two")
+      expect(lp.clean_string).to eq('(one OR title:two)')
+    end
+
+    it "without field" do
+      lp = localparams("one OR two")
+      expect(lp.clean_string).to eq('(one OR two)')
+    end
   end
 
   describe "Special cases" do
