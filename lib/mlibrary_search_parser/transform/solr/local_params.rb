@@ -71,7 +71,9 @@ module MLibrarySearchParser
                    elsif shouldmust == :should
                      "OR"
                    else
+                     # :nocov:
                      raise "ShouldMust should only get :should or :must"
+                     # :nocov:
                    end
           "(#{transform(node.left)} #{joiner} #{transform(node.right)})"
         end
@@ -89,7 +91,7 @@ module MLibrarySearchParser
           first = node.clauses.first
           if node.clauses.size == 1 and first.is_type?(:not)
             fake_and = (MLibrarySearchParser::Node::AndNode.new(
-                MLibrarySearchParser::Node::FieldedNode.new("allfields", MLibrarySearchParser::Node::TokensNode.new("")),
+                MLibrarySearchParser::Node::FieldedNode.new("all_fields", MLibrarySearchParser::Node::TokensNode.new("")),
                 first
             ))
             fake_and.renumber!

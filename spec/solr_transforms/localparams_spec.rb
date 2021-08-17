@@ -10,6 +10,18 @@ end
 
 RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
 
+  it "handles OR" do
+    lp = localparams("one OR title:two")
+    expect(lp.clean_string).to eq('(one OR title:two)')
+  end
+
+  describe "Special cases" do
+    it "Correctly handles a lone NOT clause" do
+      lp = localparams("NOT one")
+      expect(lp.query).to match(/AND NOT/)
+    end
+  end
+
   describe "Correctly use mm with/without booleans" do
     it "adds mm for non-boolean search" do
       lp = localparams("one two")
