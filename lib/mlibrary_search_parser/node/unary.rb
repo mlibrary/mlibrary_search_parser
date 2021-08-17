@@ -13,7 +13,9 @@ module MLibrarySearchParser
       end
 
       def operator
+        # :nocov:
         :undefined
+        # :nocov:
       end
 
       def children
