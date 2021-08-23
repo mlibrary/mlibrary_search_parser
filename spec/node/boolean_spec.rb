@@ -57,8 +57,12 @@ RSpec.describe "BooleanNode" do
 
     it "gets the 'negative' clauses" do
       node = MLibrarySearchParser::Node::AndNode.new(tnode('one'), not_node('two'))
-      pp(node)
       expect(node.negatives).to match_array([tnode('two')])
+    end
+
+    it "shakes out two matching fieldeds" do
+      node = and_node(fielded_node("title", "one"), fielded_node("title", "one"))
+      expect(node.shake).to eq(fielded_node("title", "one"))
     end
   end
 

@@ -92,11 +92,11 @@ module MLibrarySearchParser
         return EmptyNode.new if  [lshake, rshake].all? {|n| n.is_type?(:empty)}
         return lshake if rshake.is_type?(:empty)
         return rshake if lshake.is_type?(:empty)
-        if [left,right].all? {|x| x.is_type?(:fielded)} and
+        if lshake == rshake
+          lshake
+        elsif [left,right].all? {|x| x.is_type?(:fielded)} and
             left.field == right.field
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
-        elsif lshake == rshake
-          lshake
         else
           self
         end
