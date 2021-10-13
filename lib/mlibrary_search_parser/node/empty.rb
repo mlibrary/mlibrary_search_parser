@@ -20,12 +20,12 @@ module MLibrarySearchParser::Node
       :empty
     end
 
-    def children
-      []
-    end
-
     def to_s
       ""
+    end
+
+    def deep_dup
+      self
     end
   end
 end

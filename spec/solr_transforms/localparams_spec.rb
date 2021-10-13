@@ -10,6 +10,25 @@ end
 
 RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
 
+  describe "handles OR" do
+    it "with field" do
+      lp = localparams("one OR title:two")
+      expect(lp.clean_string).to eq('(one OR title:two)')
+    end
+
+    it "without field" do
+      lp = localparams("one OR two")
+      expect(lp.clean_string).to eq('(one OR two)')
+    end
+  end
+
+  describe "Special cases" do
+    it "Correctly handles a lone NOT clause" do
+      lp = localparams("NOT one")
+      expect(lp.query).to match(/AND NOT/)
+    end
+  end
+
   describe "Correctly use mm with/without booleans" do
     it "adds mm for non-boolean search" do
       lp = localparams("one two")
@@ -59,6 +78,11 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
     it "shakes an AND" do
       lp = localparams('one AND two')
       expect(lp.params[:clean_string]).to eq('(one AND two)')
+    end
+
+    it "shakes out an empty node inside a field" do
+      lp = localparams('one title:()')
+      expect(lp.params[:clean_string]).to eq('one')
     end
   end
 

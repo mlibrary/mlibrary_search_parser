@@ -15,10 +15,6 @@ RSpec.describe "TokensNode" do
     expect(@node.to_s).to eq "some text"
   end
 
-  it "returns that text for to_webform" do
-    expect(@node.to_webform).to eq({"query" => "some text"})
-  end
-
   it "parenthesizes multiple words" do
     expect(@node.clean_string).to eq "(some text)"
   end
@@ -29,5 +25,9 @@ RSpec.describe "TokensNode" do
 
   it "implements equality" do
     expect(tnode("one")).to eq(tnode('one'))
+  end
+
+  it "knows if it's not in a fielded node" do
+    expect(@node.in_fielded?).to eq false
   end
 end

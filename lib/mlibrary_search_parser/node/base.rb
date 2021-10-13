@@ -20,6 +20,7 @@ module MLibrarySearchParser::Node
       self
     end
 
+    # :nocov:
     # @abstract What type of node is this?
     # @return [Symbol] Symbol representing the node type
     def node_type
@@ -34,6 +35,7 @@ module MLibrarySearchParser::Node
     def deep_dup(&blk)
       raise "#{self.class} needs to implement deep_dup(&blk)"
     end
+    # :nocov:
 
     # Is this the given type?
     # @param [Symbol] type the node type to detect

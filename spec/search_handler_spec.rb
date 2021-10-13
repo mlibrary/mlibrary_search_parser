@@ -125,22 +125,4 @@ RSpec.describe "MLibrarySearchHandler" do
       expect(output.errors[0].original).to eq "keyword AND "
     end
   end
-
-  describe "parse" do
-    it "returns useful object with to_webform" do
-      output = @handler.parse("title:huck finn AND author:mark twain")
-      expect(output.to_s).to eq "(title:(huck finn)) AND (author:(mark twain))"
-      expect(output.to_webform).to eq([{"field"=>"title"},
-        {"query"=>"huck finn"},
-        {"operator"=>"AND"},
-        {"field"=>"author"},
-        {"query"=>"mark twain"}
-        ])
-    end
-
-    it "returns something useful even on a parser error" do
-      output = @handler.parse("title:somebody(")
-      expect(output.to_webform).to eq([{"query" => "title:somebody("}])
-    end
-  end
 end

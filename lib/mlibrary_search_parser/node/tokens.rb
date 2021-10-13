@@ -26,11 +26,6 @@ module MLibrarySearchParser::Node
       other.is_type?(node_type) and text == other.text
     end
 
-    # A tokens node is always a leaf
-    def children
-      []
-    end
-
     # @see BaseNode#deep_dup
     def deep_dup(&blk)
       n = self.class.new(text)
@@ -55,10 +50,6 @@ module MLibrarySearchParser::Node
 
     def inspect
       "<TokensNode: [#{text}]>"
-    end
-
-    def to_webform
-      {"query" => text}
     end
   end
 end

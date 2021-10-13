@@ -4,20 +4,7 @@ require_relative 'base'
 
 module MLibrarySearchParser
   module Node
-    class Boolean < BaseNode
-      def self.for_operator(operator, left, right=nil)
-        case operator.upcase
-        when "OR"
-          OrNode.new(left, right)
-        when "AND"
-          AndNode.new(left, right)
-        when "NOT"
-          AndNode.new(left, NotNode.new(right))
-        end
-      end
-    end
-
-    class BinaryNode < Boolean
+    class BinaryNode < BaseNode
       attr_accessor :left, :right
       def initialize(left, right)
         @left = left.set_parent!(self)
@@ -105,11 +92,11 @@ module MLibrarySearchParser
         return EmptyNode.new if  [lshake, rshake].all? {|n| n.is_type?(:empty)}
         return lshake if rshake.is_type?(:empty)
         return rshake if lshake.is_type?(:empty)
-        if [left,right].all? {|x| x.is_type?(:fielded)} and
+        if lshake == rshake
+          lshake
+        elsif [left,right].all? {|x| x.is_type?(:fielded)} and
             left.field == right.field
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
-        elsif lshake == rshake
-          lshake
         else
           self
         end
@@ -117,10 +104,6 @@ module MLibrarySearchParser
 
       def inspect
         "<#{operator.upcase} [#{left.inspect}] [#{right.inspect}]>"
-      end
-
-      def to_webform
-        [left.to_webform, {"operator" => "#{operator.upcase}"}, right.to_webform].flatten
       end
     end
 
@@ -144,66 +127,7 @@ module MLibrarySearchParser
       end
     end
 
-    class UnaryNode < Boolean
-      attr_accessor :operand
-      def initialize(operand)
-        @operand = operand
-      end
 
-      def operator
-        :undefined
-      end
-
-      def children
-        [operand]
-      end
-
-      def to_s
-        "#{operator.upcase} (#{operand})"
-      end
-
-      def tree_string
-        "#{tree_indent}#{operator.to_s.upcase}\n#{operand.tree_string}"
-      end
-
-      def deep_dup(&blk)
-        n = self.class.new(operand.deep_dup(&blk))
-        if block_given?
-          blk.call(n)
-        else
-          n
-        end
-      end
-
-      def ==(other)
-        other.is_type?(node_type) && operand == other.operand
-      end
-
-      def inspect
-        "<#{operator.upcase} [#{operand.inspect}]>"
-      end
-
-      def shake
-        shaken = operand.shake
-
-        return EmptyNode.new if  shaken.is_type?(:empty)
-        self.class.new(shaken)
-      end
-
-      def to_webform
-        [{"operator" => "#{operator.upcase}"}, operand.to_webform]
-      end
-    end
-
-    class NotNode < UnaryNode
-      def operator
-        :not
-      end
-
-      def node_type
-        :not
-      end
-    end
 
   end
 end

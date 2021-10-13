@@ -25,11 +25,13 @@ RSpec.describe "FieldedNode" do
     expect(n.clean_string).to eq('title:(one AND two) AND author:("phrase here")')
   end
 
-  it "has to_webform" do
-    expect(@node.to_webform).to eq([
-                                       {"field" => "title"},
-                                       {"query" => "some terms"}
-                                   ])
+  it "has a reasonable inspect" do
+    expect(@node.inspect).to eq "<FieldedNode[title]: <TokensNode: [some terms]>>"
+  end
+
+  it "contained node knows it's in a fielded" do
+    child = @node.children[0]
+    expect(child.in_fielded?).to eq true
   end
 
   describe "Equality and traversing" do

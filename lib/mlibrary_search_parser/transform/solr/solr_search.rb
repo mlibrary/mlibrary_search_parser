@@ -79,9 +79,11 @@ module MLibrarySearchParser
           when :not
             not_node(node)
           when :unparseable
+            # :nocov:
             unparseable_node(node)
           else
             raise ArgumentError, "Unknown node type #{node.node_type}"
+            # :nocov:
           end
         end
 
@@ -128,9 +130,11 @@ module MLibrarySearchParser
         end
 
         def unparseable_node(node)
+          # :nocov:
           tok = MLibrarySearchParser::Node::TokensNode.new(node.clean_string.downcase)
           tok.renumber!
           edismaxify(default_field, tok)
+          # :nocov:
         end
 
       end
