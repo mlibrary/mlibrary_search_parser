@@ -92,7 +92,7 @@ module MLibrarySearchParser
     rule(:word) { match['^\(\)\s'].repeat(1) }
     rule(:token) { phrase | word }
     rule(:tokens) { token >> (space >> tokens).repeat(0) >> space? }
-    rule(:balanced_parens) { lparen >> (tokens | balanced_parens).repeat >> rparen }
+    rule(:balanced_parens) { lparen >> (tokens | balanced_parens).repeat >> rparen >> space? }
     rule(:full_query) { (space? >> (balanced_parens | tokens) >> space?).repeat }
     root(:full_query)
   end

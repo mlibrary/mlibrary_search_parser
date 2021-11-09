@@ -40,5 +40,9 @@ RSpec.describe "PreQueryParenthesisParser" do
   it "allows paren embedded in a phrase" do
     expect { @parser.parse('( one two "three )" four)') }.not_to raise_error
   end
+
+  it "allows nested parens with trailing token" do
+    expect { @parser.parse('(one (two) three)') }.not_to raise_error
+  end
 end
 
