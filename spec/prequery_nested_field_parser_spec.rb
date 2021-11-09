@@ -8,6 +8,22 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new(@fieldnames)
   end
 
+  it "is fine with no fieldeds or parens or anything" do
+    expect { @parser.parse('one two') }.not_to raise_error
+  end
+
+  it "validates normal unnested parens" do
+    expect { @parser.parse("(one two) (three four)")}.not_to raise_error
+  end
+
+  it "validates unnested parens and leading/trailing tokens" do
+    expect { @parser.parse("one (two three) four")}.not_to raise_error
+  end
+
+  it "validates nested parens" do
+    expect { @parser.parse("(one (two three) four)")}.not_to raise_error
+  end
+
   it "validates a single field" do
     expect { @parser.parse("title:test") }.not_to raise_error
   end
@@ -31,6 +47,15 @@ RSpec.describe "PreQueryNestedFieldsParser" do
   it "validates fields with parens in them" do
     expect { @parser.parse("title:(test word) author:thing") }.not_to raise_error
   end
+
+  it "validates parenthesized fielded within parens" do
+    expect { @parser.parse("(title:(test word))") }.not_to raise_error
+  end
+
+  it "validates parenthesized fielded within parens and leading/trailing tokens" do
+    expect { @parser.parse("one (title:(test word) two) three") }.not_to raise_error
+  end
+
 
   it "rejects a field containing a field in parens" do
     expect { @parser.parse("title:(thing author:test)") }.to raise_error(Parslet::ParseFailed)
