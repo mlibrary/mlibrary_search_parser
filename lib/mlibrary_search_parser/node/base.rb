@@ -202,6 +202,10 @@ module MLibrarySearchParser::Node
       deep_dup.trim_not.tokens_string
     end
 
+    def wanted_tokens_phrase
+      %Q("#{wanted_tokens_string.gsub('"', '')}")
+    end
+
     # Assign each node in this tree an arbitrary number, useful for
     # splitting out extra query information in a way you know will
     # be unique for each node.

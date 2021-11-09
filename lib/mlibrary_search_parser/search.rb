@@ -1,4 +1,9 @@
+# frozen_string_literal: true
+
+
 require 'mlibrary_search_parser/search_handler'
+
+require 'forwardable'
 
 module MLibrarySearchParser
 
@@ -24,6 +29,11 @@ module MLibrarySearchParser
       SearchBuilder.new(config)
     end
 
+    extend Forwardable
+    def_delegators :@search_tree, :trim, :trim_not, :tokens_string, :tokens_phrase,
+                   :wanted_tokens_string, :wanted_tokens_phrase,
+                   :tree_string
+
     def initialize(original_input, config)
       @original_input = original_input
       @config         = config
@@ -31,11 +41,13 @@ module MLibrarySearchParser
       @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
       @errors         = Array(@mini_search.errors)
       @warnings       = Array(@mini_search.warnings)
+      @search_tree    = @search_handler.parse(mini_search.to_s)
     end
 
     def clean_string
       search_tree.clean_string
     end
+
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
     end

@@ -9,7 +9,7 @@ module MLibrarySearchParser
       attr_accessor :operand
 
       def initialize(operand)
-        @operand = operand
+        @operand = operand.set_parent!(self)
       end
 
       def operator
@@ -20,6 +20,14 @@ module MLibrarySearchParser
 
       def children
         [operand]
+      end
+
+      def trim(&blk)
+        if blk.call(self)
+          EmptyNode.new
+        else
+          self.class.new(operand.trim(&blk))
+        end
       end
 
       def to_s
