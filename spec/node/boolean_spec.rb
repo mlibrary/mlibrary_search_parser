@@ -129,7 +129,7 @@ RSpec.describe "BooleanNode" do
   describe "NotNode" do
     it "has a tree string" do
       node = not_node("thingy")
-      expect(node.tree_string).to eq "NOT\nthingy"
+      expect(node.tree_string).to eq "NOT\n  ┝  thingy"
     end
   end
 
