@@ -71,4 +71,7 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     expect(parsed[0]).to have_key(:tokens)
   end
 
+  it "ignores nested parens with no field" do
+    expect { @parser.parse("(one (two) three)") }.not_to raise_error
+  end
 end
