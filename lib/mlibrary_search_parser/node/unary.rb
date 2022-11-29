@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser
   module Node
-
     class UnaryNode < BaseNode
       attr_accessor :operand
 
@@ -32,7 +31,7 @@ module MLibrarySearchParser
 
       def deep_dup(&blk)
         n = self.class.new(operand.deep_dup(&blk))
-        if block_given?
+        if blk
           blk.call(n)
         else
           n
@@ -64,6 +63,5 @@ module MLibrarySearchParser
         :not
       end
     end
-
   end
 end

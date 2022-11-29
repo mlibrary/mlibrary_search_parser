@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'mlibrary_search_parser/node'
-require_relative 'solr_search'
-require_relative 'utilities'
-require 'mlibrary_search_parser/node/search'
+require "mlibrary_search_parser/node"
+require_relative "solr_search"
+require_relative "utilities"
+require "mlibrary_search_parser/node/search"
 
 module MLibrarySearchParser
   module Transformer
@@ -23,7 +23,6 @@ module MLibrarySearchParser
           q.renumber!
           transform(q, SolrSearch.new)
         end
-
 
         # Dispatch to specific methods for transforming
         # each node type
@@ -57,10 +56,10 @@ module MLibrarySearchParser
         def edismaxify(node, ss)
           v = node.to_clean_string
           {
-              edismax: {
-                  qf: field,
-                  v:  v
-              }
+            edismax: {
+              qf: field,
+              v: v
+            }
           }
         end
 
@@ -68,10 +67,10 @@ module MLibrarySearchParser
         # and the negated clauses go into the must_not
         # @todo Deal with double-negation
         def boolnode(node, shouldmust)
-          pos                 = node.positives.map { |x| transform(x) }
-          neg                 = node.negatives.map { |x| transform(x) }
-          q                   = {
-              bool: {shouldmust.to_sym => pos}
+          pos = node.positives.map { |x| transform(x) }
+          neg = node.negatives.map { |x| transform(x) }
+          q = {
+            bool: {shouldmust.to_sym => pos}
           }
           q[:bool][:must_not] = neg if neg.size.positive?
           q

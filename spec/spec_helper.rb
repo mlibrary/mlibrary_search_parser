@@ -1,9 +1,8 @@
-require 'simplecov'
+require "simplecov"
 SimpleCov.start
 
 require "bundler/setup"
 require "mlibrary_search_parser/query_parser"
-
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -18,8 +17,8 @@ RSpec.configure do |config|
 end
 
 # Set up a search builder based on the catalog
-catalog_config_file = './spec/data/00-catalog.yml'
-catalog_config      = YAML.load(ERB.new(File.read(catalog_config_file)).result)
+catalog_config_file = "./spec/data/00-catalog.yml"
+catalog_config = YAML.load(ERB.new(File.read(catalog_config_file)).result)
 CATALOG_SEARCH_BUILDER = MLibrarySearchParser::Search.search_builder(catalog_config)
 
 def catalog_search(search_str)
@@ -27,7 +26,7 @@ def catalog_search(search_str)
 end
 
 def nodeify(node_or_string)
-  if node_or_string.kind_of? MLibrarySearchParser::Node::BaseNode
+  if node_or_string.is_a? MLibrarySearchParser::Node::BaseNode
     node_or_string
   else
     MLibrarySearchParser::Node::TokensNode.new(node_or_string)
@@ -55,9 +54,5 @@ def not_node(node_or_string)
 end
 
 def search_node(*clauses)
-  MLibrarySearchParser::Node::SearchNode.new(clauses.map{|c| nodeify(c)})
+  MLibrarySearchParser::Node::SearchNode.new(clauses.map { |c| nodeify(c) })
 end
-
-
-
-

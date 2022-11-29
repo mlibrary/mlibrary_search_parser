@@ -1,8 +1,8 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 RSpec.describe "MLibrarySearchHandler" do
   before do
-    @config_file = './spec/data/00-catalog.yml'
+    @config_file = "./spec/data/00-catalog.yml"
     @config = YAML.load(ERB.new(File.read(@config_file)).result)
     @handler = MLibrarySearchParser::SearchHandler.new(@config)
   end
@@ -63,7 +63,7 @@ RSpec.describe "MLibrarySearchHandler" do
         MLibrarySearchParser::NestedFieldsError
       ])
     end
-   
+
     it "ignores things that look like nested fields but aren't" do
       search = MLibrarySearchParser::MiniSearch.new("title:one:author")
       output = @handler.check_nested_fields(search)
@@ -97,7 +97,7 @@ RSpec.describe "MLibrarySearchHandler" do
     end
 
     it "fixes special characters" do
-      search = MLibrarySearchParser::MiniSearch.new('a “search”')
+      search = MLibrarySearchParser::MiniSearch.new("a “search”")
       output = @handler.pre_process(search)
       expect(output.to_s).to eq 'a "search"'
       expect(output.errors).to be_empty
@@ -113,7 +113,7 @@ RSpec.describe "MLibrarySearchHandler" do
         MLibrarySearchParser::NestedFieldsError,
         MLibrarySearchParser::UnparseableError
       ])
-      for err in output.errors do
+      output.errors.each do |err|
         expect(err.original).to eq 'test) "with title:(author:many problems) AND '
       end
     end

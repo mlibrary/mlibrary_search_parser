@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-require 'spec_helper'
+
+require "spec_helper"
 
 RSpec.describe "BooleanNode" do
   before do
-    @left       = MLibrarySearchParser::Node::TokensNode.new("left terms")
-    @right      = MLibrarySearchParser::Node::TokensNode.new("right terms")
+    @left = MLibrarySearchParser::Node::TokensNode.new("left terms")
+    @right = MLibrarySearchParser::Node::TokensNode.new("right terms")
     @genericAnd = and_node("left", "right right")
-    @genericOr  = or_node("left left", "right")
-    @complex    = and_node(or_node('one', 'two'), or_node('three', not_node('four')))
+    @genericOr = or_node("left left", "right")
+    @complex = and_node(or_node("one", "two"), or_node("three", not_node("four")))
   end
-
 
   describe "Generic and AND Boolean node" do
     before do
@@ -49,15 +49,14 @@ RSpec.describe "BooleanNode" do
       expect(tnode(string)).to eq(tnode(string))
     end
 
-
     it "gets the 'positive' clauses" do
-      node = MLibrarySearchParser::Node::AndNode.new(tnode('one'), not_node('two'))
-      expect(node.positives).to match_array([tnode('one')])
+      node = MLibrarySearchParser::Node::AndNode.new(tnode("one"), not_node("two"))
+      expect(node.positives).to match_array([tnode("one")])
     end
 
     it "gets the 'negative' clauses" do
-      node = MLibrarySearchParser::Node::AndNode.new(tnode('one'), not_node('two'))
-      expect(node.negatives).to match_array([tnode('two')])
+      node = MLibrarySearchParser::Node::AndNode.new(tnode("one"), not_node("two"))
+      expect(node.negatives).to match_array([tnode("two")])
     end
 
     it "shakes out two matching fieldeds" do
@@ -77,7 +76,7 @@ RSpec.describe "BooleanNode" do
 
     describe "Nested" do
       before do
-        not_node   = MLibrarySearchParser::Node::NotNode.new(MLibrarySearchParser::Node::TokensNode.new("unwanted terms"))
+        not_node = MLibrarySearchParser::Node::NotNode.new(MLibrarySearchParser::Node::TokensNode.new("unwanted terms"))
         @nest_node = MLibrarySearchParser::Node::AndNode.new(@node, not_node)
       end
 
@@ -85,12 +84,11 @@ RSpec.describe "BooleanNode" do
         expect(@nest_node.to_s).to eq "((left terms) OR (right terms)) AND (NOT (unwanted terms))"
       end
 
-
       it "provides equality for trees of booleans" do
         node_1 = and_node(or_node("one two", "three four"),
-                          and_node("five six", "seven"))
+          and_node("five six", "seven"))
         node_2 = and_node(or_node("one two", "three four"),
-                          and_node("five six", "seven"))
+          and_node("five six", "seven"))
 
         expect(node_1).to eq(node_2)
       end
@@ -100,9 +98,9 @@ RSpec.describe "BooleanNode" do
         b2 = or_node("three", "four")
         b3 = and_node("five", "six")
         b4 = and_node(or_node("one two", "three four"),
-                      and_node("five six", "seven"))
+          and_node("five six", "seven"))
         b5 = and_node(or_node("one two", "three four"),
-                      and_node("five six", "XXXXXXX"))
+          and_node("five six", "XXXXXXX"))
         expect(b1).to_not eq(b2)
         expect(b4).to_not eq(b5)
       end
@@ -115,15 +113,14 @@ RSpec.describe "BooleanNode" do
       it "does deep dup with a block" do
         dup = @complex.deep_dup do |n|
           if n.is_type?(:tokens)
-            tnode('X')
+            tnode("X")
           else
             n
           end
         end
-        expect(dup.tokens_string).to eq 'X X X X'
+        expect(dup.tokens_string).to eq "X X X X"
       end
     end
-
   end
 
   describe "NotNode" do
@@ -132,5 +129,4 @@ RSpec.describe "BooleanNode" do
       expect(node.tree_string).to eq "NOT\nthingy"
     end
   end
-
 end
