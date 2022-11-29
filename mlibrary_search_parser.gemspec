@@ -33,4 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'solr_wrapper'
   spec.add_development_dependency 'simple_solr_client'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'standard'
+
 end

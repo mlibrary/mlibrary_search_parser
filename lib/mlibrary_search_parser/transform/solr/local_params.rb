@@ -8,41 +8,37 @@ module MLibrarySearchParser
       class LocalParams < SolrSearch
 
         def transform!
-          if ["", "*"].include? original_search_tree.clean_string
-            set_param("q", "*:*")
-          else
-            super
-            set_param("q", "_query_:#{query}")
-            set_param("clean_string", original_search_tree.clean_string)
+          super
+          return if params[:q] == "*:*"
+          set_param("q", "_query_:#{query}")
+          set_param("clean_string", original_search_tree.clean_string)
 
-            # Need a df for the boost queries to work
-            set_param('df', 'allfields')
+          # Need a df for the boost queries to work
+          set_param('df', 'allfields')
 
-            # merge in the defaults
-            @params = solr_params.merge(@params)
-
-          end
+          # merge in the defaults
+          @params = solr_params.merge(@params)
         end
 
         # @param [MLibrarySearchParser::Node::BaseNode] node
         def edismaxify(field, node)
-          q_localparams_name  = "q#{node.number}"
+          q_localparams_name = "q#{node.number}"
           qq_localparams_name = "qq#{node.number}"
-          tokens_name         = "t#{node.number}"
+          tokens_name = "t#{node.number}"
 
           set_param(q_localparams_name, node.clean_string)
           set_param(qq_localparams_name, lucene_escape(node.tokens_phrase))
           set_param(tokens_name, lucene_escape(node.wanted_tokens_string))
 
           attributes = field_config(field)
-          args = attributes.keys.each_with_object({}) do  |k,h|
+          args = attributes.keys.each_with_object({}) do |k, h|
             v = attributes[k]
             fname = "#{field}_#{k}"
             v = v.to_s
-            v = v.to_s.gsub(/\$q\b/, "$" + q_localparams_name)
-            v = v.gsub(/\$qq\b/, "$" + qq_localparams_name)
-            v = v.gsub(/\$t\b/, "$" + tokens_name)
-            v = v.gsub(/[\n\s]+/, ' ')
+            v = add_dollarsign_localparam(v, "q", q_localparams_name)
+            v = add_dollarsign_localparam(v, "qq", qq_localparams_name)
+            v = add_dollarsign_localparam(v, "t", tokens_name)
+            v = collapse_whitespace(v)
             set_param(fname, v)
             h[k] = "$#{fname}"
           end
@@ -56,12 +52,19 @@ module MLibrarySearchParser
           # and/or SOLR-8812
 
           if [:and, :or].include? node.node_type
-             args.delete('mm')
+            args.delete('mm')
           end
-          arg_pairs = args.each_pair.map{|k, v| "#{k}=#{v}"}
+          arg_pairs = args.each_pair.map { |k, v| "#{k}=#{v}" }
           "{!edismax #{arg_pairs.join(' ')} v=$#{q_localparams_name}}"
         end
 
+        def add_dollarsign_localparam(query_string, dollar_variable, name)
+          query_string.gsub(/\$#{dollar_variable}\b/, "$" + name)
+        end
+
+        def collapse_whitespace(str)
+          str.gsub(/[\n\s]+/, ' ')
+        end
 
         # @override
         def boolnode(node, shouldmust)
@@ -91,8 +94,8 @@ module MLibrarySearchParser
           first = node.clauses.first
           if node.clauses.size == 1 and first.is_type?(:not)
             fake_and = (MLibrarySearchParser::Node::AndNode.new(
-                MLibrarySearchParser::Node::FieldedNode.new("all_fields", MLibrarySearchParser::Node::TokensNode.new("")),
-                first
+              MLibrarySearchParser::Node::FieldedNode.new("all_fields", MLibrarySearchParser::Node::TokensNode.new("")),
+              first
             ))
             fake_and.renumber!
             transform(fake_and)
@@ -101,8 +104,9 @@ module MLibrarySearchParser
           end
         end
 
-
       end
     end
   end
 end
+
+
