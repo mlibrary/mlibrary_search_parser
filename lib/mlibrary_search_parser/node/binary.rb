@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser
   module Node
@@ -27,8 +27,8 @@ module MLibrarySearchParser
       # @param [BinaryNode] other The other binary node to compare
       def ==(other)
         other.is_type?(node_type) and
-            left == other.left and
-            right == other.right
+          left == other.left and
+          right == other.right
       end
 
       def flatten
@@ -58,7 +58,7 @@ module MLibrarySearchParser
         else
           trimmed_left = left.trim(&blk)
           trimmed_right = right.trim(&blk)
-          combo = [trimmed_left, trimmed_right].map{|n| n.is_type?(:empty) ? :empty : :not_empty}
+          combo = [trimmed_left, trimmed_right].map { |n| n.is_type?(:empty) ? :empty : :not_empty }
           case combo
           when [:empty, :empty]
             EmptyNode
@@ -75,9 +75,10 @@ module MLibrarySearchParser
       # @see BaseNode#deep_dup
       def deep_dup(&blk)
         n = self.class.new(
-            left.deep_dup(&blk),
-            right.deep_dup(&blk))
-        if block_given?
+          left.deep_dup(&blk),
+          right.deep_dup(&blk)
+        )
+        if blk
           blk.call(n)
         else
           n
@@ -89,13 +90,13 @@ module MLibrarySearchParser
         lshake = left.shake
         rshake = right.shake
 
-        return EmptyNode.new if  [lshake, rshake].all? {|n| n.is_type?(:empty)}
+        return EmptyNode.new if [lshake, rshake].all? { |n| n.is_type?(:empty) }
         return lshake if rshake.is_type?(:empty)
         return rshake if lshake.is_type?(:empty)
         if lshake == rshake
           lshake
-        elsif [left,right].all? {|x| x.is_type?(:fielded)} and
-            left.field == right.field
+        elsif [left, right].all? { |x| x.is_type?(:fielded) } &&
+            (left.field == right.field)
           FieldedNode.new(left.field, self.class.new(left.query.shake, right.query.shake))
         else
           self
@@ -126,8 +127,5 @@ module MLibrarySearchParser
         :or
       end
     end
-
-
-
   end
 end

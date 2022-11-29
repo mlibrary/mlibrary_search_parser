@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 RSpec.describe "PreQueryParenthesisParser" do
   before do
@@ -42,7 +42,6 @@ RSpec.describe "PreQueryParenthesisParser" do
   end
 
   it "allows nested parens with trailing token" do
-    expect { @parser.parse('(one (two) three)') }.not_to raise_error
+    expect { @parser.parse("(one (two) three)") }.not_to raise_error
   end
 end
-

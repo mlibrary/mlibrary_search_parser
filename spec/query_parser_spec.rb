@@ -1,5 +1,5 @@
-require_relative 'spec_helper'
-require 'mlibrary_search_parser/query_parser'
+require_relative "spec_helper"
+require "mlibrary_search_parser/query_parser"
 
 RSpec.describe MLibrarySearchParser do
   it "has a version number" do
@@ -7,10 +7,10 @@ RSpec.describe MLibrarySearchParser do
   end
 
   before do
-    @config_file = './spec/data/00-catalog.yml'
-    @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-    @fieldnames  = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
-    @parser      = MLibrarySearchParser::QueryParser.new(@fieldnames)
+    @config_file = "./spec/data/00-catalog.yml"
+    @config = YAML.load(ERB.new(File.read(@config_file)).result)
+    @fieldnames = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+    @parser = MLibrarySearchParser::QueryParser.new(@fieldnames)
     @transformer = MLibrarySearchParser::QueryTransformer.new
 
     def parse_and_transform(string)
@@ -128,19 +128,19 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "does something with empty parens" do
-    expect(parse_and_transform('something ()').to_s).to eq 'something | '
+    expect(parse_and_transform("something ()").to_s).to eq "something | "
   end
 
   it "handles consecutive fieldeds" do
-    expect(parse_and_transform('author:one title:two').to_s).to eq("author:(one) | title:(two)")
+    expect(parse_and_transform("author:one title:two").to_s).to eq("author:(one) | title:(two)")
   end
 
-  it 'works with multiple clauses in parens of a boolean' do
-    expect(parse_and_transform('bill AND (author:one title:two)').to_s).to eq("(bill) AND (author:(one) | title:(two))")
+  it "works with multiple clauses in parens of a boolean" do
+    expect(parse_and_transform("bill AND (author:one title:two)").to_s).to eq("(bill) AND (author:(one) | title:(two))")
   end
 
-  it 'works with a multi-clause thing inside a multi-clause thing' do
-    expect(parse_and_transform('(one title:two (three AND (four author:five)))').to_s).to eq 'one | title:(two) | (three) AND (four | author:(five))'
+  it "works with a multi-clause thing inside a multi-clause thing" do
+    expect(parse_and_transform("(one title:two (three AND (four author:five)))").to_s).to eq "one | title:(two) | (three) AND (four | author:(five))"
   end
 
   it "handles two clauses before an OR" do
@@ -157,7 +157,6 @@ RSpec.describe MLibrarySearchParser do
 
   it "parses a lone NOT after another clause in parens" do
     expect(parse_and_transform("three AND (one NOT two)").to_s).to eq "(three) AND (one | NOT (two))"
-
   end
 
   it "parses a lone NOT after another clause in a fielded" do
@@ -165,12 +164,12 @@ RSpec.describe MLibrarySearchParser do
   end
 
   it "allows nested parens with trailing token" do
-    str = '(one (two) three)'
+    str = "(one (two) three)"
     expect(parse_and_transform(str).clean_string).to eq str
   end
 
   it "deals with fielded in parens" do
-    str = '(title:jones OR author:smith)'
+    str = "(title:jones OR author:smith)"
     expect(parse_and_transform(str).clean_string).to eq str
   end
 
@@ -210,5 +209,4 @@ RSpec.describe MLibrarySearchParser do
     str = "title:one wildcard*"
     expect(parse_and_transform(str).clean_string).to eq "title:(one wildcard*)"
   end
-
 end

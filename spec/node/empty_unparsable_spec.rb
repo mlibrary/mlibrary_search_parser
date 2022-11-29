@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'spec_helper'
+
+require "spec_helper"
 require "mlibrary_search_parser/node"
 
 RSpec.describe "Unparseable and Empty nodes" do

@@ -1,5 +1,5 @@
-require 'json'
-require 'dotenv/load'
+require "json"
+require "dotenv/load"
 
 module MLibrarySearchParser
   class ParseError
@@ -25,47 +25,42 @@ module MLibrarySearchParser
         details: details,
         summary: summary,
         original: original,
-        actual: actual,
+        actual: actual
       }
     end
   end
 
   class UnevenParensError < ParseError
-    DETAILS = <<-EOF
-<strong>Unpaired parentheses detected.</strong> If you meant to group certain terms together, make sure the intended terms are enclosed with a pair of opening and closing parentheses.
+    DETAILS = <<~EOF
+      <strong>Unpaired parentheses detected.</strong> If you meant to group certain terms together, make sure the intended terms are enclosed with a pair of opening and closing parentheses.
     EOF
   end
 
   class UnevenQuotesError < ParseError
-    DETAILS = <<-EOF
-<strong>An unpaired quotation mark was detected.</strong> If you meant to search for a phrase, make sure it is enclosed with a pair of opening and closing quotation marks.
+    DETAILS = <<~EOF
+      <strong>An unpaired quotation mark was detected.</strong> If you meant to search for a phrase, make sure it is enclosed with a pair of opening and closing quotation marks.
     EOF
   end
 
   class NestedFieldsError < ParseError
-    DETAILS = <<-EOF
-<strong>One or more parentheses removed.</strong> When including <strong>author:</strong>, <strong>title:</strong>, or other fields in a search, an error can occur if fields are grouped together with parentheses incorrectly. See <a href="https://guides.lib.umich.edu/c.php?g=914690&amp;p=6590011">Tips for Using Library Search</a> for help or revise your search to run again.
+    DETAILS = <<~EOF
+      <strong>One or more parentheses removed.</strong> When including <strong>author:</strong>, <strong>title:</strong>, or other fields in a search, an error can occur if fields are grouped together with parentheses incorrectly. See <a href="https://guides.lib.umich.edu/c.php?g=914690&amp;p=6590011">Tips for Using Library Search</a> for help or revise your search to run again.
     EOF
   end
 
   class UnparseableError < ParseError
-    DETAILS = <<-EOF
-<strong>Not able to run requested search due to conflicting parameters.</strong> Edit your search terms above to revise and rerun this search. See <Research Guide> for search help.
+    DETAILS = <<~EOF
+      <strong>Not able to run requested search due to conflicting parameters.</strong> Edit your search terms above to revise and rerun this search. See <Research Guide> for search help.
     EOF
   end
 
   class MiniSearch
     attr_accessor :search_string, :original_string, :errors, :warnings
 
-
     def initialize(search_string, errors = [], original_string = nil)
       @search_string = search_string
-      if original_string
-        @original_string = original_string
-      else
-        @original_string = search_string
-      end
-      @errors        = errors
+      @original_string = original_string || search_string
+      @errors = errors
     end
 
     def to_s
@@ -75,28 +70,27 @@ module MLibrarySearchParser
 
   class SearchHandler
     attr_reader :fieldnames,
-                :special_char_parser,
-                :special_char_transformer,
-                :quote_preparser,
-                :paren_preparser,
-                :field_preparser,
-                :main_parser,
-                :transformer
-
+      :special_char_parser,
+      :special_char_transformer,
+      :quote_preparser,
+      :paren_preparser,
+      :field_preparser,
+      :main_parser,
+      :transformer
 
     # Create the parser from teh config
     # Note how we have to sort the search fields so the longest ones come first.
     # Otherwise, the peg parser sees 'title' and never gets to 'title_starts_with'
     def initialize(config)
-      @fieldnames               = config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
-      @special_char_parser      = SpecialCharParser.new
+      @fieldnames = config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+      @special_char_parser = SpecialCharParser.new
       @special_char_transformer = SpecialCharTransformer.new
-      @quote_preparser          = PreQueryDoubleQuotesParser.new
-      @paren_preparser          = PreQueryParenthesisParser.new
-      @field_preparser          = PreQueryNestedFieldsParser.new(@fieldnames)
-      @main_parser              = QueryParser.new(@fieldnames)
-      @fallback_parser          = FallbackParser.new
-      @transformer              = QueryTransformer.new
+      @quote_preparser = PreQueryDoubleQuotesParser.new
+      @paren_preparser = PreQueryParenthesisParser.new
+      @field_preparser = PreQueryNestedFieldsParser.new(@fieldnames)
+      @main_parser = QueryParser.new(@fieldnames)
+      @fallback_parser = FallbackParser.new
+      @transformer = QueryTransformer.new
     end
 
     def fix_special_chars(search)
@@ -107,7 +101,7 @@ module MLibrarySearchParser
 
     def check_quotes(search)
       search_string = search.search_string
-      errors        = search.errors
+      errors = search.errors
       begin
         @quote_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -119,7 +113,7 @@ module MLibrarySearchParser
 
     def check_parens(search)
       search_string = search.search_string
-      errors        = search.errors
+      errors = search.errors
       begin
         @paren_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -131,7 +125,7 @@ module MLibrarySearchParser
 
     def check_nested_fields(search)
       search_string = search.search_string
-      errors        = search.errors
+      errors = search.errors
       begin
         @field_preparser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -146,8 +140,8 @@ module MLibrarySearchParser
       # We want to eliminate nested fields like author:title:blah
       # They are unreasonably hard to recognize/prevent with Parslet
       any_fieldname = Regexp.union(@fieldnames)
-      nested_regex  = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
-      match         = nested_regex.match(search_string)
+      nested_regex = /(.*#{any_fieldname}):(#{any_fieldname}):(.*)/
+      match = nested_regex.match(search_string)
       if match
         search_string = search_string.gsub(nested_regex, '\1:\2 \3')
         errors << NestedFieldsError.new(search.original_string, search_string)
@@ -157,7 +151,7 @@ module MLibrarySearchParser
 
     def check_parse(search)
       search_string = search.search_string
-      errors        = search.errors
+      errors = search.errors
       begin
         @main_parser.parse(search_string)
       rescue Parslet::ParseFailed
@@ -176,9 +170,7 @@ module MLibrarySearchParser
       mini_search = check_nested_fields(mini_search)
 
       # try to actually parse! if it fails, then we add a ??? warning and throw it to solr
-      mini_search = check_parse(mini_search)
-
-      mini_search
+      check_parse(mini_search)
     end
 
     def parse(search)

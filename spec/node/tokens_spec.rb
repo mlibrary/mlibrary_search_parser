@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'spec_helper'
+
+require "spec_helper"
 require "mlibrary_search_parser/node/tokens"
 
 RSpec.describe "TokensNode" do
@@ -24,7 +25,7 @@ RSpec.describe "TokensNode" do
   end
 
   it "implements equality" do
-    expect(tnode("one")).to eq(tnode('one'))
+    expect(tnode("one")).to eq(tnode("one"))
   end
 
   it "knows if it's not in a fielded node" do

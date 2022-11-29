@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser::Node
   class SearchNode < BaseNode
@@ -28,7 +28,7 @@ module MLibrarySearchParser::Node
     end
 
     def shake
-      shaken_clauses = clauses.map(&:shake).reject {|x| x.is_type?(:empty)}
+      shaken_clauses = clauses.map(&:shake).reject { |x| x.is_type?(:empty) }
       if shaken_clauses.length > 0
         self.class.new(shaken_clauses)
       else
@@ -38,7 +38,7 @@ module MLibrarySearchParser::Node
 
     def deep_dup(&blk)
       n = self.class.new(clauses.map { |c| c.deep_dup(&blk) })
-      if block_given?
+      if blk
         blk.call(n)
       else
         n
@@ -46,7 +46,7 @@ module MLibrarySearchParser::Node
     end
 
     def trim(&blk)
-      self.class.new(clauses.map{|c| c.trim(&blk)})
+      self.class.new(clauses.map { |c| c.trim(&blk) })
     end
 
     def to_s
@@ -54,7 +54,7 @@ module MLibrarySearchParser::Node
     end
 
     def clean_string
-      clauses.map(&:clean_string).join(' ')
+      clauses.map(&:clean_string).join(" ")
     end
 
     # Since the search node is just a holder for multiple clauses,
