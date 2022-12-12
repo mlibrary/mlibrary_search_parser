@@ -20,6 +20,14 @@ module MLibrarySearchParser
         [query]
       end
 
+      def trim(&blk)
+        if blk.call(self)
+          EmptyNode.new
+        else
+          self.class.new(field, query.trim(&blk))
+        end
+      end
+
       def shake
         shaken = query.shake
         if shaken.is_type?(:empty)
