@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser
   module Node
@@ -31,7 +31,7 @@ module MLibrarySearchParser
 
       def deep_dup(&blk)
         n = self.class.new(field, query.deep_dup(&blk))
-        if block_given?
+        if blk
           blk.call(n)
         else
           n

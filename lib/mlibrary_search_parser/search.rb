@@ -1,7 +1,6 @@
-require 'mlibrary_search_parser/search_handler'
+require "mlibrary_search_parser/search_handler"
 
 module MLibrarySearchParser
-
   class SearchBuilder
     attr_accessor :config
 
@@ -15,10 +14,11 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search, :config, :errors, :warnings
+    attr_reader :original_input, :mini_search, :config, :errors, :warnings
     # could come from search box, from adv search form, or from solr output
 
-    def self.from_form(input, search_handler) end
+    def self.from_form(input, search_handler)
+    end
 
     def self.search_builder(config)
       SearchBuilder.new(config)
@@ -26,16 +26,17 @@ module MLibrarySearchParser
 
     def initialize(original_input, config)
       @original_input = original_input
-      @config         = config
+      @config = config
       @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
-      @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
-      @errors         = Array(@mini_search.errors)
-      @warnings       = Array(@mini_search.warnings)
+      @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
+      @errors = Array(@mini_search.errors)
+      @warnings = Array(@mini_search.warnings)
     end
 
     def clean_string
       search_tree.clean_string
     end
+
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
     end
@@ -45,7 +46,7 @@ module MLibrarySearchParser
     end
 
     def valid?
-      not errors? or warnings?
+      !errors? or warnings?
     end
 
     def errors?

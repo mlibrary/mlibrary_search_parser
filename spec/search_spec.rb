@@ -1,11 +1,11 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 RSpec.describe "Search" do
   describe "a simple search" do
     before do
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @search      = MLibrarySearchParser::Search.new("a simple search", @config)
+      @config_file = "./spec/data/00-catalog.yml"
+      @config = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search = MLibrarySearchParser::Search.new("a simple search", @config)
     end
     it "returns its original input" do
       expect(@search.original_input).to eq "a simple search"
@@ -33,16 +33,16 @@ RSpec.describe "Search" do
 
     it "constructs a factory" do
       search_builder = MLibrarySearchParser::Search.search_builder(@config)
-      search         = search_builder.build("a simple search")
+      search = search_builder.build("a simple search")
       expect(search.to_s).to eq("a simple search")
     end
   end
 
   describe "a query AND some more query" do
     before do
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @search      = MLibrarySearchParser::Search.new("a query AND some more query", @config)
+      @config_file = "./spec/data/00-catalog.yml"
+      @config = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search = MLibrarySearchParser::Search.new("a query AND some more query", @config)
     end
     it "returns its original input" do
       expect(@search.original_input).to eq "a query AND some more query"
@@ -59,9 +59,9 @@ RSpec.describe "Search" do
 
   describe "title:somebody OR author:something NOT author:whozit" do
     before do
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @search      = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @config)
+      @config_file = "./spec/data/00-catalog.yml"
+      @config = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search = MLibrarySearchParser::Search.new("title:somebody OR author:something NOT author:whozit", @config)
     end
 
     it "returns its original input" do
@@ -79,9 +79,9 @@ RSpec.describe "Search" do
 
   describe "title:something (AND somebody" do
     before do
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @search      = MLibrarySearchParser::Search.new("title:something (AND somebody", @config)
+      @config_file = "./spec/data/00-catalog.yml"
+      @config = YAML.load(ERB.new(File.read(@config_file)).result)
+      @search = MLibrarySearchParser::Search.new("title:something (AND somebody", @config)
     end
 
     it "returns its original input" do
@@ -98,20 +98,19 @@ RSpec.describe "Search" do
     end
 
     it "gives a reasonable clean string" do
-      expect(@search.clean_string).to eq '(title:something AND somebody)'
+      expect(@search.clean_string).to eq "(title:something AND somebody)"
     end
   end
 
-
   describe "Testing failures from spreadsheet" do
     before do
-      @config_file = './spec/data/00-catalog.yml'
-      @config      = YAML.load(ERB.new(File.read(@config_file)).result)
-      @builder     = MLibrarySearchParser::SearchBuilder.new(@config)
+      @config_file = "./spec/data/00-catalog.yml"
+      @config = YAML.load(ERB.new(File.read(@config_file)).result)
+      @builder = MLibrarySearchParser::SearchBuilder.new(@config)
     end
 
-    it '(title:jones OR author:smith)' do
-      str    = '(title:jones OR author:smith)'
+    it "(title:jones OR author:smith)" do
+      str = "(title:jones OR author:smith)"
       search = @builder.build(str)
       expect(search.valid?).to be_truthy
     end

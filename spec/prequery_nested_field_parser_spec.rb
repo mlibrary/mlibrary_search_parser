@@ -1,10 +1,10 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 RSpec.describe "PreQueryNestedFieldsParser" do
   before do
-    @config_file = './spec/data/00-catalog.yml'
+    @config_file = "./spec/data/00-catalog.yml"
     @config = YAML.load(ERB.new(File.read(@config_file)).result)
-    @fieldnames               = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
+    @fieldnames = @config["search_fields"].keys.sort { |a, b| b.size <=> a.size }
     @parser = MLibrarySearchParser::PreQueryNestedFieldsParser.new(@fieldnames)
   end
 
@@ -45,5 +45,4 @@ RSpec.describe "PreQueryNestedFieldsParser" do
     expect(parsed[0]).not_to have_key(:fielded)
     expect(parsed[0]).to have_key(:tokens)
   end
-
 end
