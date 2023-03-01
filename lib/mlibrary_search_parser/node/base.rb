@@ -218,7 +218,7 @@ module MLibrarySearchParser::Node
     # Only the wanted tokens enclosed in double-quotes
     # @return [String]
     def wanted_tokens_phrase
-      %Q("#{wanted_tokens_string.gsub('"', '')}")
+      %("#{wanted_tokens_string.delete('"')}")
     end
 
     # Assign each node in this tree an arbitrary number, useful for

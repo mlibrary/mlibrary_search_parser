@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-require "mlibrary_search_parser/search_handler"
-=======
 require 'mlibrary_search_parser/search_handler'
 require "delegate"
->>>>>>> c310bd04aa780cdc5f3be5c30317f64915c419dd
 
 module MLibrarySearchParser
   class SearchBuilder
