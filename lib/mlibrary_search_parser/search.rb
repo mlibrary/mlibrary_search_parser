@@ -1,4 +1,5 @@
 require 'mlibrary_search_parser/search_handler'
+require "delegate"
 
 module MLibrarySearchParser
 
@@ -14,7 +15,8 @@ module MLibrarySearchParser
     end
   end
 
-  class Search
+  class Search < SimpleDelegator
+
     attr_reader :search_tree, :original_input, :mini_search, :config, :errors, :warnings
     # could come from search box, from adv search form, or from solr output
 
@@ -26,16 +28,19 @@ module MLibrarySearchParser
 
     def initialize(original_input, config)
       @original_input = original_input
-      @config         = config
+      @config = config
       @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
-      @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
-      @errors         = Array(@mini_search.errors)
-      @warnings       = Array(@mini_search.warnings)
+      @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
+      @errors = Array(@mini_search.errors)
+      @warnings = Array(@mini_search.warnings)
+      @search_tree = @search_handler.parse(mini_search.to_s)
+      __setobj__(@search_tree)
     end
 
     def clean_string
       search_tree.clean_string
     end
+
     def search_tree
       @search_tree ||= @search_handler.parse(mini_search.to_s)
     end

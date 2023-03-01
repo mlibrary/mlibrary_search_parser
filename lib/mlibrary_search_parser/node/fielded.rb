@@ -38,6 +38,10 @@ module MLibrarySearchParser
         end
       end
 
+      def trim(&blk)
+        self.class.new(field, query.deep_dup.trim(&blk))
+      end
+
       def ==(other)
         other.is_type?(node_type) && other.field == field && other.query == query
       end
