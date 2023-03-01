@@ -183,12 +183,18 @@ module MLibrarySearchParser::Node
       select { |x| x.is_type?(type.to_sym) }
     end
 
+    # Get a list of all the tokens in left-to-right order
+    # @return [Array<String>]
+    def tokens
+      select_type(:tokens).map(&:to_s).reject { |str| str.empty? }
+    end
+
     # Get a string joining all the tokens in the normal
     # left-to-right -- essentially, the search without any
     # booleans/fields/etc, and skipping any empty strings
     # @return [String]
     def tokens_string
-      select_type(:tokens).map(&:to_s).reject { |str| str.empty? }.join(" ")
+      tokens.join(" ")
     end
 
     # The tokens_string, but devoid of double-quotes and then wrapped
@@ -197,9 +203,22 @@ module MLibrarySearchParser::Node
       %("#{tokens_string.delete('"')}")
     end
 
+    # Get on the "wanted" tokens (those not encased in a "NOT" of some sort)
+    # @return [Array<String>]
+    def wanted_tokens
+      deep_dup.trim_not.tokens
+    end
+
     # Get only the tokens the user actually wants
+    # @return [String]
     def wanted_tokens_string
-      deep_dup.trim_not.tokens_string
+      wanted_tokens.join(" ")
+    end
+
+    # Only the wanted tokens enclosed in double-quotes
+    # @return [String]
+    def wanted_tokens_phrase
+      %Q("#{wanted_tokens_string.gsub('"', '')}")
     end
 
     # Assign each node in this tree an arbitrary number, useful for
