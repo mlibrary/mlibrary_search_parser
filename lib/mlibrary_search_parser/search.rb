@@ -1,4 +1,4 @@
-require 'mlibrary_search_parser/search_handler'
+require "mlibrary_search_parser/search_handler"
 require "delegate"
 
 module MLibrarySearchParser
@@ -15,7 +15,6 @@ module MLibrarySearchParser
   end
 
   class Search < SimpleDelegator
-
     attr_reader :original_input, :mini_search, :config, :errors, :warnings
 
     # could come from search box, from adv search form, or from solr output
