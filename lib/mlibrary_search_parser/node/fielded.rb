@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser
   module Node
@@ -20,14 +20,6 @@ module MLibrarySearchParser
         [query]
       end
 
-      def trim(&blk)
-        if blk.call(self)
-          EmptyNode.new
-        else
-          self.class.new(field, query.trim(&blk))
-        end
-      end
-
       def shake
         shaken = query.shake
         if shaken.is_type?(:empty)
@@ -39,7 +31,7 @@ module MLibrarySearchParser
 
       def deep_dup(&blk)
         n = self.class.new(field, query.deep_dup(&blk))
-        if block_given?
+        if blk
           blk.call(n)
         else
           n

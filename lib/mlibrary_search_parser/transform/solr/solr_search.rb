@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'json_edismax'
-require 'mlibrary_search_parser/search'
-require 'mlibrary_search_parser/transform/solr/utilities'
+require_relative "json_edismax"
+require "mlibrary_search_parser/search"
+require "mlibrary_search_parser/transform/solr/utilities"
 
 module MLibrarySearchParser
   module Transformer
@@ -13,15 +13,15 @@ module MLibrarySearchParser
       #    [JSON request API](https://lucene.apache.org/solr/guide/8_5/json-request-api.html)
       class SolrSearch
         include Utilities
-        attr_accessor :transform, :params, :query, :search_tree, :original_search_tree, :config
+        attr_accessor :params, :query, :search_tree, :original_search_tree, :config
 
         # @param [MLibrarySearchParser::Search] search
         def initialize(search)
           @original_search_tree = search.shake
-          @search_tree          = lucene_escape_node(search.search_tree.deep_dup)
+          @search_tree = lucene_escape_node(search.search_tree.deep_dup)
           @search_tree.renumber!
           @params = {}
-          @query  = {}
+          @query = {}
           @config = search.config
           transform!
         end
@@ -30,17 +30,16 @@ module MLibrarySearchParser
           original_search_tree.clean_string
         end
 
-
         def transform!
-          if ['', '*'].include? @original_search_tree.clean_string.strip
-            set_param('q', '*:*')
+          if ["", "*"].include? @original_search_tree.clean_string.strip
+            set_param("q", "*:*")
           else
             @query = transform(search_tree)
           end
         end
 
         def solr_params
-          @config['solr_params'] || {}
+          @config["solr_params"] || {}
         end
 
         def default_field
@@ -48,11 +47,11 @@ module MLibrarySearchParser
         end
 
         def default_attributes
-          @config['search_attr_defaults'] || {}
+          @config["search_attr_defaults"] || {}
         end
 
         def field_config(field)
-          @config['search_fields'][field]
+          @config["search_fields"][field]
         end
 
         # Set params, symbolizing the keys on the way in
@@ -87,7 +86,6 @@ module MLibrarySearchParser
           end
         end
 
-
         def tokens_node(node)
           edismaxify(default_field, node)
         end
@@ -116,10 +114,9 @@ module MLibrarySearchParser
           if clauses.size == 1
             clauses.first
           else
-            MLibrarySearchParser::Node::AndNode.new(clauses.first, reduce_ands(clauses[1..-1]))
+            MLibrarySearchParser::Node::AndNode.new(clauses.first, reduce_ands(clauses[1..]))
           end
         end
-
 
         def search_node(node)
           if node.clauses.size == 1
@@ -136,9 +133,7 @@ module MLibrarySearchParser
           edismaxify(default_field, tok)
           # :nocov:
         end
-
       end
     end
   end
 end
-

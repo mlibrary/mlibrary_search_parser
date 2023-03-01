@@ -1,14 +1,13 @@
-require 'pry'
-require 'simple_solr_client'
-require 'mlibrary_search_parser'
-require 'erb'
+require "pry"
+require "simple_solr_client"
+require "mlibrary_search_parser"
+require "erb"
 
-@config_file = './spec/data/00-catalog.yml'
+@config_file = "./spec/data/00-catalog.yml"
 @config = YAML.load(ERB.new(File.read(@config_file)).result)
 
-
 # Your solr port (local) or full URL (remote)
-portOrURL = 'http://julep-1.umdl.umich.edu:8023/solr'
+portOrURL = "http://julep-1.umdl.umich.edu:8023/solr"
 # portOrURL = 9639
 client = SimpleSolrClient::Client.new(portOrURL)
 @core = client.core(client.cores.first)
@@ -16,8 +15,8 @@ client = SimpleSolrClient::Client.new(portOrURL)
 # Other solr params
 #
 @solr_params = {
-    fl: 'score,id,title,mainauthor',
-    rows: 10
+  fl: "score,id,title,mainauthor",
+  rows: 10
 }
 
 # Index a document, translating title to title_common and
@@ -44,16 +43,14 @@ end
 # Override solr parms in kwargs
 def get(str, **kwargs)
   resp = get_response(str, **kwargs)
-  resp['response']['docs']
+  resp["response"]["docs"]
 end
 
 # In case we need to look at the whole response
 def get_response(str, **kwargs)
   s = search(str)
   params = lp(s).params.merge(@solr_params).merge(kwargs)
-  @core.get('select', params)
+  @core.get("select", params)
 end
-
-require 'pry'; binding.pry
 
 puts "Goodbye"

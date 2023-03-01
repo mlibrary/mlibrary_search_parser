@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
+require "spec_helper"
 
 RSpec.describe "SearchNode" do
-
   before do
-    @simple       = search_node("one")
-    @fielded      = search_node(fielded_node('title', 'two'))
+    @simple = search_node("one")
+    @fielded = search_node(fielded_node("title", "two"))
     @simple_multi = search_node("one", "two", "three")
-    @complex      = search_node(and_node('one', 'two'), or_node('three', 'four'))
-    @complex_dup  = search_node(and_node('one', 'two'), or_node('three', 'four'))
+    @complex = search_node(and_node("one", "two"), or_node("three", "four"))
+    @complex_dup = search_node(and_node("one", "two"), or_node("three", "four"))
   end
 
   describe "Basics" do
@@ -30,7 +28,7 @@ RSpec.describe "SearchNode" do
     end
 
     it "deep_dups with a block" do
-      dup = @complex.deep_dup {|n| n.is_type?(:or) ? tnode("XXX") : n }
+      dup = @complex.deep_dup { |n| n.is_type?(:or) ? tnode("XXX") : n }
       expect(dup.clean_string).to eq "(one AND two) XXX"
     end
 
@@ -44,5 +42,4 @@ RSpec.describe "SearchNode" do
       expect(@complex.tree_string).to eq "AND\n  ┝  one\n  ┝  two\nOR\n  ┝  three\n  ┝  four"
     end
   end
-
 end

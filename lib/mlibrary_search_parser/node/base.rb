@@ -1,9 +1,9 @@
 # frozen_string_literal: true
+
 module MLibrarySearchParser::Node
   # The base of all the node types. Has everything you need
   # for inspecting and traversing the tree
   class BaseNode
-
     # An arbitrary number associated with this node in a given instance. Must be
     # set with #renumber!
     attr_accessor :number
@@ -15,7 +15,7 @@ module MLibrarySearchParser::Node
     attr_accessor :query
 
     def set_parent!(parent)
-      @parent  = parent
+      @parent = parent
       @payload = {}
       self
     end
@@ -48,7 +48,7 @@ module MLibrarySearchParser::Node
     # spaces and isn't already surrounded by parens
     # @param [String] s The string to maybe parenthesize
     def parenthesize_multiwords(s)
-      if s.match(/\s/) and !s.match(/\A\(.*\)\Z/)
+      if s.match(/\s/) && !s.match(/\A\(.*\)\Z/)
         "(#{s})"
       else
         s
@@ -194,16 +194,12 @@ module MLibrarySearchParser::Node
     # The tokens_string, but devoid of double-quotes and then wrapped
     # in new double-quotes
     def tokens_phrase
-      %Q("#{tokens_string.gsub('"', '')}")
+      %("#{tokens_string.delete('"')}")
     end
 
     # Get only the tokens the user actually wants
     def wanted_tokens_string
       deep_dup.trim_not.tokens_string
-    end
-
-    def wanted_tokens_phrase
-      %Q("#{wanted_tokens_string.gsub('"', '')}")
     end
 
     # Assign each node in this tree an arbitrary number, useful for
@@ -223,6 +219,5 @@ module MLibrarySearchParser::Node
     def renumber!
       flatten.each_with_index { |n, i| n.number = i }
     end
-
   end
 end

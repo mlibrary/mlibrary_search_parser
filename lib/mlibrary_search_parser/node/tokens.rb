@@ -1,8 +1,8 @@
 # frozen_string_literal: true
+
 require_relative "base"
 
 module MLibrarySearchParser::Node
-
   # A simple node to hold tokens -- either strings of text
   # or phrases
   class TokensNode < BaseNode
@@ -29,7 +29,7 @@ module MLibrarySearchParser::Node
     # @see BaseNode#deep_dup
     def deep_dup(&blk)
       n = self.class.new(text)
-      if block_given?
+      if blk
         blk.call(n)
       else
         n
@@ -37,7 +37,7 @@ module MLibrarySearchParser::Node
     end
 
     def shake
-      if text == '*'
+      if text == "*"
         EmptyNode.new
       else
         self

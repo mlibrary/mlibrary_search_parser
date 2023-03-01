@@ -1,12 +1,6 @@
-# frozen_string_literal: true
-
-
-require 'mlibrary_search_parser/search_handler'
-
-require 'forwardable'
+require "mlibrary_search_parser/search_handler"
 
 module MLibrarySearchParser
-
   class SearchBuilder
     attr_accessor :config
 
@@ -20,28 +14,23 @@ module MLibrarySearchParser
   end
 
   class Search
-    attr_reader :search_tree, :original_input, :mini_search, :config, :errors, :warnings
+    attr_reader :original_input, :mini_search, :config, :errors, :warnings
     # could come from search box, from adv search form, or from solr output
 
-    def self.from_form(input, search_handler) end
+    def self.from_form(input, search_handler)
+    end
 
     def self.search_builder(config)
       SearchBuilder.new(config)
     end
 
-    extend Forwardable
-    def_delegators :@search_tree, :trim, :trim_not, :tokens_string, :tokens_phrase,
-                   :wanted_tokens_string, :wanted_tokens_phrase,
-                   :tree_string
-
     def initialize(original_input, config)
       @original_input = original_input
-      @config         = config
+      @config = config
       @search_handler = MLibrarySearchParser::SearchHandler.new(@config)
-      @mini_search    = @search_handler.pre_process(MiniSearch.new(original_input))
-      @errors         = Array(@mini_search.errors)
-      @warnings       = Array(@mini_search.warnings)
-      @search_tree    = @search_handler.parse(mini_search.to_s)
+      @mini_search = @search_handler.pre_process(MiniSearch.new(original_input))
+      @errors = Array(@mini_search.errors)
+      @warnings = Array(@mini_search.warnings)
     end
 
     def clean_string
@@ -57,7 +46,7 @@ module MLibrarySearchParser
     end
 
     def valid?
-      not errors? or warnings?
+      !errors? or warnings?
     end
 
     def errors?

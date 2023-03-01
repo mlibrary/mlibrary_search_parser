@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'mlibrary_search_parser/node'
+require "mlibrary_search_parser/node"
 
 module MLibrarySearchParser
   module Transformer
@@ -9,15 +9,12 @@ module MLibrarySearchParser
     # and a method #transform to dispatch to canonically-named
     # node tranformation methods based n the node type
     class Base
-
       attr_accessor :config
 
       # Simplest possible intializer
       def initialize(config:, **kwargs)
         @config = config
       end
-
-
     end
   end
 end

@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'base'
+require_relative "base"
 
 module MLibrarySearchParser
   module Node
-
     class UnaryNode < BaseNode
       attr_accessor :operand
 
       def initialize(operand)
-        @operand = operand.set_parent!(self)
+        @operand = operand
       end
 
       def operator
@@ -22,14 +21,6 @@ module MLibrarySearchParser
         [operand]
       end
 
-      def trim(&blk)
-        if blk.call(self)
-          EmptyNode.new
-        else
-          self.class.new(operand.trim(&blk))
-        end
-      end
-
       def to_s
         "#{operator.upcase} (#{operand})"
       end
@@ -40,7 +31,7 @@ module MLibrarySearchParser
 
       def deep_dup(&blk)
         n = self.class.new(operand.deep_dup(&blk))
-        if block_given?
+        if blk
           blk.call(n)
         else
           n
@@ -72,6 +63,5 @@ module MLibrarySearchParser
         :not
       end
     end
-
   end
 end

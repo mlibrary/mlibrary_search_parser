@@ -6,9 +6,9 @@ module MLibrarySearchParser
       module Utilities
         # We don't escape double-quotes, parens because anything that's there
         # is already validated as part of a phrase
-        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^~?:])/.freeze
+        LUCENE_SPECIAL_CHARS_RE = /([!{}\[\]^~?:])/
         QUOTED_RE = /\A".*?"\Z/
-        PLUS_MINUS_SPACE = /([\-+])(\s+|\Z)/
+        PLUS_MINUS_SPACE = /([-+])(\s+|\Z)/
 
         # Lucene escape syntax for char C is essentially '\C'
         # but we need to escape the \, and then escape the \
@@ -18,7 +18,7 @@ module MLibrarySearchParser
         # with '\\\\\1'
         def lucene_escape(str)
           escaped = str.gsub(LUCENE_SPECIAL_CHARS_RE, '\\\\\1')
-              .gsub(/(?:\|\||&&)/, ' ')
+            .gsub(/(?:\|\||&&)/, " ")
           escaped = escape_asterisks_followed_by_something(escaped)
           escape_plus_minus_followed_by_space(escaped)
         end
@@ -29,7 +29,7 @@ module MLibrarySearchParser
         def escape_asterisks_followed_by_something(str)
           m = ASTR.match(str)
           if m
-            m['pre'] + '\\*' + m['post']
+            m["pre"] + '\\*' + m["post"]
           else
             str
           end
