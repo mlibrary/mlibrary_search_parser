@@ -62,6 +62,20 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
     end
   end
 
+  describe "more complex queries" do
+    it "numbers params" do
+      lp = localparams("title:one two AND author:three four")
+      title_node_number = lp.search_tree.clauses.first.left.query.number
+      title_q_key = "q#{title_node_number}".to_sym
+      author_node_number = lp.search_tree.clauses.first.right.query.number
+      author_q_key = "q#{author_node_number}".to_sym
+      title_qq_key = ("q" + title_q_key.to_s).to_sym
+      expect(lp.params[title_q_key]).to eq "(one two)"
+      expect(lp.params[author_q_key]).to eq "(three four)"
+      expect(lp.params[title_qq_key]).to eq '"one two"'
+    end
+  end
+
   describe "shakes" do
     it "combines matching fieldeds into one" do
       lp = localparams("title:one AND title:two")
@@ -82,5 +96,6 @@ RSpec.describe MLibrarySearchParser::Transformer::Solr::LocalParams do
       lp = localparams("one title:()")
       expect(lp.params[:clean_string]).to eq("one")
     end
+
   end
 end

@@ -86,30 +86,30 @@ module MLibrarySearchParser
           end
         end
 
-        def tokens_node(node)
-          edismaxify(default_field, node)
-        end
 
-        def and_node(node)
-          if node.contains_fielded?
-            boolnode(node, :must)
+        # For multiple clauses, we need to turn the search into a boolean tree.
+        # Use AND by default, but can be set to "or" in teh configuration with
+        # the key "default_operator"
+        # @param [MLibrarySearchParser::Node::SearchNode] node
+        def search_node(node)
+          if node.clauses.size == 1
+            transform(node.clauses.first)
           else
-            edismaxify(default_field, node)
+            case @config[:default_operator]
+              when "or"
+                or_node(reduce_ors(node.clauses))
+              else
+                and_node(reduce_ands(node.clauses))
+            end
           end
         end
 
-        def or_node(node)
-          if node.contains_fielded?
-            boolnode(node, :should)
-          else
-            edismaxify(default_field, node)
-          end
-        end
-
-        def fielded_node(node)
-          edismaxify(node.field, node.query)
-        end
-
+        # There can be any number of top-level clauses. To apply a default AND to join
+        # them, recursively turn the clauses into a tree of booleans.
+        # Example: A B C D turns into
+        #    A AND (B AND (C AND D))
+        # @param [Array<Node::BaseNode>] clauses
+        # @return [Node::AndNode]
         def reduce_ands(clauses)
           if clauses.size == 1
             clauses.first
@@ -118,21 +118,16 @@ module MLibrarySearchParser
           end
         end
 
-        def search_node(node)
-          if node.clauses.size == 1
-            transform(node.clauses.first)
+        # @see reduce_ands
+        # @return [Node::OrNode]
+        def reduce_ors(clauses)
+          if clauses.size == 1
+            clauses.first
           else
-            boolnode(reduce_ands(node.clauses), :must)
+            MLibrarySearchParser::Node::OrNode.new(clauses.first, reduce_ors(clauses[1..]))
           end
         end
 
-        def unparseable_node(node)
-          # :nocov:
-          tok = MLibrarySearchParser::Node::TokensNode.new(node.clean_string.downcase)
-          tok.renumber!
-          edismaxify(default_field, tok)
-          # :nocov:
-        end
       end
     end
   end

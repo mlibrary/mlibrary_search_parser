@@ -23,6 +23,38 @@ module MLibrarySearchParser
           end
         end
 
+        def tokens_node(node)
+          edismaxify(default_field, node)
+        end
+
+        def and_node(node)
+          if node.contains_fielded?
+            boolnode(node, :must)
+          else
+            edismaxify(default_field, node)
+          end
+        end
+
+        def or_node(node)
+          if node.contains_fielded?
+            boolnode(node, :should)
+          else
+            edismaxify(default_field, node)
+          end
+        end
+
+        def fielded_node(node)
+          edismaxify(node.field, node.query)
+        end
+
+        def unparseable_node(node)
+          # :nocov:
+          tok = MLibrarySearchParser::Node::TokensNode.new(node.clean_string.downcase)
+          tok.renumber!
+          edismaxify(default_field, tok)
+          # :nocov:
+        end
+
         # @param [MLibrarySearchParser::Node::BaseNode] node
         def edismaxify(field, node)
           q_localparams_name = "q#{node.number}"
