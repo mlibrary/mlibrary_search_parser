@@ -15,7 +15,7 @@ module MLibrarySearchParser
             set_param("clean_string", original_search_tree.clean_string)
 
             # Need a df for the boost queries to work
-            set_param("df", "allfields")
+            set_param("df", default_field)
 
             # merge in the defaults
             @params = solr_params.merge(@params)
