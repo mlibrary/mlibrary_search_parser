@@ -1,4 +1,5 @@
 require "mlibrary_search_parser/search_handler"
+require "mlibrary_search_parser/transform"
 require "delegate"
 
 module MLibrarySearchParser
@@ -65,11 +66,17 @@ module MLibrarySearchParser
       search_tree.to_s
     end
 
-    def to_solr_query
-      # the string to give to solr
-      # producing a complicated highly specific solr query
-      # with edismax stuff and lists of fields and all that
-      search_tree.to_s
-    end
+  def to_solr_query
+    # the string to give to solr
+    # producing a complicated highly specific solr query
+    # with edismax stuff and lists of fields and all that
+    search_tree.to_s
   end
+
+  def to_opensearch_query
+    # Transform the search tree to OpenSearch Query DSL format
+    transformer = MLibrarySearchParser::Transformer::OpenSearch::QueryDSL.new(config: @config)
+    transformer.transform(search_tree)
+  end
+end
 end
