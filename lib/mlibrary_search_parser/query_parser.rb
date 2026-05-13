@@ -1,6 +1,10 @@
 require "parslet"
 require "json"
-require "pry"
+begin
+  require "pry"
+rescue LoadError
+  # pry is a development tool; safe to skip when not installed
+end
 require "mlibrary_search_parser/node"
 require "mlibrary_search_parser/search_handler"
 require "mlibrary_search_parser/search"
